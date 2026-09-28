@@ -39,23 +39,27 @@ function createParticles(target: number): Particle[] {
   return points
 }
 
+type OrbProps = React.ComponentProps<"div"> & {
+  state?: VoiceState
+  /** Input or output loudness, 0 to 1. */
+  level?: number
+  /** Rendered size in px. */
+  size?: number
+}
+
 /**
- * Presence for a voice agent: a rotating mesh of particles in the primary color.
- * Undulates gently when idle, swells with `level` (0..1) while listening, spins
- * faster while thinking, and pulses while speaking. Edges glow brighter than the
- * center, like light catching the rim of a sphere.
+ * Rotating mesh of particles. Undulates gently when idle, swells with `level` while
+ * listening, spins faster while thinking, and pulses while speaking. Edges glow
+ * brighter than the center, like light catching the rim of a sphere.
  */
-function VoiceOrb({
+function ParticleOrb({
   state = "idle",
   level = 0,
   size = 160,
   particles,
   className,
   ...props
-}: React.ComponentProps<"div"> & {
-  state?: VoiceState
-  level?: number
-  size?: number
+}: OrbProps & {
   /** Approximate particle count. Defaults to scale with size. */
   particles?: number
 }) {
@@ -151,6 +155,7 @@ function VoiceOrb({
   return (
     <div
       data-slot="voice-orb"
+      data-variant="particles"
       data-state={state}
       role="img"
       aria-label={`Voice assistant ${state}`}
@@ -163,4 +168,152 @@ function VoiceOrb({
   )
 }
 
-export { VoiceOrb, type VoiceState }
+
+/** Per-state targets for the ring. */
+const ringTargets: Record<VoiceState, { wobble: number; spin: number; scale: number; width: number }> = {
+  idle: { wobble: 0.018, spin: 0.15, scale: 1, width: 1 },
+  listening: { wobble: 0.03, spin: 0.25, scale: 1, width: 1.2 },
+  thinking: { wobble: 0.035, spin: 1.6, scale: 0.94, width: 0.9 },
+  speaking: { wobble: 0.03, spin: 0.35, scale: 1, width: 1.3 },
+}
+
+const RING_POINTS = 120
+
+/**
+ * A soft glowing ring. Its outline wobbles like a membrane, stretching with `level`
+ * while listening or speaking; the light sweeps around it faster while thinking.
+ * Brightest along the bottom edge. Drawn as SVG, so it stays sharp at any size.
+ */
+function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
+  const id = React.useId().replace(/:/g, "")
+  const coreRef = React.useRef<SVGPathElement>(null)
+  const glowRef = React.useRef<SVGPathElement>(null)
+  const haloRef = React.useRef<SVGPathElement>(null)
+  const gradientRef = React.useRef<SVGLinearGradientElement>(null)
+  const input = React.useRef({ state, level })
+  const redraw = React.useRef<(() => void) | null>(null)
+
+  React.useEffect(() => {
+    input.current = { state, level }
+    redraw.current?.()
+  }, [state, level])
+
+  React.useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const cur = { ...ringTargets.idle, level: 0, time: 0, angle: 0 }
+    let last = performance.now()
+    let raf = 0
+
+    const draw = (now: number) => {
+      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
+      last = now
+      const { state, level } = input.current
+      const target = ringTargets[state]
+      const k = reduced ? 1 : 1 - Math.exp(-dt * 5)
+      cur.wobble += (target.wobble - cur.wobble) * k
+      cur.spin += (target.spin - cur.spin) * k
+      cur.scale += (target.scale - cur.scale) * k
+      cur.width += (target.width - cur.width) * k
+      const targetLevel = state === "listening" || state === "speaking" ? level : 0
+      cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 12))
+      cur.time += dt
+      cur.angle += cur.spin * dt
+      const t = cur.time
+
+      const amp = cur.wobble + cur.level * 0.045
+      const radius = 38 * cur.scale * (1 + cur.level * 0.06 + Math.sin(t * 1.2) * 0.008)
+      let d = ""
+      for (let i = 0; i <= RING_POINTS; i++) {
+        const a = (i / RING_POINTS) * Math.PI * 2
+        const r =
+          radius *
+          (1 +
+            amp * Math.sin(a * 2 + t * 0.9) +
+            amp * 0.6 * Math.sin(a * 3 - t * 1.3 + 1.7) +
+            cur.level * 0.02 * Math.sin(a * 6 + t * 5))
+        const x = 50 + Math.cos(a) * r
+        const y = 50 + Math.sin(a) * r
+        d += `${i === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
+      }
+      d += "Z"
+      coreRef.current?.setAttribute("d", d)
+      glowRef.current?.setAttribute("d", d)
+      haloRef.current?.setAttribute("d", d)
+      coreRef.current?.setAttribute("stroke-width", (1.8 * cur.width).toFixed(2))
+      glowRef.current?.setAttribute("stroke-width", (5 * cur.width + cur.level * 3).toFixed(2))
+      haloRef.current?.setAttribute("stroke-width", (10 + cur.level * 6).toFixed(2))
+      gradientRef.current?.setAttribute("gradientTransform", `rotate(${((cur.angle * 180) / Math.PI).toFixed(1)} 0.5 0.5)`)
+      if (!reduced) raf = requestAnimationFrame(draw)
+    }
+
+    redraw.current = reduced ? () => draw(performance.now()) : null
+    raf = requestAnimationFrame(draw)
+    return () => {
+      cancelAnimationFrame(raf)
+      redraw.current = null
+    }
+  }, [])
+
+  return (
+    <div
+      data-slot="voice-orb"
+      data-variant="ring"
+      data-state={state}
+      role="img"
+      aria-label={`Voice assistant ${state}`}
+      className={cn("relative size-(--orb-size) text-primary", className)}
+      style={{ "--orb-size": `${size}px` } as React.CSSProperties}
+      {...props}
+    >
+      <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+        <defs>
+          {/* Dim at the top, full strength at the bottom; rotated to sweep the light around. */}
+          <linearGradient ref={gradientRef} id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="currentColor" stopOpacity="0.25" />
+            <stop offset="0.6" stopColor="currentColor" stopOpacity="0.7" />
+            <stop offset="1" stopColor="currentColor" stopOpacity="1" />
+          </linearGradient>
+          <filter id={`${id}-blur`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.2" />
+          </filter>
+          <filter id={`${id}-halo`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
+        <path ref={haloRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-halo)`} opacity="0.35" />
+        <path ref={glowRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-blur)`} opacity="0.85" />
+        <path ref={coreRef} fill="none" stroke={`url(#${id}-g)`} strokeLinejoin="round" />
+      </svg>
+    </div>
+  )
+}
+
+type VoiceOrbVariant = "particles" | "ring"
+
+const VoiceOrbContext = React.createContext<VoiceOrbVariant>("particles")
+
+/** Sets the default orb variant for everything inside it. A `variant` prop still wins. */
+function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; children: React.ReactNode }) {
+  return <VoiceOrbContext.Provider value={variant}>{children}</VoiceOrbContext.Provider>
+}
+
+/**
+ * Presence for a voice agent, drawn in the primary color.
+ * `particles`: a rotating particle mesh. `ring`: a soft glowing ring.
+ */
+function VoiceOrb({
+  variant,
+  particles,
+  ...props
+}: OrbProps & {
+  /** Defaults to the nearest VoiceOrbProvider, then "particles". */
+  variant?: VoiceOrbVariant
+  /** Particle count for the particles variant. */
+  particles?: number
+}) {
+  const fallback = React.useContext(VoiceOrbContext)
+  const resolved = variant ?? fallback
+  return resolved === "ring" ? <RingOrb {...props} /> : <ParticleOrb particles={particles} {...props} />
+}
+
+export { VoiceOrb, VoiceOrbProvider, type VoiceOrbVariant, type VoiceState }

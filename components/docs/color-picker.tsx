@@ -10,8 +10,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useSiteSettings } from "@/components/docs/site-settings"
+import type { VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { colorPresets } from "@/lib/colors"
 
 export const COLOR_KEY = "jds:color"
@@ -30,8 +33,15 @@ const swatch: Record<string, string> = {
 
 const options = [{ name: "neutral", label: "Neutral" }, ...colorPresets.map(({ name, label }) => ({ name, label }))]
 
+const orbs: { value: VoiceOrbVariant; label: string }[] = [
+  { value: "particles", label: "Particles" },
+  { value: "ring", label: "Ring" },
+]
+
+/** Header customizer: primary color and voice orb style, applied across the site. */
 export function ColorPicker() {
   const [color, setColor] = React.useState("neutral")
+  const { orb, setOrb } = useSiteSettings()
 
   React.useEffect(() => {
     queueMicrotask(() => setColor(document.documentElement.dataset.color ?? "neutral"))
@@ -48,7 +58,7 @@ export function ColorPicker() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Primary color" />}>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Customize" />}>
         <span className={cn("size-3.5 rounded-full ring-1 ring-border", swatch[color])} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
@@ -57,6 +67,15 @@ export function ColorPicker() {
           {options.map((o) => (
             <DropdownMenuRadioItem key={o.name} value={o.name}>
               <span className={cn("size-3 rounded-full", swatch[o.name])} />
+              {o.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup value={orb} onValueChange={(v) => setOrb(v as VoiceOrbVariant)}>
+          <DropdownMenuLabel>Voice orb</DropdownMenuLabel>
+          {orbs.map((o) => (
+            <DropdownMenuRadioItem key={o.value} value={o.value}>
               {o.label}
             </DropdownMenuRadioItem>
           ))}

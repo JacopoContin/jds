@@ -4,6 +4,7 @@ import Script from "next/script"
 
 import { colorInitScript } from "@/components/docs/color-picker"
 import { SiteHeader } from "@/components/docs/site-header"
+import { SiteSettingsProvider } from "@/components/docs/site-settings"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -25,10 +26,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {colorInitScript}
         </Script>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <TooltipProvider>
-            <SiteHeader />
-            <div className="flex flex-1 flex-col">{children}</div>
-          </TooltipProvider>
+          <SiteSettingsProvider>
+            <TooltipProvider>
+              <SiteHeader />
+              <div className="flex flex-1 flex-col">{children}</div>
+            </TooltipProvider>
+          </SiteSettingsProvider>
           <Toaster />
         </ThemeProvider>
       </body>

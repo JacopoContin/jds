@@ -493,7 +493,7 @@
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",
-      "description": "A rotating particle mesh for a voice agent, drawn in the primary color. Undulates when idle, swells with your voice while listening, spins while thinking, pulses while speaking.",
+      "description": "Presence for a voice agent, drawn in the primary color. Two variants: a rotating particle mesh, or a soft glowing ring. Both react to state and voice level.",
       "dependencies": [
         "cn"
       ],
