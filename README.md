@@ -9,7 +9,7 @@ Add the registry to `components.json`:
 ```json
 {
   "registries": {
-    "@jds": "https://jds.vercel.app/r/{name}.json"
+    "@jds": "https://jds-ruddy.vercel.app/r/{name}.json"
   }
 }
 ```
