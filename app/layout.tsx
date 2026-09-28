@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import Script from "next/script"
+import { Geist, Geist_Mono, Inter } from "next/font/google"
 
-import { colorInitScript } from "@/components/docs/color-picker"
+import { settingsInitScript } from "@/components/docs/color-picker"
 import { SiteHeader } from "@/components/docs/site-header"
 import { SiteSettingsProvider } from "@/components/docs/site-settings"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -12,6 +11,7 @@ import "./globals.css"
 
 const sans = Geist({ variable: "--font-sans", subsets: ["latin"] })
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap", preload: false })
 
 export const metadata: Metadata = {
   title: { default: "JDS · Jaco Design System", template: "%s · JDS" },
@@ -20,11 +20,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${sans.variable} ${mono.variable} ${inter.variable} h-full antialiased`}
+    >
+      <head>
+        {/* Blocking on purpose: restores saved color, base, radius and font before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: settingsInitScript }} />
+      </head>
       <body className="isolate flex min-h-full flex-col">
-        <Script id="jds-color" strategy="beforeInteractive">
-          {colorInitScript}
-        </Script>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SiteSettingsProvider>
             <TooltipProvider>

@@ -579,7 +579,7 @@ const { status, sendMessage, stop } = useChat()
     slug: "voice-orb",
     title: "Voice Orb",
     description:
-      "Presence for a voice agent, drawn in the primary color. Three variants: a rotating particle mesh, a soft glowing ring, or twisting ribbons. All react to state and voice level.",
+      "Presence for a voice agent, drawn in the primary color. Six variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, and halftone dots. All react to state and voice level.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
@@ -596,7 +596,7 @@ const { status, sendMessage, stop } = useChat()
         props: [
           {
             name: "variant",
-            type: '"particles" | "ring" | "wave"',
+            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone"',
             default: 'provider, else "particles"',
             description: "Visual style. Omit to use the nearest VoiceOrbProvider.",
           },
@@ -622,7 +622,7 @@ const { status, sendMessage, stop } = useChat()
         props: [
           {
             name: "variant",
-            type: '"particles" | "ring" | "wave"',
+            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone"',
             description: "Default variant for every VoiceOrb inside.",
           },
         ],

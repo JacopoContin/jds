@@ -4,7 +4,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs"
 
-import { colorPresets } from "../lib/colors.ts"
+import { baseColorVars, baseColors, colorPresets } from "../lib/colors.ts"
 import { components } from "../lib/docs.ts"
 import { site } from "../lib/site.ts"
 
@@ -50,6 +50,10 @@ const decl = (o: Record<string, string>) =>
     .map(([k, v]) => `  --${k}: ${v};`)
     .join("\n")
 let presetCss = "\n/* Primary color presets. Generated from lib/colors.ts by scripts/build-registry.mts. */\n"
+// Base colors first, so a primary color preset (same specificity, later) wins over the base's primary.
+for (const b of baseColors) {
+  presetCss += `:root[data-base="${b.name}"] {\n${decl(baseColorVars(b, "light"))}\n}\n:root.dark[data-base="${b.name}"] {\n${decl(baseColorVars(b, "dark"))}\n}\n`
+}
 for (const p of colorPresets) {
   presetCss += `:root[data-color="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-color="${p.name}"] {\n${decl(p.dark)}\n}\n`
 }
@@ -110,6 +114,13 @@ const items: object[] = [
       { path: "lib/motion.ts", type: "registry:lib" },
     ],
   },
+  ...baseColors.map((b) => ({
+    name: `base-${b.name}`,
+    type: "registry:theme",
+    title: `${b.label} base`,
+    description: `Tints the gray scale ${b.label.toLowerCase()} (hue ${b.hue}). Install after ${NS}/style, before a color preset.`,
+    cssVars: { light: baseColorVars(b, "light"), dark: baseColorVars(b, "dark") },
+  })),
   ...colorPresets.map((p) => ({
     name: `color-${p.name}`,
     type: "registry:theme",

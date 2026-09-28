@@ -14,10 +14,11 @@ const releases = [
         title: "Added",
         items: [
           "Agent components: Conversation, Message, Prompt Input (with frame, dictation and mentions), Response, Reasoning, Tool Call, Approval, Agent Steps, Sources, Suggestions, Shimmer, Model Picker, Branch, Context Meter, Artifact.",
-          "Voice components: Voice Orb (particles, ring and wave variants), Waveform, Push to Talk, Live Transcript, Voice Picker, Call Controls.",
+          "Voice components: Voice Orb (particles, ring, wave, aura, bars and halftone variants), Waveform, Push to Talk, Live Transcript, Voice Picker, Call Controls.",
           "52 Base UI primitives, from Accordion to Tooltip, including Number Field, Meter, Toolbar and Form built directly on Base UI.",
           "Particles: Chat app, Agent inbox, Run history, Agent onboarding, Agent marketplace, Agent run, Agent panel, Voice call, Voice session, Agent settings.",
-          "Primary color presets (blue, violet, rose, emerald, amber) as registry themes. Neutral by default.",
+          "Primary color presets (blue, violet, rose, emerald, amber) and base colors (stone, zinc, slate) as registry themes. Neutral by default.",
+          "Customize panel in the docs header: primary and base color, radius, font and voice orb, restored before first paint.",
           "Docs for agents: llms.txt, llms-full.txt, per-component Markdown, and Copy page on every page. ⌘K search.",
         ],
       },
@@ -32,6 +33,7 @@ const releases = [
         title: "Fixed",
         items: [
           "Response no longer squashes sibling message parts by claiming full height.",
+          "Toggle and Toggle Group pressed state is now clearly visible; it was nearly identical to the unpressed surface.",
           "Upstream fixes to vendored primitives: invalid Tailwind variants in Navigation Menu, a setState-in-effect and listener leak in Carousel, calendar surface and selected-today styling.",
         ],
       },
