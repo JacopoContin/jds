@@ -1,0 +1,53 @@
+name: Visual tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      update:
+        description: Regenerate the Linux baselines and commit them
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - name: Update baselines
+        if: inputs.update
+        run: pnpm test:visual:update
+      - name: Commit baselines
+        if: inputs.update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/visual.spec.ts-snapshots
+          git commit -m "test(visual): update linux baselines" || echo "Baselines unchanged"
+          git push
+
+      - name: Compare against baselines
+        # Skipped until the first Linux baselines are committed (run this workflow with "update").
+        if: ${{ !inputs.update && hashFiles('tests/visual.spec.ts-snapshots/*-linux.png') != '' }}
+        run: pnpm test:visual
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 14

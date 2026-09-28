@@ -72,7 +72,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Open source",
-    status: "next",
+    status: "done",
     items: ["Contribution guide", "Visual regression tests for every component", "Weekly particle drops"],
   },
 ]

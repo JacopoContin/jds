@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { AnimatePresence, motion } from "motion/react"
 import { cn } from "cn"
 
@@ -44,10 +45,36 @@ function PromptInputMentions({
   const results = React.useMemo(() => {
     if (!match) return []
     const q = match.query.toLowerCase()
-    return items.filter((i) => !selected.some((s) => s.id === i.id) && i.label.toLowerCase().includes(q)).slice(0, MAX_RESULTS)
+    return items
+      .filter((i) => !selected.some((s) => s.id === i.id) && i.label.toLowerCase().includes(q))
+      .slice(0, MAX_RESULTS)
   }, [items, match, selected])
 
   const open = !!match && match.start !== dismissedAt && results.length > 0
+
+  // The menu renders in a portal so overflow-hidden ancestors can't clip it.
+  // It sits above the composer, or below when there isn't room, and follows scroll and resize.
+  const menuRef = React.useRef<HTMLDivElement>(null)
+  const [position, setPosition] = React.useState({ x: 0, y: 0 })
+  React.useLayoutEffect(() => {
+    if (!open) return
+    const place = () => {
+      const anchor = textareaRef.current?.closest("[data-slot=prompt-input]")
+      if (!anchor) return
+      const rect = anchor.getBoundingClientRect()
+      const height = menuRef.current?.offsetHeight ?? 240
+      const gap = 8
+      const above = rect.top - height - gap >= gap
+      setPosition({ x: rect.left + 8, y: above ? rect.top - height - gap : rect.bottom + gap })
+    }
+    place()
+    window.addEventListener("scroll", place, true)
+    window.addEventListener("resize", place)
+    return () => {
+      window.removeEventListener("scroll", place, true)
+      window.removeEventListener("resize", place)
+    }
+  }, [open, results.length, textareaRef])
 
   // Find an "@query" run ending at the caret.
   const detect = React.useCallback(() => {
@@ -87,7 +114,7 @@ function PromptInputMentions({
       setSelected(next)
       onMentionsChange?.(next)
     },
-    [onMentionsChange]
+    [onMentionsChange],
   )
 
   // Submitting clears the text; clear the chips with it.
@@ -116,7 +143,7 @@ function PromptInputMentions({
         el.setSelectionRange(pos, pos)
       })
     },
-    [textareaRef, match, value, setValue, update, selected]
+    [textareaRef, match, value, setValue, update, selected],
   )
 
   const remove = (item: Mention) => {
@@ -135,7 +162,7 @@ function PromptInputMentions({
         else return false
         return true
       }),
-    [registerKeyHandler, open, results, active, pick, match]
+    [registerKeyHandler, open, results, active, pick, match],
   )
 
   return (
@@ -169,39 +196,45 @@ function PromptInputMentions({
         </div>
       )}
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            role="listbox"
-            aria-label="Mention"
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: duration.fast, ease: ease.out }}
-            className="absolute bottom-full left-2 z-50 mb-2 w-72 overflow-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
-          >
-            {results.map((item, i) => (
-              <div
-                key={item.id}
-                role="option"
-                aria-selected={i === active}
-                onMouseEnter={() => setActive(i)}
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  pick(item)
-                }}
-                className="flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm aria-selected:bg-accent [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground"
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                ref={menuRef}
+                style={{ "--menu-x": `${position.x}px`, "--menu-y": `${position.y}px` } as React.CSSProperties}
+                role="listbox"
+                aria-label="Mention"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: duration.fast, ease: ease.out }}
+                className="fixed top-(--menu-y) left-(--menu-x) z-50 w-72 overflow-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
               >
-                {typeIcon[item.type]}
-                <span className="truncate">{item.label}</span>
-                {item.description && (
-                  <span className="ml-auto truncate text-xs text-muted-foreground">{item.description}</span>
-                )}
-              </div>
-            ))}
-          </motion.div>
+                {results.map((item, i) => (
+                  <div
+                    key={item.id}
+                    role="option"
+                    aria-selected={i === active}
+                    onMouseEnter={() => setActive(i)}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      pick(item)
+                    }}
+                    className="flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm aria-selected:bg-accent [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground"
+                  >
+                    {typeIcon[item.type]}
+                    <span className="truncate">{item.label}</span>
+                    {item.description && (
+                      <span className="ml-auto truncate text-xs text-muted-foreground">{item.description}</span>
+                    )}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </>
   )
 }

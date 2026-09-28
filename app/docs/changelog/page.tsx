@@ -20,6 +20,7 @@ const releases = [
           "Primary color presets (blue, violet, rose, emerald, amber) and base colors (stone, zinc, slate) as registry themes. Neutral by default.",
           "Customize panel in the docs header: primary and base color, radius, font and voice orb, restored before first paint.",
           "Docs for agents: llms.txt, llms-full.txt, per-component Markdown, and Copy page on every page. ⌘K search.",
+          "Visual regression tests for every component and particle, light and dark, run in CI. Contribution guide.",
         ],
       },
       {
@@ -34,6 +35,8 @@ const releases = [
         items: [
           "Response no longer squashes sibling message parts by claiming full height.",
           "Toggle and Toggle Group pressed state is now clearly visible; it was nearly identical to the unpressed surface.",
+          "Mentions menu renders in a portal, so containers with overflow hidden no longer cut it off.",
+          "Base colors no longer leak light-mode borders into dark mode.",
           "Upstream fixes to vendored primitives: invalid Tailwind variants in Navigation Menu, a setState-in-effect and listener leak in Carousel, calendar surface and selected-today styling.",
         ],
       },
