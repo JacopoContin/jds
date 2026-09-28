@@ -31,11 +31,11 @@ function LiveTranscript({
             layout="position"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-[4.5rem_1fr] gap-3"
+            className="grid grid-cols-[4.5rem_1fr] items-baseline gap-3"
           >
             <span
               className={cn(
-                "pt-px text-xs font-medium tracking-wide uppercase",
+                "text-xs font-medium tracking-wide uppercase",
                 s.speaker === "agent" ? "text-foreground" : "text-muted-foreground"
               )}
             >

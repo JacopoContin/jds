@@ -61,9 +61,9 @@ function MessageAvatar({
   ...props
 }: React.ComponentProps<typeof Avatar> & { src?: string; name: string }) {
   return (
-    <Avatar data-slot="message-avatar" className={cn("mt-0.5 size-7 ring-1 ring-border", className)} {...props}>
+    <Avatar data-slot="message-avatar" className={cn("size-6 ring-1 ring-border", className)} {...props}>
       {src && <AvatarImage src={src} alt={name} />}
-      <AvatarFallback className="text-xs">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+      <AvatarFallback className="text-[10px]">{name.slice(0, 2).toUpperCase()}</AvatarFallback>
     </Avatar>
   )
 }
