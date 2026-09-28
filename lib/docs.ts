@@ -358,10 +358,10 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "ModelPicker",
         props: [
-          { name: "models", type: "{ id, name, description?, capabilities?, meta? }[]", description: 'capabilities: "reasoning" | "vision" | "fast" | "web". meta: short note like "$$" or "200k".' },
+          { name: "models", type: "{ id, name, description?, capabilities?, meta? }[]", description: 'capabilities show as small icons after the name: "reasoning" | "vision" | "fast" | "web". meta is appended to the description, like "$$" or "200k".' },
           { name: "value", type: "string", description: "Controlled model id. Or use defaultValue." },
           { name: "onValueChange", type: "(id: string) => void", description: "" },
-          { name: "label", type: "string", default: '"Model"', description: "Menu heading." },
+          { name: "label", type: "string", description: "Optional menu heading." },
         ],
       },
     ],

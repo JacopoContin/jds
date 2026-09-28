@@ -22,7 +22,7 @@ type Model = {
   /** One line: what it's good for. */
   description?: string
   capabilities?: ModelCapability[]
-  /** Short right-aligned note, like a relative cost ("$$") or context size ("200k"). */
+  /** Short note after the description, like a relative cost ("$$") or context size ("200k"). */
   meta?: string
 }
 
@@ -42,14 +42,14 @@ function ModelPicker({
   value: controlled,
   defaultValue,
   onValueChange,
-  label = "Model",
+  label,
   className,
 }: {
   models: Model[]
   value?: string
   defaultValue?: string
   onValueChange?: (id: string) => void
-  /** Heading shown at the top of the menu. */
+  /** Optional heading at the top of the menu. */
   label?: string
   className?: string
 }) {
@@ -76,31 +76,35 @@ function ModelPicker({
         }
       >
         {current?.name ?? "Select model"}
-        <SelectIcon className="size-3.5 opacity-60" />
+        <SelectIcon className="size-3 opacity-50" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuRadioGroup value={value} onValueChange={(v) => select(v as string)}>
-          <DropdownMenuLabel>{label}</DropdownMenuLabel>
+          {label && <DropdownMenuLabel>{label}</DropdownMenuLabel>}
           {models.map((m) => (
-            <DropdownMenuRadioItem key={m.id} value={m.id} className="items-start py-2">
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{m.name}</span>
-                  {m.meta && <span className="ml-auto font-mono text-xs text-muted-foreground">{m.meta}</span>}
+            <DropdownMenuRadioItem
+              key={m.id}
+              value={m.id}
+              className="items-start py-1.5 **:data-[slot=dropdown-menu-radio-item-indicator]:top-2"
+            >
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="truncate">{m.name}</span>
+                  {m.capabilities?.map((c) => (
+                    <span
+                      key={c}
+                      title={capabilityMeta[c].label}
+                      className="text-muted-foreground/70! [&_svg]:size-3.5"
+                    >
+                      {capabilityMeta[c].icon}
+                      <span className="sr-only">{capabilityMeta[c].label}</span>
+                    </span>
+                  ))}
                 </div>
-                {m.description && <span className="text-xs text-muted-foreground">{m.description}</span>}
-                {m.capabilities && m.capabilities.length > 0 && (
-                  <div className="flex flex-wrap gap-1 pt-0.5">
-                    {m.capabilities.map((c) => (
-                      <span
-                        key={c}
-                        className="inline-flex h-5 items-center gap-1 rounded-md bg-muted px-1.5 text-[11px] text-muted-foreground [&_svg]:size-3"
-                      >
-                        {capabilityMeta[c].icon}
-                        {capabilityMeta[c].label}
-                      </span>
-                    ))}
-                  </div>
+                {(m.description || m.meta) && (
+                  <span className="truncate text-xs text-muted-foreground!">
+                    {[m.description, m.meta].filter(Boolean).join(" · ")}
+                  </span>
                 )}
               </div>
             </DropdownMenuRadioItem>
