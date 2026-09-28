@@ -5,7 +5,9 @@ import { H2, P, PageHeader, Pager } from "@/components/docs/prose"
 
 export const metadata: Metadata = { title: "Roadmap" }
 
-const phases = [
+type Status = "done" | "next" | "planned"
+
+const phases: { title: string; status: Status; items: readonly string[] }[] = [
   {
     title: "Foundation",
     status: "done",
@@ -14,7 +16,12 @@ const phases = [
   {
     title: "Agent",
     status: "done",
-    items: ["Conversation, Message, Prompt Input", "Response, Reasoning, Tool Call", "Approval, Agent Steps, Sources", "Suggestions, Shimmer"],
+    items: [
+      "Conversation, Message, Prompt Input",
+      "Response, Reasoning, Tool Call",
+      "Approval, Agent Steps, Sources",
+      "Suggestions, Shimmer",
+    ],
   },
   {
     title: "Voice",
@@ -24,7 +31,14 @@ const phases = [
   {
     title: "Agent, part two",
     status: "done",
-    items: ["Model Picker", "Branch (regenerated responses)", "Artifact panel", "Context Meter", "Mentions in the composer", "Voice Picker, Call Controls"],
+    items: [
+      "Model Picker",
+      "Branch (regenerated responses)",
+      "Artifact panel",
+      "Context Meter",
+      "Mentions in the composer",
+      "Voice Picker, Call Controls",
+    ],
   },
   {
     title: "Primitives",
@@ -46,15 +60,15 @@ const phases = [
     status: "next",
     items: ["Chat app shell", "Agent inbox", "Voice call screen", "Settings for an agent", "Weekly drops"],
   },
-] as const
+]
 
 export default function RoadmapPage() {
   return (
     <>
       <PageHeader title="Roadmap" description="Agent and voice first, then the full primitive set." />
       <P>
-        Priorities follow what agent products need first. Primitives get added when a component needs them, then
-        filled out to parity with general-purpose libraries.
+        Priorities follow what agent products need first. Primitives get added when a component needs them, then filled
+        out to parity with general-purpose libraries.
       </P>
       {phases.map((phase) => (
         <div key={phase.title}>
@@ -67,7 +81,7 @@ export default function RoadmapPage() {
                     "size-1.5 shrink-0 rounded-full",
                     phase.status === "done" && "bg-success",
                     phase.status === "next" && "bg-foreground",
-                    phase.status === "planned" && "bg-border"
+                    phase.status === "planned" && "bg-border",
                   )}
                 />
                 <span className={cn(phase.status === "planned" && "text-muted-foreground")}>{item}</span>
