@@ -36,6 +36,7 @@ const options = [{ name: "neutral", label: "Neutral" }, ...colorPresets.map(({ n
 const orbs: { value: VoiceOrbVariant; label: string }[] = [
   { value: "particles", label: "Particles" },
   { value: "ring", label: "Ring" },
+  { value: "wave", label: "Wave" },
 ]
 
 /** Header customizer: primary color and voice orb style, applied across the site. */

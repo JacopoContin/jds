@@ -23,6 +23,10 @@ export default function VoiceOrbVariantsDemo() {
           <VoiceOrb variant="ring" state={state} level={level} size={180} />
           <code className="font-mono text-xs text-muted-foreground">ring</code>
         </div>
+        <div className="flex flex-col items-center gap-3">
+          <VoiceOrb variant="wave" state={state} level={level} size={120} />
+          <code className="font-mono text-xs text-muted-foreground">wave</code>
+        </div>
       </div>
       <Tabs value={state} onValueChange={(v) => setState(v as VoiceState)}>
         <TabsList>

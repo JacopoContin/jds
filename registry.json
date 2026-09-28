@@ -493,7 +493,7 @@
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",
-      "description": "Presence for a voice agent, drawn in the primary color. Two variants: a rotating particle mesh, or a soft glowing ring. Both react to state and voice level.",
+      "description": "Presence for a voice agent, drawn in the primary color. Three variants: a rotating particle mesh, a soft glowing ring, or twisting ribbons. All react to state and voice level.",
       "dependencies": [
         "cn"
       ],

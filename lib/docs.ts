@@ -342,7 +342,7 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "voice-orb",
     title: "Voice Orb",
-    description: "Presence for a voice agent, drawn in the primary color. Two variants: a rotating particle mesh, or a soft glowing ring. Both react to state and voice level.",
+    description: "Presence for a voice agent, drawn in the primary color. Three variants: a rotating particle mesh, a soft glowing ring, or twisting ribbons. All react to state and voice level.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
@@ -357,16 +357,16 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "VoiceOrb",
         props: [
-          { name: "variant", type: '"particles" | "ring"', default: "provider, else \"particles\"", description: "Visual style. Omit to use the nearest VoiceOrbProvider." },
+          { name: "variant", type: '"particles" | "ring" | "wave"', default: "provider, else \"particles\"", description: "Visual style. Omit to use the nearest VoiceOrbProvider." },
           { name: "state", type: '"idle" | "listening" | "thinking" | "speaking"', default: '"idle"', description: "" },
           { name: "level", type: "number", default: "0", description: "Loudness 0 to 1. Smoothed with a spring." },
-          { name: "size", type: "number", default: "160", description: "Rendered size in px. Color follows --primary; override with a text-* class." },
+          { name: "size", type: "number", default: "160", description: "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Color follows --primary; override with a text-* class." },
           { name: "particles", type: "number", default: "size² × 0.07", description: "Particles variant only. Approximate count, capped at 6000." },
         ],
       },
       {
         component: "VoiceOrbProvider",
-        props: [{ name: "variant", type: '"particles" | "ring"', description: "Default variant for every VoiceOrb inside." }],
+        props: [{ name: "variant", type: '"particles" | "ring" | "wave"', description: "Default variant for every VoiceOrb inside." }],
       },
     ],
     isNew: true,

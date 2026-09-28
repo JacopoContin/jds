@@ -5,15 +5,33 @@ import { buttonVariants } from "@/components/ui/button"
 import { Example } from "@/components/docs/example"
 import { componentBySlug } from "@/lib/docs"
 
-const featured = [
-  { slug: "prompt-input", span: "lg:col-span-2" },
-  { slug: "voice-orb", span: "" },
-  { slug: "reasoning", span: "" },
-  { slug: "approval", span: "lg:col-span-2" },
-  { slug: "tool-call", span: "lg:col-span-2" },
-  { slug: "agent-steps", span: "" },
-  { slug: "message", span: "lg:col-span-2" },
-  { slug: "push-to-talk", span: "" },
+type Card = { slug: string; demo?: string; span?: string }
+
+/** Related components sit next to each other: the agent turn first, then voice. */
+const groups: { title: string; cards: Card[] }[] = [
+  {
+    title: "Agent",
+    cards: [
+      { slug: "prompt-input", demo: "prompt-input-frame", span: "lg:col-span-2" },
+      { slug: "suggestions" },
+      { slug: "message", span: "lg:col-span-2" },
+      { slug: "reasoning" },
+      { slug: "tool-call", span: "lg:col-span-2" },
+      { slug: "agent-steps" },
+      { slug: "approval", span: "lg:col-span-2" },
+      { slug: "sources" },
+    ],
+  },
+  {
+    title: "Voice",
+    cards: [
+      { slug: "voice-orb", span: "lg:col-span-2" },
+      { slug: "push-to-talk" },
+      { slug: "prompt-input-mic", span: "lg:col-span-2" },
+      { slug: "waveform" },
+      { slug: "live-transcript", span: "md:col-span-2 lg:col-span-3" },
+    ],
+  },
 ]
 
 export default function Home() {
@@ -37,25 +55,30 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {featured.map(({ slug, span }) => {
-          const doc = componentBySlug[slug]
-          return (
-            <div key={slug} className={cn("flex flex-col overflow-hidden rounded-xl border bg-card", span)}>
-              <div className="flex min-h-64 flex-1 items-center justify-center p-6">
-                <Example name={`${slug}-demo`} />
-              </div>
-              <Link
-                href={`/docs/components/${slug}`}
-                className="flex items-center justify-between border-t px-4 py-3 text-sm transition-colors hover:bg-muted/50"
-              >
-                <span className="font-medium">{doc.title}</span>
-                <span className="text-muted-foreground">View</span>
-              </Link>
-            </div>
-          )
-        })}
-      </div>
+      {groups.map((group) => (
+        <section key={group.title} className="flex flex-col gap-4">
+          <h2 className="text-sm font-medium text-muted-foreground">{group.title}</h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {group.cards.map(({ slug, demo, span }) => {
+              const doc = componentBySlug[slug]
+              return (
+                <div key={slug} className={cn("flex flex-col overflow-hidden rounded-xl border bg-card", span)}>
+                  <div className="flex min-h-64 flex-1 items-center justify-center p-6">
+                    <Example name={demo ?? `${slug}-demo`} />
+                  </div>
+                  <Link
+                    href={`/docs/components/${slug}`}
+                    className="flex items-center justify-between border-t px-4 py-3 text-sm transition-colors hover:bg-muted/50"
+                  >
+                    <span className="font-medium">{doc.title}</span>
+                    <span className="text-muted-foreground">View</span>
+                  </Link>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      ))}
     </main>
   )
 }
