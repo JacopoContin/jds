@@ -15,7 +15,7 @@ const rows = [
 export function SpringDemo() {
   const [on, setOn] = React.useState(false)
   return (
-    <div className="flex flex-col gap-5 rounded-xl border bg-card p-6">
+    <div data-md-skip className="flex flex-col gap-5 rounded-xl border bg-card p-6">
       {rows.map(([name, use]) => (
         <div key={name} className="flex flex-col gap-2">
           <div className="flex items-baseline justify-between text-xs">

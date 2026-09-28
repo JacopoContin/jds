@@ -62,12 +62,12 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Docs for humans and agents",
-    status: "next",
+    status: "done",
     items: ["Search with ⌘K", "Copy page as Markdown", "llms.txt for coding agents", "Changelog"],
   },
   {
     title: "More particles",
-    status: "planned",
+    status: "next",
     items: ["Onboarding with an agent", "Agent marketplace", "Run history and analytics", "Weekly drops"],
   },
 ]

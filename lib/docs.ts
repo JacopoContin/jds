@@ -875,6 +875,7 @@ export const nav: NavGroup[] = [
       { title: "Motion", href: "/docs/motion" },
       { title: "Icons", href: "/docs/icons" },
       { title: "Roadmap", href: "/docs/roadmap" },
+      { title: "Changelog", href: "/docs/changelog" },
     ],
   },
   { title: "Agent", items: toNav("ai") },

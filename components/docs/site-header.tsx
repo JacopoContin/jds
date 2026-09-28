@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { ColorPicker } from "@/components/docs/color-picker"
 import { GithubIcon } from "@/components/docs/github-icon"
 import { MobileNav } from "@/components/docs/mobile-nav"
+import { Search } from "@/components/docs/search"
 import { ThemeToggle } from "@/components/site/theme-toggle"
 import { site } from "@/lib/site"
 
@@ -27,6 +28,7 @@ export function SiteHeader() {
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-1">
+          <Search />
           <a
             href={site.github}
             target="_blank"

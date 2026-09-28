@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { cn } from "cn"
 
+import { CopyPage } from "@/components/docs/copy-page"
 import { ChevronLeftIcon, ChevronRightIcon } from "@/lib/icons"
 import { flatNav } from "@/lib/docs"
 
@@ -13,7 +14,10 @@ export const slugify = (s: string) =>
 export function PageHeader({ title, description }: { title: string; description?: string }) {
   return (
     <div className="space-y-2">
-      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+        <CopyPage />
+      </div>
       {description && <p className="text-base text-pretty text-muted-foreground">{description}</p>}
     </div>
   )
@@ -71,7 +75,7 @@ export function Pager({ href }: { href: string }) {
   const prev = flatNav[i - 1]
   const next = flatNav[i + 1]
   return (
-    <div className="mt-16 flex items-center justify-between gap-4 border-t pt-6 text-sm">
+    <div data-md-skip className="mt-16 flex items-center justify-between gap-4 border-t pt-6 text-sm">
       {prev ? (
         <Link href={prev.href} className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
           <ChevronLeftIcon className="size-4" />

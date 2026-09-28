@@ -40,8 +40,8 @@ export default function GetStartedPage() {
       <Steps>
         <Step title="Add the style">
           <P>
-            Installs the neutral light and dark themes, status colors, motion keyframes, and the
-            shared icon and motion utilities.
+            Installs the neutral light and dark themes, status colors, motion keyframes, and the shared icon and motion
+            utilities.
           </P>
           <Command command={`shadcn@latest add ${site.namespace}/style`} />
         </Step>
@@ -85,8 +85,8 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
 <html className={\`\${sans.variable} \${mono.variable}\`}>`}
       />
       <P>
-        Next.js starters name the variable <Code>--font-geist-sans</Code>. Rename it to <Code>--font-sans</Code> or
-        text falls back to the system font.
+        Next.js starters name the variable <Code>--font-geist-sans</Code>. Rename it to <Code>--font-sans</Code> or text
+        falls back to the system font.
       </P>
 
       <H2>Using with the AI SDK</H2>
@@ -132,6 +132,23 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
         The registry is plain JSON at <Code>{`${site.url}/r/{name}.json`}</Code>. With the namespace in{" "}
         <Code>components.json</Code>, the shadcn MCP server can search and install JDS components from your agent.
       </P>
+      <List>
+        <li>
+          <a href="/llms.txt" className="text-foreground underline underline-offset-4">
+            /llms.txt
+          </a>{" "}
+          indexes every page, with a Markdown link per component.
+        </li>
+        <li>
+          <a href="/llms-full.txt" className="text-foreground underline underline-offset-4">
+            /llms-full.txt
+          </a>{" "}
+          has every component&apos;s docs and source in one file.
+        </li>
+        <li>
+          <strong>Copy page</strong>, at the top of every page, copies it as Markdown for pasting into a chat.
+        </li>
+      </List>
 
       <Pager href="/docs/get-started" />
     </>

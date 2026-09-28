@@ -21,7 +21,7 @@ export function PreviewTabs({
   className?: string
 }) {
   return (
-    <Tabs defaultValue="preview" className={cn("gap-3", className)}>
+    <Tabs data-md-skip defaultValue="preview" className={cn("gap-3", className)}>
       <TabsList variant="line">
         <TabsTrigger value="preview">Preview</TabsTrigger>
         <TabsTrigger value="code">Code</TabsTrigger>

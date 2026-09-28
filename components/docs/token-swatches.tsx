@@ -57,7 +57,7 @@ function Palette({ theme }: { theme: "light" | "dark" }) {
 
 export function TokenSwatches() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div data-md-skip className="grid gap-4 sm:grid-cols-2">
       <Palette theme="light" />
       <Palette theme="dark" />
     </div>
