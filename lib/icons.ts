@@ -56,6 +56,13 @@ export {
   ChevronsUpDown as SelectIcon,
   Zap as FastIcon,
   Image as VisionIcon,
+  TrendingUp as TrendUpIcon,
+  TrendingDown as TrendDownIcon,
+  Star as StarIcon,
+  Clock as ClockIcon,
+  Coins as TokensIcon,
+  ChartColumn as ChartIcon,
+  Table as TableIcon,
 } from "lucide-react"
 
 export type { LucideIcon as IconComponent } from "lucide-react"

@@ -16,7 +16,7 @@ const releases = [
           "Agent components: Conversation, Message, Prompt Input (with frame, dictation and mentions), Response, Reasoning, Tool Call, Approval, Agent Steps, Sources, Suggestions, Shimmer, Model Picker, Branch, Context Meter, Artifact.",
           "Voice components: Voice Orb (particles, ring and wave variants), Waveform, Push to Talk, Live Transcript, Voice Picker, Call Controls.",
           "52 Base UI primitives, from Accordion to Tooltip, including Number Field, Meter, Toolbar and Form built directly on Base UI.",
-          "Particles: Chat app, Agent inbox, Agent run, Agent panel, Voice call, Voice session, Agent settings.",
+          "Particles: Chat app, Agent inbox, Run history, Agent onboarding, Agent marketplace, Agent run, Agent panel, Voice call, Voice session, Agent settings.",
           "Primary color presets (blue, violet, rose, emerald, amber) as registry themes. Neutral by default.",
           "Docs for agents: llms.txt, llms-full.txt, per-component Markdown, and Copy page on every page. ⌘K search.",
         ],

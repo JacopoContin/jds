@@ -67,8 +67,13 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "More particles",
+    status: "done",
+    items: ["Agent onboarding", "Agent marketplace", "Run history and analytics"],
+  },
+  {
+    title: "Open source",
     status: "next",
-    items: ["Onboarding with an agent", "Agent marketplace", "Run history and analytics", "Weekly drops"],
+    items: ["Contribution guide", "Visual regression tests for every component", "Weekly particle drops"],
   },
 ]
 

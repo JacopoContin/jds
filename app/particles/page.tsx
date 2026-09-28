@@ -18,6 +18,24 @@ const particles = [
       "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
   },
   {
+    name: "run-history",
+    title: "Run history",
+    description:
+      "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
+  },
+  {
+    name: "agent-onboarding",
+    title: "Agent onboarding",
+    description:
+      "Set up an agent by answering its questions. Quick replies drive the chat while a live card and progress list fill in beside it.",
+  },
+  {
+    name: "agent-marketplace",
+    title: "Agent marketplace",
+    description:
+      "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",
+  },
+  {
     name: "agent-run",
     title: "Agent run",
     description:
