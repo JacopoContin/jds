@@ -294,7 +294,7 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "voice-orb",
     title: "Voice Orb",
-    description: "A rotating sphere of particles for a voice agent. Breathes when idle, scatters with your voice while listening, spins while thinking, pulses while speaking.",
+    description: "A rotating particle mesh for a voice agent, drawn in the primary color. Undulates when idle, swells with your voice while listening, spins while thinking, pulses while speaking.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb } from "@/components/voice/voice-orb"
@@ -306,8 +306,8 @@ const { status, sendMessage, stop } = useChat()
         props: [
           { name: "state", type: '"idle" | "listening" | "thinking" | "speaking"', default: '"idle"', description: "" },
           { name: "level", type: "number", default: "0", description: "Loudness 0 to 1. Smoothed with a spring." },
-          { name: "size", type: "number", default: "160", description: "Rendered size in px. Color follows the text color." },
-          { name: "particles", type: "number", default: "size × 5", description: "Particle count, capped at 2400." },
+          { name: "size", type: "number", default: "160", description: "Rendered size in px. Color follows --primary; override with a text-* class." },
+          { name: "particles", type: "number", default: "size² × 0.07", description: "Approximate particle count, capped at 6000." },
         ],
       },
     ],

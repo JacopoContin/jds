@@ -4,6 +4,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs"
 
+import { colorPresets } from "../lib/colors.ts"
 import { components } from "../lib/docs.ts"
 import { site } from "../lib/site.ts"
 
@@ -41,7 +42,21 @@ function analyze(paths: string[]) {
   return { dependencies: [...deps].sort(), registryDependencies: [...regDeps].sort() }
 }
 
-const css = readFileSync("app/globals.css", "utf8")
+// Keep the preset CSS in globals.css in sync with lib/colors.ts.
+const decl = (o: Record<string, string>) =>
+  Object.entries(o)
+    .map(([k, v]) => `  --${k}: ${v};`)
+    .join("\n")
+let presetCss = "\n/* Primary color presets. Generated from lib/colors.ts by scripts/build-registry.mts. */\n"
+for (const p of colorPresets) {
+  presetCss += `:root[data-color="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-color="${p.name}"] {\n${decl(p.dark)}\n}\n`
+}
+const globals = readFileSync("app/globals.css", "utf8")
+  .replace(/\n\/\* Primary color presets[\s\S]*?(?=\n@layer base)/, "")
+  .replace("\n@layer base", presetCss + "\n@layer base")
+writeFileSync("app/globals.css", globals)
+
+const css = globals
 function vars(selector: RegExp) {
   const block = css.match(selector)?.[1] ?? ""
   return Object.fromEntries(
@@ -93,6 +108,13 @@ const items: object[] = [
       { path: "lib/motion.ts", type: "registry:lib" },
     ],
   },
+  ...colorPresets.map((p) => ({
+    name: `color-${p.name}`,
+    type: "registry:theme",
+    title: `${p.label} primary`,
+    description: `Sets --primary and --ring to ${p.label.toLowerCase()}. Install after ${NS}/style.`,
+    cssVars: { light: p.light, dark: p.dark },
+  })),
   ...components.map((c) => ({
     name: c.slug,
     type: c.group === "components" ? "registry:ui" : "registry:component",

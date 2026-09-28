@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
+import { ColorPicker } from "@/components/docs/color-picker"
 import { GithubIcon } from "@/components/docs/github-icon"
 import { MobileNav } from "@/components/docs/mobile-nav"
 import { ThemeToggle } from "@/components/site/theme-toggle"
@@ -35,6 +36,7 @@ export function SiteHeader() {
           >
             <GithubIcon className="size-4" />
           </a>
+          <ColorPicker />
           <ThemeToggle />
         </div>
       </div>

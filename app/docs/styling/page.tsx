@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 
 import { CodeBlock } from "@/components/docs/code-block"
+import { Command } from "@/components/docs/command"
 import { Code, H2, H3, List, P, PageHeader, Pager } from "@/components/docs/prose"
 import { TokenSwatches } from "@/components/docs/token-swatches"
+import { site } from "@/lib/site"
 
 export const metadata: Metadata = { title: "Styling" }
 
@@ -24,11 +26,16 @@ export default function StylingPage() {
       <H2>Colors</H2>
       <TokenSwatches />
 
-      <H3>No accent</H3>
+      <H3>Primary color</H3>
       <P>
-        JDS ships without a brand color. Agent activity (thinking, streaming, running tools, listening) is shown with
-        motion and contrast in <Code>foreground</Code> tones, not a hue. To add your brand, set{" "}
-        <Code>--primary</Code> and <Code>--ring</Code>; everything that should follow it already does.
+        Neutral is the default: no brand color, and agent activity reads through motion and contrast. To add one, pick
+        a preset. It only sets <Code>--primary</Code>, <Code>--primary-foreground</Code> and <Code>--ring</Code>, so
+        buttons, focus rings and the Voice Orb follow it. Try them with the color dot in the header.
+      </P>
+      <Command command={`shadcn@latest add ${site.namespace}/color-blue`} />
+      <P>
+        Presets: <Code>color-blue</Code>, <Code>color-violet</Code>, <Code>color-rose</Code>, <Code>color-emerald</Code>,{" "}
+        <Code>color-amber</Code>. For any other color, set the three variables yourself in both themes.
       </P>
 
       <H3>Status</H3>

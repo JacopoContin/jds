@@ -5,36 +5,45 @@ import { cn } from "cn"
 
 type VoiceState = "idle" | "listening" | "thinking" | "speaking"
 
-type Particle = { x: number; y: number; z: number; size: number; phase: number }
+/** A point on the sphere in latitude/longitude, so the surface can wave along its lines. */
+type Particle = { lat: number; lon: number; size: number; phase: number }
 
 /** Per-state motion targets. Values are eased toward, so state changes never jump. */
-const targets: Record<VoiceState, { spin: number; jitter: number; wave: number; scale: number }> = {
-  idle: { spin: 0.12, jitter: 0, wave: 0, scale: 1 },
-  listening: { spin: 0.2, jitter: 1, wave: 0, scale: 1 },
-  thinking: { spin: 0.9, jitter: 0, wave: 1, scale: 0.94 },
-  speaking: { spin: 0.25, jitter: 0.4, wave: 1, scale: 1 },
-}
-
-function createParticles(count: number): Particle[] {
-  return Array.from({ length: count }, () => {
-    // Uniform on the unit sphere.
-    const u = Math.random() * 2 - 1
-    const a = Math.random() * Math.PI * 2
-    const s = Math.sqrt(1 - u * u)
-    return {
-      x: s * Math.cos(a),
-      y: u,
-      z: s * Math.sin(a),
-      size: 0.9 + Math.random() ** 2.5 * 2.2,
-      phase: Math.random() * Math.PI * 2,
-    }
-  })
+const targets: Record<VoiceState, { spin: number; swell: number; wave: number; speed: number; scale: number }> = {
+  idle: { spin: 0.1, swell: 0, wave: 0.025, speed: 0.6, scale: 1 },
+  listening: { spin: 0.16, swell: 1, wave: 0.03, speed: 1.2, scale: 1 },
+  thinking: { spin: 0.7, swell: 0, wave: 0.06, speed: 2.4, scale: 0.95 },
+  speaking: { spin: 0.2, swell: 0.7, wave: 0.045, speed: 1.6, scale: 1 },
 }
 
 /**
- * Presence for a voice agent: a rotating sphere of particles in the current text color.
- * Breathes when idle, scatters with `level` (0..1) while listening, spins and ripples
- * while thinking, and pulses in waves while speaking.
+ * Rings of latitude with points spaced along each ring. Slight jitter keeps the
+ * mesh organic; the ring structure shows up as fine wavy lines once displaced.
+ */
+function createParticles(target: number): Particle[] {
+  const rings = Math.max(12, Math.round(Math.sqrt((target * Math.PI) / 4)))
+  const points: Particle[] = []
+  for (let i = 0; i < rings; i++) {
+    const lat = -Math.PI / 2 + ((i + 0.5) / rings) * Math.PI
+    const perRing = Math.max(6, Math.round(rings * 2 * Math.cos(lat)))
+    const offset = Math.random() * Math.PI * 2
+    for (let j = 0; j < perRing; j++) {
+      points.push({
+        lat: lat + (Math.random() - 0.5) * (Math.PI / rings) * 0.35,
+        lon: offset + (j / perRing) * Math.PI * 2,
+        size: 0.8 + Math.random() ** 3 * 0.9,
+        phase: Math.random() * Math.PI * 2,
+      })
+    }
+  }
+  return points
+}
+
+/**
+ * Presence for a voice agent: a rotating mesh of particles in the primary color.
+ * Undulates gently when idle, swells with `level` (0..1) while listening, spins
+ * faster while thinking, and pulses while speaking. Edges glow brighter than the
+ * center, like light catching the rim of a sphere.
  */
 function VoiceOrb({
   state = "idle",
@@ -47,13 +56,13 @@ function VoiceOrb({
   state?: VoiceState
   level?: number
   size?: number
-  /** Particle count. Defaults to scale with size. */
+  /** Approximate particle count. Defaults to scale with size. */
   particles?: number
 }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const input = React.useRef({ state, level })
   const redraw = React.useRef<(() => void) | null>(null)
-  const count = particles ?? Math.round(Math.min(2400, size * 5))
+  const count = particles ?? Math.round(Math.min(6000, size * size * 0.07))
 
   React.useEffect(() => {
     input.current = { state, level }
@@ -72,55 +81,60 @@ function VoiceOrb({
     canvas.height = px
 
     const points = createParticles(count)
-    const cur = { ...targets.idle, level: 0, angle: 0 }
+    const cur = { ...targets.idle, level: 0, angle: 0, time: 0 }
     let last = performance.now()
     let raf = 0
 
     const draw = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000)
+      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
       last = now
-      const t = reduced ? 0 : now / 1000
       const { state, level } = input.current
       const target = targets[state]
-      const k = reduced ? 1 : 1 - Math.exp(-dt * 6)
+      const k = reduced ? 1 : 1 - Math.exp(-dt * 5)
       cur.spin += (target.spin - cur.spin) * k
-      cur.jitter += (target.jitter - cur.jitter) * k
+      cur.swell += (target.swell - cur.swell) * k
       cur.wave += (target.wave - cur.wave) * k
+      cur.speed += (target.speed - cur.speed) * k
       cur.scale += (target.scale - cur.scale) * k
       const targetLevel = state === "listening" || state === "speaking" ? level : 0
-      cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 14))
+      cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 12))
       cur.angle += cur.spin * dt
+      cur.time += cur.speed * dt
+      const t = cur.time
 
-      const breathe = 1 + Math.sin(t * 1.3) * 0.015
-      const radius = px * 0.4 * cur.scale * breathe
+      const radius = px * 0.4 * cur.scale
       const c = px / 2
-      const cosA = Math.cos(cur.angle)
-      const sinA = Math.sin(cur.angle)
-      const tilt = 0.35
+      const tilt = 0.3
       const cosT = Math.cos(tilt)
       const sinT = Math.sin(tilt)
+      const amp = cur.wave + cur.swell * cur.level * 0.16
 
       ctx.clearRect(0, 0, px, px)
       ctx.fillStyle = getComputedStyle(canvas).color
 
       for (const p of points) {
-        // Spin around Y, then tilt toward the viewer so the axis reads as 3D.
-        const x1 = p.x * cosA + p.z * sinA
-        const z1 = -p.x * sinA + p.z * cosA
-        const y2 = p.y * cosT - z1 * sinT
-        const z2 = p.y * sinT + z1 * cosT
+        // Longitude snakes a little, turning rings of dots into wavy lines.
+        const lon = p.lon + cur.angle + Math.sin(p.lat * 7 + t * 0.9) * 0.05
+        const cosLat = Math.cos(p.lat)
+        const x = cosLat * Math.cos(lon)
+        const y = Math.sin(p.lat)
+        const z = cosLat * Math.sin(lon)
 
-        const scatter = cur.jitter * cur.level * 0.28 * (0.5 + 0.5 * Math.sin(p.phase + t * 9))
-        const ripple =
-          cur.wave * (0.05 + cur.level * 0.12) * Math.sin(p.y * 5 - t * (4 + cur.level * 6) + p.phase * 0.3)
-        const r = radius * (1 + scatter + ripple)
+        // Tilt toward the viewer so the rotation axis reads as 3D.
+        const y2 = y * cosT - z * sinT
+        const z2 = y * sinT + z * cosT
 
-        const depth = (z2 + 1) / 2
-        ctx.globalAlpha = 0.3 + depth * 0.7
-        const s = p.size * dpr * (size / 320 + 0.35) * (0.65 + depth * 0.45)
-        ctx.beginPath()
-        ctx.arc(c + x1 * r, c + y2 * r, s / 2, 0, Math.PI * 2)
-        ctx.fill()
+        const bump =
+          Math.sin(lon * 3 + p.lat * 4 + t) * Math.sin(p.lat * 5 - t * 0.7) +
+          0.5 * Math.sin(lon * 7 - t * 1.3 + p.phase * 0.2)
+        const r = radius * (1 + amp * bump)
+
+        // Front faces are brighter, and the silhouette glows.
+        const facing = (z2 + 1) / 2
+        const rim = 1 - Math.abs(z2)
+        ctx.globalAlpha = Math.min(1, 0.12 + facing * 0.5 + rim ** 3 * 0.5)
+        const s = p.size * dpr * (0.7 + facing * 0.4)
+        ctx.fillRect(c + x * r - s / 2, c + y2 * r - s / 2, s, s)
       }
       ctx.globalAlpha = 1
       if (!reduced) raf = requestAnimationFrame(draw)
@@ -140,7 +154,7 @@ function VoiceOrb({
       data-state={state}
       role="img"
       aria-label={`Voice assistant ${state}`}
-      className={cn("relative size-(--orb-size) text-foreground", className)}
+      className={cn("relative size-(--orb-size) text-primary", className)}
       style={{ "--orb-size": `${size}px` } as React.CSSProperties}
       {...props}
     >

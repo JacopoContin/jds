@@ -167,6 +167,58 @@
   --sidebar-ring: oklch(0.55 0 0);
 }
 
+/* Primary color presets. Generated from lib/colors.ts by scripts/build-registry.mts. */
+:root[data-color="blue"] {
+  --primary: oklch(0.546 0.215 262.9);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.546 0.215 262.9);
+}
+:root.dark[data-color="blue"] {
+  --primary: oklch(0.65 0.18 259.8);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.65 0.18 259.8);
+}
+:root[data-color="violet"] {
+  --primary: oklch(0.541 0.25 293);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.541 0.25 293);
+}
+:root.dark[data-color="violet"] {
+  --primary: oklch(0.66 0.21 293);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.66 0.21 293);
+}
+:root[data-color="rose"] {
+  --primary: oklch(0.586 0.22 17.6);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.586 0.22 17.6);
+}
+:root.dark[data-color="rose"] {
+  --primary: oklch(0.68 0.2 16.4);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.68 0.2 16.4);
+}
+:root[data-color="emerald"] {
+  --primary: oklch(0.596 0.145 163.2);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.596 0.145 163.2);
+}
+:root.dark[data-color="emerald"] {
+  --primary: oklch(0.72 0.15 162.5);
+  --primary-foreground: oklch(0.2 0.04 163);
+  --ring: oklch(0.72 0.15 162.5);
+}
+:root[data-color="amber"] {
+  --primary: oklch(0.7 0.17 60);
+  --primary-foreground: oklch(0.2 0.04 60);
+  --ring: oklch(0.7 0.17 60);
+}
+:root.dark[data-color="amber"] {
+  --primary: oklch(0.78 0.16 72);
+  --primary-foreground: oklch(0.2 0.04 60);
+  --ring: oklch(0.78 0.16 72);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

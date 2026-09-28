@@ -152,6 +152,96 @@
       ]
     },
     {
+      "name": "color-blue",
+      "type": "registry:theme",
+      "title": "Blue primary",
+      "description": "Sets --primary and --ring to blue. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "primary": "oklch(0.546 0.215 262.9)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.546 0.215 262.9)"
+        },
+        "dark": {
+          "primary": "oklch(0.65 0.18 259.8)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.65 0.18 259.8)"
+        }
+      }
+    },
+    {
+      "name": "color-violet",
+      "type": "registry:theme",
+      "title": "Violet primary",
+      "description": "Sets --primary and --ring to violet. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "primary": "oklch(0.541 0.25 293)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.541 0.25 293)"
+        },
+        "dark": {
+          "primary": "oklch(0.66 0.21 293)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.66 0.21 293)"
+        }
+      }
+    },
+    {
+      "name": "color-rose",
+      "type": "registry:theme",
+      "title": "Rose primary",
+      "description": "Sets --primary and --ring to rose. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "primary": "oklch(0.586 0.22 17.6)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.586 0.22 17.6)"
+        },
+        "dark": {
+          "primary": "oklch(0.68 0.2 16.4)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.68 0.2 16.4)"
+        }
+      }
+    },
+    {
+      "name": "color-emerald",
+      "type": "registry:theme",
+      "title": "Emerald primary",
+      "description": "Sets --primary and --ring to emerald. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "primary": "oklch(0.596 0.145 163.2)",
+          "primary-foreground": "oklch(0.985 0 0)",
+          "ring": "oklch(0.596 0.145 163.2)"
+        },
+        "dark": {
+          "primary": "oklch(0.72 0.15 162.5)",
+          "primary-foreground": "oklch(0.2 0.04 163)",
+          "ring": "oklch(0.72 0.15 162.5)"
+        }
+      }
+    },
+    {
+      "name": "color-amber",
+      "type": "registry:theme",
+      "title": "Amber primary",
+      "description": "Sets --primary and --ring to amber. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "primary": "oklch(0.7 0.17 60)",
+          "primary-foreground": "oklch(0.2 0.04 60)",
+          "ring": "oklch(0.7 0.17 60)"
+        },
+        "dark": {
+          "primary": "oklch(0.78 0.16 72)",
+          "primary-foreground": "oklch(0.2 0.04 60)",
+          "ring": "oklch(0.78 0.16 72)"
+        }
+      }
+    },
+    {
       "name": "conversation",
       "type": "registry:component",
       "title": "Conversation",
@@ -375,7 +465,7 @@
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",
-      "description": "A rotating sphere of particles for a voice agent. Breathes when idle, scatters with your voice while listening, spins while thinking, pulses while speaking.",
+      "description": "A rotating particle mesh for a voice agent, drawn in the primary color. Undulates when idle, swells with your voice while listening, spins while thinking, pulses while speaking.",
       "dependencies": [
         "cn"
       ],
