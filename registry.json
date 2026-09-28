@@ -293,6 +293,7 @@
       "title": "Prompt Input",
       "description": "Composer for chat and agent apps. Enter to send, Shift+Enter for a new line, paste or drop files, stop while streaming.",
       "dependencies": [
+        "@base-ui/react",
         "cn",
         "motion"
       ],

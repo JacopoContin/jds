@@ -95,6 +95,7 @@ const { status, sendMessage, stop } = useChat()
     <PromptInputSubmit onStop={stop} />
   </PromptInputToolbar>
 </PromptInput>`,
+    examples: [{ name: "prompt-input-frame", title: "With context and options" }],
     api: [
       {
         component: "PromptInput",
@@ -109,6 +110,24 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "PromptInputSubmit",
         props: [{ name: "onStop", type: "() => void", description: "Called when pressed while streaming." }],
+      },
+      {
+        component: "PromptInputFrame",
+        props: [
+          { name: "children", type: "ReactNode", description: "An optional PromptInputHeader, the PromptInput, and an optional PromptInputFooter. Header and footer animate when added or removed." },
+        ],
+      },
+      {
+        component: "PromptInputHeader",
+        props: [{ name: "icon", type: "ReactNode", description: "Shown before the context text." }],
+      },
+      {
+        component: "PromptInputOption",
+        props: [
+          { name: "icon", type: "ReactNode", description: "Shown before the label." },
+          { name: "pressed", type: "boolean", description: "Controlled state. Or use defaultPressed." },
+          { name: "onPressedChange", type: "(pressed: boolean) => void", description: "" },
+        ],
       },
     ],
     isNew: true,

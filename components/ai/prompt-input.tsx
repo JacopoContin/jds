@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { AnimatePresence, motion } from "motion/react"
+import { Toggle } from "@base-ui/react/toggle"
+import { AnimatePresence, motion, type HTMLMotionProps } from "motion/react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
@@ -278,6 +279,90 @@ function PromptInputSubmit({
   )
 }
 
+/**
+ * Optional outer layer. Wrap <PromptInput> to add a context line on top
+ * (<PromptInputHeader>), options below (<PromptInputFooter>), or both.
+ * Header and footer animate in and out when conditionally rendered.
+ */
+function PromptInputFrame({ className, children, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="prompt-input-frame"
+      className={cn(
+        "flex w-full flex-col rounded-3xl border border-transparent transition-[padding,background-color,border-color] duration-200",
+        // The tray only appears when there's a header or footer to hold.
+        "has-data-[slot=prompt-input-footer]:border-border has-data-[slot=prompt-input-footer]:bg-muted/70 has-data-[slot=prompt-input-footer]:p-1",
+        "has-data-[slot=prompt-input-header]:border-border has-data-[slot=prompt-input-header]:bg-muted/70 has-data-[slot=prompt-input-header]:p-1",
+        "has-data-[slot=prompt-input-footer]:[&_[data-slot=prompt-input]]:shadow-none has-data-[slot=prompt-input-header]:[&_[data-slot=prompt-input]]:shadow-none",
+        className
+      )}
+      {...props}
+    >
+      <AnimatePresence initial={false}>{React.Children.toArray(children)}</AnimatePresence>
+    </div>
+  )
+}
+
+type SlotProps = Omit<HTMLMotionProps<"div">, "children"> & { children?: React.ReactNode }
+
+const collapse = {
+  initial: { height: 0, opacity: 0 },
+  animate: { height: "auto", opacity: 1 },
+  exit: { height: 0, opacity: 0 },
+  transition: spring.gentle,
+} as const
+
+/** Context line above the input, for guidance, the current scope, or attached context. */
+function PromptInputHeader({
+  icon,
+  className,
+  children,
+  ...props
+}: SlotProps & { icon?: React.ReactNode }) {
+  return (
+    <motion.div data-slot="prompt-input-header" className="overflow-hidden" {...collapse} {...props}>
+      <div
+        className={cn(
+          "flex items-center gap-2 px-3 pt-1.5 pb-2.5 text-sm text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0",
+          className
+        )}
+      >
+        {icon}
+        {children}
+      </div>
+    </motion.div>
+  )
+}
+
+/** Options row below the input: toggles, modes, scopes. */
+function PromptInputFooter({ className, children, ...props }: SlotProps) {
+  return (
+    <motion.div data-slot="prompt-input-footer" className="overflow-hidden" {...collapse} {...props}>
+      <div className={cn("flex flex-wrap items-center gap-1.5 px-1.5 pt-1.5 pb-0.5", className)}>{children}</div>
+    </motion.div>
+  )
+}
+
+/** A pressable option chip for the footer, e.g. web search or deep research. */
+function PromptInputOption({ icon, className, children, ...props }: Toggle.Props & { icon?: React.ReactNode }) {
+  return (
+    <Toggle
+      data-slot="prompt-input-option"
+      className={cn(
+        "inline-flex h-7 items-center gap-1.5 rounded-full border border-transparent px-2.5 text-xs text-muted-foreground transition-colors outline-none select-none",
+        "hover:bg-background/60 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+        "data-pressed:border-border data-pressed:bg-background data-pressed:text-foreground data-pressed:shadow-xs",
+        "[&_svg]:size-3.5 [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    >
+      {icon}
+      {children}
+    </Toggle>
+  )
+}
+
 export {
   PromptInput,
   PromptInputTextarea,
@@ -286,6 +371,10 @@ export {
   PromptInputTools,
   PromptInputAttachButton,
   PromptInputSubmit,
+  PromptInputFrame,
+  PromptInputHeader,
+  PromptInputFooter,
+  PromptInputOption,
   usePromptInput,
   type ChatStatus,
 }

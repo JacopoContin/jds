@@ -33,6 +33,11 @@ export {
   Moon as MoonIcon,
   Terminal as TerminalIcon,
   Menu as MenuIcon,
+  Info as InfoIcon,
+  Plus as AddIcon,
+  Globe as WebSearchIcon,
+  Telescope as ResearchIcon,
+  SlidersHorizontal as SettingsIcon,
 } from "lucide-react"
 
 export type { LucideIcon as IconComponent } from "lucide-react"

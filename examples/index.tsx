@@ -22,6 +22,7 @@ export const examples: Record<string, ComponentType> = {
   "message-demo": dynamic(() => import("./message-demo")),
   "popover-demo": dynamic(() => import("./popover-demo")),
   "prompt-input-demo": dynamic(() => import("./prompt-input-demo")),
+  "prompt-input-frame": dynamic(() => import("./prompt-input-frame")),
   "push-to-talk-demo": dynamic(() => import("./push-to-talk-demo")),
   "reasoning-demo": dynamic(() => import("./reasoning-demo")),
   "response-demo": dynamic(() => import("./response-demo")),
