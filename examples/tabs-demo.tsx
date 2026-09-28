@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function TabsDemo() {
   return (
@@ -18,5 +18,5 @@ export default function TabsDemo() {
         <p className="pt-3 text-muted-foreground">3 tools connected.</p>
       </TabsContent>
     </Tabs>
-  );
+  )
 }

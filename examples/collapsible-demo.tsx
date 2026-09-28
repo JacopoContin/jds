@@ -1,10 +1,6 @@
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDownIcon } from "@/lib/icons";
+import { Button } from "@/components/ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ChevronDownIcon } from "@/lib/icons"
 
 export default function CollapsibleDemo() {
   return (
@@ -19,5 +15,5 @@ export default function CollapsibleDemo() {
         </div>
       </CollapsibleContent>
     </Collapsible>
-  );
+  )
 }

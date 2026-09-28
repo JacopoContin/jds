@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { SendIcon } from "@/lib/icons";
+import { Button } from "@/components/ui/button"
+import { SendIcon } from "@/lib/icons"
 
 export default function ButtonDemo() {
   return (
@@ -13,5 +13,5 @@ export default function ButtonDemo() {
         <SendIcon />
       </Button>
     </div>
-  );
+  )
 }

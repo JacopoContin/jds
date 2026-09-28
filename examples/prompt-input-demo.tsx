@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { toast } from "sonner";
+import * as React from "react"
+import { toast } from "sonner"
 
 import {
   PromptInput,
@@ -12,23 +12,23 @@ import {
   PromptInputToolbar,
   PromptInputTools,
   type ChatStatus,
-} from "@/components/ai/prompt-input";
+} from "@/components/ai/prompt-input"
 
 export default function PromptInputDemo() {
-  const [status, setStatus] = React.useState<ChatStatus>("ready");
-  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [status, setStatus] = React.useState<ChatStatus>("ready")
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
 
   return (
     <PromptInput
       className="max-w-lg"
       status={status}
       onSubmit={({ text, files }) => {
-        toast(`Sent: ${text || `${files.length} file(s)`}`);
-        setStatus("submitted");
+        toast(`Sent: ${text || `${files.length} file(s)`}`)
+        setStatus("submitted")
         timer.current = setTimeout(() => {
-          setStatus("streaming");
-          timer.current = setTimeout(() => setStatus("ready"), 2500);
-        }, 800);
+          setStatus("streaming")
+          timer.current = setTimeout(() => setStatus("ready"), 2500)
+        }, 800)
       }}
     >
       <PromptInputAttachments />
@@ -39,11 +39,11 @@ export default function PromptInputDemo() {
         </PromptInputTools>
         <PromptInputSubmit
           onStop={() => {
-            clearTimeout(timer.current);
-            setStatus("ready");
+            clearTimeout(timer.current)
+            setStatus("ready")
           }}
         />
       </PromptInputToolbar>
     </PromptInput>
-  );
+  )
 }

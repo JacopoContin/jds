@@ -1,15 +1,10 @@
-"use client";
+"use client"
 
-import { toast } from "sonner";
+import { toast } from "sonner"
 
-import { Suggestion, Suggestions } from "@/components/ai/suggestions";
+import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 
-const items = [
-  "Summarize this page",
-  "Find related tickets",
-  "Draft a reply",
-  "Translate to Italian",
-];
+const items = ["Summarize this page", "Find related tickets", "Draft a reply", "Translate to Italian"]
 
 export default function SuggestionsDemo() {
   return (
@@ -18,5 +13,5 @@ export default function SuggestionsDemo() {
         <Suggestion key={s} suggestion={s} onSelect={(v) => toast(v)} />
       ))}
     </Suggestions>
-  );
+  )
 }

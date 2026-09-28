@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
-import { Approval, type ApprovalDecision } from "@/components/ai/approval";
-import { Button } from "@/components/ui/button";
+import { Approval, type ApprovalDecision } from "@/components/ai/approval"
+import { Button } from "@/components/ui/button"
 
 export default function ApprovalDemo() {
-  const [decision, setDecision] = React.useState<ApprovalDecision>("pending");
+  const [decision, setDecision] = React.useState<ApprovalDecision>("pending")
   return (
     <div className="flex w-full max-w-lg flex-col gap-4">
       <Approval
@@ -18,15 +18,10 @@ export default function ApprovalDemo() {
         onDeny={() => setDecision("denied")}
       />
       {decision !== "pending" && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="self-start"
-          onClick={() => setDecision("pending")}
-        >
+        <Button variant="ghost" size="sm" className="self-start" onClick={() => setDecision("pending")}>
           Reset
         </Button>
       )}
     </div>
-  );
+  )
 }

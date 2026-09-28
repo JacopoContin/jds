@@ -1,18 +1,16 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { VoiceOrb, type VoiceState } from "@/components/voice/voice-orb";
-import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { VoiceOrb, type VoiceState } from "@/components/voice/voice-orb"
+import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
-const states: VoiceState[] = ["idle", "listening", "thinking", "speaking"];
+const states: VoiceState[] = ["idle", "listening", "thinking", "speaking"]
 
 export default function VoiceOrbDemo() {
-  const [state, setState] = React.useState<VoiceState>("idle");
-  const { level } = useSimulatedSpectrum(
-    state === "listening" || state === "speaking",
-  );
+  const [state, setState] = React.useState<VoiceState>("idle")
+  const { level } = useSimulatedSpectrum(state === "listening" || state === "speaking")
 
   return (
     <div className="flex flex-col items-center gap-8">
@@ -27,5 +25,5 @@ export default function VoiceOrbDemo() {
         </TabsList>
       </Tabs>
     </div>
-  );
+  )
 }

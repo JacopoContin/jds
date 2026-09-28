@@ -80,7 +80,9 @@ export default function ArtifactDemo() {
               </ArtifactHeader>
               <ArtifactContent>
                 {source ? (
-                  <pre className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">{DOC}</pre>
+                  <pre className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">
+                    {DOC}
+                  </pre>
                 ) : (
                   <Response>{DOC}</Response>
                 )}

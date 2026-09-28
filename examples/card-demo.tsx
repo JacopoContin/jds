@@ -1,12 +1,5 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function CardDemo() {
   return (
@@ -16,9 +9,7 @@ export default function CardDemo() {
         <CardDescription>Handles refunds and order questions.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
-          Resolved 1,284 conversations this week.
-        </p>
+        <p className="text-sm text-muted-foreground">Resolved 1,284 conversations this week.</p>
       </CardContent>
       <CardFooter>
         <Button variant="outline" size="sm">
@@ -26,5 +17,5 @@ export default function CardDemo() {
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }

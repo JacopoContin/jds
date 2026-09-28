@@ -28,8 +28,18 @@ const phases = [
   },
   {
     title: "Primitives",
+    status: "done",
+    items: [
+      "Accordion, Alert, Alert Dialog, Breadcrumb, Checkbox, Combobox, Command",
+      "Context Menu, Drawer, Empty, Field, Hover Card, Input Group, Input OTP",
+      "Label, Menubar, Pagination, Progress, Radio Group, Slider, Spinner",
+      "Switch, Table, Toggle, Toggle Group, Sheet",
+    ],
+  },
+  {
+    title: "Primitives, part two",
     status: "next",
-    items: ["Accordion, Alert, Checkbox, Combobox, Command", "Field, Form, Menubar, Meter, Number Field", "Radio, Slider, Switch, Toggle Group, Toolbar", "Sheet, Drawer, Table, Pagination"],
+    items: ["Calendar and Date Picker", "Number Field, Meter", "Toolbar, Form", "Navigation Menu, Resizable, Carousel"],
   },
   {
     title: "Particles",

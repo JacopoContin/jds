@@ -1,7 +1,7 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
-const runs = Array.from({ length: 30 }, (_, i) => `Run #${1200 - i}`);
+const runs = Array.from({ length: 30 }, (_, i) => `Run #${1200 - i}`)
 
 export default function ScrollAreaDemo() {
   return (
@@ -17,5 +17,5 @@ export default function ScrollAreaDemo() {
         </div>
       </ScrollArea>
     </div>
-  );
+  )
 }

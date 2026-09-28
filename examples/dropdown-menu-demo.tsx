@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,14 +6,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 
 export default function DropdownMenuDemo() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" />}>
-        Conversation
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>Conversation</DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
         <DropdownMenuItem>
           Rename <DropdownMenuShortcut>R</DropdownMenuShortcut>
@@ -25,5 +23,5 @@ export default function DropdownMenuDemo() {
         <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

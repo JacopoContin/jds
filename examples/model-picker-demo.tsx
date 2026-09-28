@@ -27,7 +27,13 @@ const models: Model[] = [
     capabilities: ["reasoning", "vision"],
     meta: "$$",
   },
-  { id: "haiku", name: "Claude Haiku 4.5", description: "Quick answers, high volume", capabilities: ["fast"], meta: "$" },
+  {
+    id: "haiku",
+    name: "Claude Haiku 4.5",
+    description: "Quick answers, high volume",
+    capabilities: ["fast"],
+    meta: "$",
+  },
 ]
 
 export default function ModelPickerDemo() {

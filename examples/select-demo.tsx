@@ -1,16 +1,10 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const models = [
   { value: "opus", label: "Claude Opus 5.5" },
   { value: "sonnet", label: "Claude Sonnet 5.5" },
   { value: "haiku", label: "Claude Haiku 4.5" },
-];
+]
 
 export default function SelectDemo() {
   return (
@@ -26,5 +20,5 @@ export default function SelectDemo() {
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }

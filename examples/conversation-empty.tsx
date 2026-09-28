@@ -1,6 +1,6 @@
-import { ConversationEmpty } from "@/components/ai/conversation";
-import { Suggestion, Suggestions } from "@/components/ai/suggestions";
-import { SparkleIcon } from "@/lib/icons";
+import { ConversationEmpty } from "@/components/ai/conversation"
+import { Suggestion, Suggestions } from "@/components/ai/suggestions"
+import { SparkleIcon } from "@/lib/icons"
 
 export default function ConversationEmptyDemo() {
   return (
@@ -14,5 +14,5 @@ export default function ConversationEmptyDemo() {
         <Suggestion suggestion="Start a return" />
       </Suggestions>
     </ConversationEmpty>
-  );
+  )
 }

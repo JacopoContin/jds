@@ -1,22 +1,18 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 
-import { Kbd } from "@/components/ui/kbd";
-import { PushToTalk } from "@/components/voice/push-to-talk";
-import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum";
+import { Kbd } from "@/components/ui/kbd"
+import { PushToTalk } from "@/components/voice/push-to-talk"
+import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
 export default function PushToTalkDemo() {
-  const [pressed, setPressed] = React.useState(false);
-  const { level } = useSimulatedSpectrum(pressed);
+  const [pressed, setPressed] = React.useState(false)
+  const { level } = useSimulatedSpectrum(pressed)
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <PushToTalk
-        level={level}
-        onPressStart={() => setPressed(true)}
-        onPressEnd={() => setPressed(false)}
-      />
+      <PushToTalk level={level} onPressStart={() => setPressed(true)} onPressEnd={() => setPressed(false)} />
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
         {pressed ? (
           "Listening…"
@@ -27,5 +23,5 @@ export default function PushToTalkDemo() {
         )}
       </p>
     </div>
-  );
+  )
 }

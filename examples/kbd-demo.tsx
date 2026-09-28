@@ -1,4 +1,4 @@
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 
 export default function KbdDemo() {
   return (
@@ -11,5 +11,5 @@ export default function KbdDemo() {
         Hold <Kbd>Space</Kbd> to talk
       </span>
     </div>
-  );
+  )
 }

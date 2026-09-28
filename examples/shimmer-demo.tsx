@@ -1,4 +1,4 @@
-import { Shimmer, TypingIndicator } from "@/components/ai/shimmer";
+import { Shimmer, TypingIndicator } from "@/components/ai/shimmer"
 
 export default function ShimmerDemo() {
   return (
@@ -6,5 +6,5 @@ export default function ShimmerDemo() {
       <Shimmer>Searching 14 sources…</Shimmer>
       <TypingIndicator />
     </div>
-  );
+  )
 }

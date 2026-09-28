@@ -1,11 +1,7 @@
-"use client";
+"use client"
 
-import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from "@/components/ai/conversation";
-import { Message, MessageContent } from "@/components/ai/message";
+import { Conversation, ConversationContent, ConversationScrollButton } from "@/components/ai/conversation"
+import { Message, MessageContent } from "@/components/ai/message"
 
 const turns = [
   ["user", "What changed in the Q3 pricing?"],
@@ -23,7 +19,7 @@ const turns = [
     "assistant",
     "Here's a first draft. I kept it short and led with the annual discount so the change reads as an option, not only a price rise.",
   ],
-] as const;
+] as const
 
 export default function ConversationDemo() {
   return (
@@ -39,5 +35,5 @@ export default function ConversationDemo() {
         <ConversationScrollButton />
       </Conversation>
     </div>
-  );
+  )
 }
