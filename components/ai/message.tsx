@@ -43,7 +43,7 @@ function MessageContent({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="message-content"
       className={cn(
-        "flex min-w-0 flex-col gap-3 text-sm leading-relaxed",
+        "flex min-w-0 flex-col gap-3 text-sm leading-relaxed *:shrink-0",
         from === "user"
           ? "max-w-[80%] rounded-2xl rounded-tr-md bg-secondary px-4 py-2.5 text-secondary-foreground"
           : "flex-1 text-foreground",

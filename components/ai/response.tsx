@@ -23,7 +23,7 @@ const Response = React.memo(function Response({
       animated={isAnimating}
       plugins={{ code }}
       shikiTheme={["github-light", "vitesse-dark"]}
-      className={cn("size-full text-sm leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0", className)}
+      className={cn("w-full text-sm leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0", className)}
       {...props}
     />
   )
