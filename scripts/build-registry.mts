@@ -25,12 +25,14 @@ function analyze(paths: string[]) {
     for (const [, spec] of readFileSync(path, "utf8").matchAll(importRe)) {
       if (spec.startsWith("@/")) {
         const local = spec.slice(2)
-        if (paths.some((p) => p.startsWith(local))) continue
+        if (paths.some((p) => p.replace(/\.tsx?$/, "") === local)) continue
         if (local === "lib/icons" || local === "lib/motion") regDeps.add(`${NS}/utils`)
         else if (local === "lib/utils") continue
         else {
-          const m = local.match(/^(?:components\/(?:ui|ai|voice)|hooks)\/(.+)$/)
-          if (m) regDeps.add(`${NS}/${m[1]}`)
+          // Resolve to the item that ships this file (hooks live inside their component's item).
+          const owner = components.find((c) => c.files.some((f) => f.replace(/\.tsx?$/, "") === local))
+          if (owner) regDeps.add(`${NS}/${owner.slug}`)
+          else throw new Error(`${path} imports ${spec}, which no registry item ships`)
         }
       } else if (!spec.startsWith(".") && spec !== "react" && !spec.startsWith("react/") && !spec.startsWith("next/")) {
         const parts = spec.split("/")

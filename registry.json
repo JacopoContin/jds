@@ -309,6 +309,33 @@
       ]
     },
     {
+      "name": "prompt-input-mic",
+      "type": "registry:component",
+      "title": "Prompt Input Mic",
+      "description": "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/prompt-input",
+        "@jds/tooltip",
+        "@jds/utils",
+        "@jds/waveform"
+      ],
+      "files": [
+        {
+          "path": "components/ai/prompt-input-mic.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "hooks/use-speech-recognition.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "response",
       "type": "registry:component",
       "title": "Response",
@@ -756,6 +783,26 @@
       "files": [
         {
           "path": "components/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "A panel that slides in from an edge. Can render inside a container, non-modal.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ui/sheet.tsx",
           "type": "registry:ui"
         }
       ]

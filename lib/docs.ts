@@ -133,6 +133,35 @@ const { status, sendMessage, stop } = useChat()
     isNew: true,
   },
   {
+    slug: "prompt-input-mic",
+    title: "Prompt Input Mic",
+    description: "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
+    group: "ai",
+    files: ["components/ai/prompt-input-mic.tsx", "hooks/use-speech-recognition.ts"],
+    usage: `import { PromptInputMic } from "@/components/ai/prompt-input-mic"
+
+<PromptInputToolbar>
+  <PromptInputTools />
+  <PromptInputMic />
+  <PromptInputSubmit />
+</PromptInputToolbar>`,
+    api: [
+      {
+        component: "PromptInputMic",
+        props: [
+          { name: "lang", type: "string", default: "navigator.language", description: "BCP 47 language for recognition, e.g. \"it-IT\"." },
+        ],
+      },
+      {
+        component: "useSpeechRecognition",
+        props: [
+          { name: "returns", type: "{ supported, listening, transcript, error, start, stop }", description: "Web Speech API. Chrome, Edge and Safari. Elsewhere supported is false and the mic disables itself." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "response",
     title: "Response",
     description: "Markdown renderer that is safe to stream. Closes unterminated syntax as it arrives and highlights code with Shiki.",
@@ -421,6 +450,7 @@ const mic = useAudioLevel()
       ["scroll-area", "Scroll Area", "A scroll container with styled scrollbars."],
       ["select", "Select", "Pick one value from a list."],
       ["separator", "Separator", "A visual divider."],
+      ["sheet", "Sheet", "A panel that slides in from an edge. Can render inside a container, non-modal."],
       ["skeleton", "Skeleton", "A placeholder while content loads."],
       ["tabs", "Tabs", "Switch between related views."],
       ["textarea", "Textarea", "A multi-line text field that grows with content."],

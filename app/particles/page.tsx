@@ -12,6 +12,12 @@ const particles = [
       "A full support-agent turn: reasoning, a plan, a tool call, approval before a refund, a streamed answer with sources.",
   },
   {
+    name: "agent-panel",
+    title: "Agent panel",
+    description:
+      "A side panel agent over an app page. Chat with page context, dictate with the mic, or switch to voice mode; the voice turns land back in the chat.",
+  },
+  {
     name: "voice-session",
     title: "Voice session",
     description: "Push to talk with live mic level, orb states, and a rolling transcript.",
