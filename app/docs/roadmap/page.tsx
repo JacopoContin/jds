@@ -57,8 +57,18 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Particles",
+    status: "done",
+    items: ["Chat app", "Agent inbox", "Agent run, Agent panel", "Voice call, Voice session", "Agent settings"],
+  },
+  {
+    title: "Docs for humans and agents",
     status: "next",
-    items: ["Chat app shell", "Agent inbox", "Voice call screen", "Settings for an agent", "Weekly drops"],
+    items: ["Search with ⌘K", "Copy page as Markdown", "llms.txt for coding agents", "Changelog"],
+  },
+  {
+    title: "More particles",
+    status: "planned",
+    items: ["Onboarding with an agent", "Agent marketplace", "Run history and analytics", "Weekly drops"],
   },
 ]
 

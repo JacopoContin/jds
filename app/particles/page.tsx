@@ -6,6 +6,18 @@ export const metadata: Metadata = { title: "Particles" }
 
 const particles = [
   {
+    name: "chat-app",
+    title: "Chat app",
+    description:
+      "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
+  },
+  {
+    name: "agent-inbox",
+    title: "Agent inbox",
+    description:
+      "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
+  },
+  {
     name: "agent-run",
     title: "Agent run",
     description:
@@ -21,6 +33,18 @@ const particles = [
     name: "voice-session",
     title: "Voice session",
     description: "Push to talk with live mic level, orb states, and a rolling transcript.",
+  },
+  {
+    name: "voice-call",
+    title: "Voice call",
+    description:
+      "A realtime call screen: connection status and timer, the orb, live captions, and mute, interrupt and end controls.",
+  },
+  {
+    name: "agent-settings",
+    title: "Agent settings",
+    description:
+      "Configure an agent: instructions, model, temperature, reply length, approval policy, tools, and voice.",
   },
 ]
 

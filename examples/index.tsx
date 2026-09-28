@@ -84,7 +84,11 @@ export const examples: Record<string, ComponentType> = {
   "voice-orb-variants": dynamic(() => import("./voice-orb-variants")),
   "voice-picker-demo": dynamic(() => import("./voice-picker-demo")),
   "waveform-demo": dynamic(() => import("./waveform-demo")),
+  "agent-inbox": dynamic(() => import("@/particles/agent-inbox")),
   "agent-panel": dynamic(() => import("@/particles/agent-panel")),
   "agent-run": dynamic(() => import("@/particles/agent-run")),
+  "agent-settings": dynamic(() => import("@/particles/agent-settings")),
+  "chat-app": dynamic(() => import("@/particles/chat-app")),
+  "voice-call": dynamic(() => import("@/particles/voice-call")),
   "voice-session": dynamic(() => import("@/particles/voice-session")),
 }
