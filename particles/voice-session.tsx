@@ -74,7 +74,7 @@ export default function VoiceSession() {
   React.useEffect(() => clear, [])
 
   return (
-    <div className="grid overflow-hidden rounded-2xl border bg-card md:grid-cols-2">
+    <div className="grid w-full overflow-hidden rounded-2xl border bg-card md:grid-cols-2">
       <div className="relative flex flex-col items-center justify-center gap-8 border-b p-10 md:border-r md:border-b-0">
         <VoiceOrb state={state} level={level} size={180} />
         <Waveform spectrum={spectrum} active={state === "listening" || state === "speaking"} className="w-56" />
