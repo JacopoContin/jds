@@ -44,6 +44,15 @@ function analyze(paths: string[]) {
   return { dependencies: [...deps].sort(), registryDependencies: [...regDeps].sort() }
 }
 
+// A token set for light but not dark leaks into dark mode, because :root[data-*] outranks .dark.
+for (const [name, light, dark] of [
+  ...baseColors.map((b) => [`base-${b.name}`, baseColorVars(b, "light"), baseColorVars(b, "dark")] as const),
+  ...colorPresets.map((p) => [`color-${p.name}`, p.light, p.dark] as const),
+]) {
+  const missing = Object.keys(light).filter((k) => !(k in dark))
+  if (missing.length) throw new Error(`${name}: set in light but not dark: ${missing.join(", ")}`)
+}
+
 // Keep the preset CSS in globals.css in sync with lib/colors.ts.
 const decl = (o: Record<string, string>) =>
   Object.entries(o)

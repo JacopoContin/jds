@@ -137,11 +137,22 @@ const neutralLightness = {
 /** Mid-tones carry more tint than near-white and near-black surfaces. */
 const chromaAt = (l: number) => (l > 0.9 || l < 0.25 ? 0.005 : 0.012)
 
+/** Dark borders are translucent foreground, not a lightness step; mirrors .dark in app/globals.css. */
+const darkTranslucent = { border: 0.09, input: 0.13, "sidebar-border": 0.09 } as const
+
 export function baseColorVars(base: BaseColor, mode: "light" | "dark") {
-  return Object.fromEntries(
+  const vars = Object.fromEntries(
     Object.entries(neutralLightness[mode]).map(([token, l]) => [
       token,
       `oklch(${l} ${(chromaAt(l) * base.chroma).toFixed(4)} ${base.hue})`,
     ]),
   ) as Record<string, string>
+  // Every token set in light must also be set in dark: the light block's selector
+  // (:root[data-base]) outranks plain .dark, so any gap leaks light values into dark mode.
+  if (mode === "dark") {
+    for (const [token, alpha] of Object.entries(darkTranslucent)) {
+      vars[token] = `oklch(1 ${(0.01 * base.chroma).toFixed(4)} ${base.hue} / ${alpha * 100}%)`
+    }
+  }
+  return vars
 }
