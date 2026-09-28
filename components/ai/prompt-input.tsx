@@ -21,7 +21,17 @@ type PromptInputContextValue = {
   status: ChatStatus
   submit: () => void
   openFilePicker: () => void
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
+  /**
+   * Lets add-ons (like mentions) claim keys before the composer handles them.
+   * Return true from the handler to consume the key. Returns an unregister function.
+   */
+  registerKeyHandler: (handler: KeyHandler) => () => void
+  /** Internal: read by the textarea. */
+  keyHandlers: React.RefObject<Set<KeyHandler>>
 }
+
+type KeyHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => boolean
 
 const PromptInputContext = React.createContext<PromptInputContextValue | null>(null)
 
@@ -53,6 +63,14 @@ function PromptInput({
   const [files, setFiles] = React.useState<File[]>([])
   const [dragging, setDragging] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+  const keyHandlers = React.useRef(new Set<KeyHandler>())
+  const registerKeyHandler = React.useCallback((handler: KeyHandler) => {
+    keyHandlers.current.add(handler)
+    return () => {
+      keyHandlers.current.delete(handler)
+    }
+  }, [])
 
   const value = controlledValue ?? uncontrolled
   const setValue = React.useCallback(
@@ -88,6 +106,9 @@ function PromptInput({
     status,
     submit,
     openFilePicker: () => fileInputRef.current?.click(),
+    textareaRef,
+    registerKeyHandler,
+    keyHandlers,
   }
 
   return (
@@ -141,9 +162,10 @@ function PromptInputTextarea({
   placeholder = "Ask anything…",
   ...props
 }: React.ComponentProps<"textarea">) {
-  const { value, setValue, submit, addFiles } = usePromptInput()
+  const { value, setValue, submit, addFiles, textareaRef, keyHandlers } = usePromptInput()
   return (
     <textarea
+      ref={textareaRef}
       data-slot="prompt-input-textarea"
       rows={1}
       value={value}
@@ -156,6 +178,12 @@ function PromptInputTextarea({
         }
       }}
       onKeyDown={(e) => {
+        for (const handler of keyHandlers.current) {
+          if (handler(e)) {
+            e.preventDefault()
+            return
+          }
+        }
         onKeyDown?.(e)
         if (e.defaultPrevented) return
         if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {

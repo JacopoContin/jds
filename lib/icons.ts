@@ -38,6 +38,19 @@ export {
   Globe as WebSearchIcon,
   Telescope as ResearchIcon,
   SlidersHorizontal as SettingsIcon,
+  AtSign as MentionIcon,
+  Folder as FolderIcon,
+  Bot as AgentIcon,
+  Play as PlayIcon,
+  Pause as PauseIcon,
+  Download as DownloadIcon,
+  Code as CodeIcon,
+  Eye as PreviewIcon,
+  PhoneOff as EndCallIcon,
+  Hand as InterruptIcon,
+  ChevronsUpDown as SelectIcon,
+  Zap as FastIcon,
+  Image as VisionIcon,
 } from "lucide-react"
 
 export type { LucideIcon as IconComponent } from "lucide-react"

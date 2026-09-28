@@ -490,6 +490,106 @@
       ]
     },
     {
+      "name": "model-picker",
+      "type": "registry:component",
+      "title": "Model Picker",
+      "description": "Choose the model for the next message. A quiet trigger for the prompt toolbar; the menu says what each model is for.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/dropdown-menu",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/model-picker.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "branch",
+      "type": "registry:component",
+      "title": "Branch",
+      "description": "Step through versions of a response after regenerating. New versions are selected as they arrive.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/branch.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "context-meter",
+      "type": "registry:component",
+      "title": "Context Meter",
+      "description": "How full the context window is. A small ring for the toolbar that shifts to warning at 80% and destructive at 95%, with a breakdown on hover.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/popover",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/context-meter.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input-mentions",
+      "type": "registry:component",
+      "title": "Mentions",
+      "description": "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/prompt-input",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/prompt-input-mentions.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "artifact",
+      "type": "registry:component",
+      "title": "Artifact",
+      "description": "A generated document or file in its own panel beside the chat, opened from a card in the message.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/tooltip",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/artifact.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",
@@ -558,6 +658,48 @@
       "files": [
         {
           "path": "components/voice/live-transcript.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "voice-picker",
+      "type": "registry:component",
+      "title": "Voice Picker",
+      "description": "Choose a synthetic voice, with a spoken preview for each option.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/voice/voice-picker.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "call-controls",
+      "type": "registry:component",
+      "title": "Call Controls",
+      "description": "Controls for a realtime voice session: status and timer, mute, interrupt the agent, end the call.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/tooltip",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/voice/call-controls.tsx",
           "type": "registry:component"
         }
       ]

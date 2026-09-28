@@ -338,6 +338,153 @@ const { status, sendMessage, stop } = useChat()
     isNew: true,
   },
 
+  {
+    slug: "model-picker",
+    title: "Model Picker",
+    description: "Choose the model for the next message. A quiet trigger for the prompt toolbar; the menu says what each model is for.",
+    group: "ai",
+    files: ["components/ai/model-picker.tsx"],
+    usage: `import { ModelPicker } from "@/components/ai/model-picker"
+
+<ModelPicker
+  models={[
+    { id: "sonnet", name: "Claude Sonnet 5.5", description: "Balanced", capabilities: ["reasoning", "vision"], meta: "$$" },
+    { id: "haiku", name: "Claude Haiku 4.5", description: "Quick answers", capabilities: ["fast"], meta: "$" },
+  ]}
+  value={model}
+  onValueChange={setModel}
+/>`,
+    api: [
+      {
+        component: "ModelPicker",
+        props: [
+          { name: "models", type: "{ id, name, description?, capabilities?, meta? }[]", description: 'capabilities: "reasoning" | "vision" | "fast" | "web". meta: short note like "$$" or "200k".' },
+          { name: "value", type: "string", description: "Controlled model id. Or use defaultValue." },
+          { name: "onValueChange", type: "(id: string) => void", description: "" },
+          { name: "label", type: "string", default: '"Model"', description: "Menu heading." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "branch",
+    title: "Branch",
+    description: "Step through versions of a response after regenerating. New versions are selected as they arrive.",
+    group: "ai",
+    files: ["components/ai/branch.tsx"],
+    usage: `import { Branch, BranchContent, BranchSelector } from "@/components/ai/branch"
+
+<Branch count={versions.length}>
+  <BranchContent>
+    {versions.map((v) => <Response key={v.id}>{v.text}</Response>)}
+  </BranchContent>
+  <BranchSelector />
+</Branch>`,
+    api: [
+      {
+        component: "Branch",
+        props: [
+          { name: "count", type: "number", description: "Number of versions. Growing it selects the newest." },
+          { name: "index", type: "number", description: "Controlled active version." },
+          { name: "onIndexChange", type: "(index: number) => void", description: "" },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "context-meter",
+    title: "Context Meter",
+    description: "How full the context window is. A small ring for the toolbar that shifts to warning at 80% and destructive at 95%, with a breakdown on hover.",
+    group: "ai",
+    files: ["components/ai/context-meter.tsx"],
+    usage: `import { ContextMeter } from "@/components/ai/context-meter"
+
+<ContextMeter
+  used={usage.totalTokens}
+  max={200_000}
+  breakdown={[
+    { label: "System and tools", tokens: 12_400 },
+    { label: "Messages", tokens: 48_000 },
+  ]}
+/>`,
+    api: [
+      {
+        component: "ContextMeter",
+        props: [
+          { name: "used", type: "number", description: "Tokens currently in context." },
+          { name: "max", type: "number", description: "Context window size." },
+          { name: "breakdown", type: "{ label, tokens }[]", description: "Shown in the hover card." },
+          { name: "showLabel", type: "boolean", default: "true", description: "Percentage next to the ring." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "prompt-input-mentions",
+    title: "Mentions",
+    description: "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
+    group: "ai",
+    files: ["components/ai/prompt-input-mentions.tsx"],
+    usage: `import { PromptInputMentions } from "@/components/ai/prompt-input-mentions"
+
+<PromptInput onSubmit={({ text }) => send({ text, mentions })}>
+  <PromptInputMentions items={items} onMentionsChange={setMentions} />
+  <PromptInputTextarea />
+  …
+</PromptInput>`,
+    api: [
+      {
+        component: "PromptInputMentions",
+        props: [
+          { name: "items", type: '{ id, label, type: "file" | "folder" | "tool" | "agent", description? }[]', description: "What can be mentioned. Filtered by the text after @." },
+          { name: "onMentionsChange", type: "(mentions) => void", description: "Current picks. Cleared after submit." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "artifact",
+    title: "Artifact",
+    description: "A generated document or file in its own panel beside the chat, opened from a card in the message.",
+    group: "ai",
+    files: ["components/ai/artifact.tsx"],
+    usage: `import {
+  Artifact,
+  ArtifactAction,
+  ArtifactActions,
+  ArtifactCard,
+  ArtifactContent,
+  ArtifactHeader,
+} from "@/components/ai/artifact"
+
+<ArtifactCard title="Q3 pricing update" description="Document · v1" onOpen={() => setOpen(true)} />
+
+<Artifact>
+  <ArtifactHeader title="Q3 pricing update" description="Document · v1">
+    <ArtifactActions>
+      <ArtifactAction label="Copy"><CopyIcon /></ArtifactAction>
+    </ArtifactActions>
+  </ArtifactHeader>
+  <ArtifactContent>…</ArtifactContent>
+</Artifact>`,
+    api: [
+      {
+        component: "ArtifactCard",
+        props: [
+          { name: "title", type: "string", description: "" },
+          { name: "description", type: "string", description: "Kind and version." },
+          { name: "kind", type: '"document" | "code"', default: '"document"', description: "Sets the icon." },
+          { name: "active", type: "boolean", description: "Highlights the card while its panel is open." },
+          { name: "onOpen", type: "() => void", description: "" },
+        ],
+      },
+    ],
+    isNew: true,
+  },
   // Voice
   {
     slug: "voice-orb",
@@ -444,6 +591,63 @@ const mic = useAudioLevel()
     isNew: true,
   },
 
+  {
+    slug: "voice-picker",
+    title: "Voice Picker",
+    description: "Choose a synthetic voice, with a spoken preview for each option.",
+    group: "voice",
+    files: ["components/voice/voice-picker.tsx"],
+    usage: `import { VoicePicker } from "@/components/voice/voice-picker"
+
+<VoicePicker
+  voices={[{ id: "aria", name: "Aria", description: "Warm and steady", tags: ["Calm"] }]}
+  value={voice}
+  onValueChange={setVoice}
+  onPreview={(v) => tts.play(v.id)}
+  onStopPreview={() => tts.stop()}
+/>`,
+    api: [
+      {
+        component: "VoicePicker",
+        props: [
+          { name: "voices", type: "{ id, name, description?, tags? }[]", description: "" },
+          { name: "onPreview", type: "(voice) => Promise<void> | void", description: "Play a sample. The button shows stop until the promise settles." },
+          { name: "onStopPreview", type: "() => void", description: "Cut a preview short." },
+          { name: "value", type: "string", description: "Controlled voice id. Or use defaultValue." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "call-controls",
+    title: "Call Controls",
+    description: "Controls for a realtime voice session: status and timer, mute, interrupt the agent, end the call.",
+    group: "voice",
+    files: ["components/voice/call-controls.tsx"],
+    usage: `import { CallControls, CallEnd, CallInterrupt, CallMute, CallStatus } from "@/components/voice/call-controls"
+
+<CallControls>
+  <CallStatus state="connected" startedAt={startedAt} />
+  <CallMute onPressedChange={setMuted} />
+  <CallInterrupt disabled={!agentSpeaking} onClick={interrupt} />
+  <CallEnd onClick={hangUp} />
+</CallControls>`,
+    api: [
+      {
+        component: "CallStatus",
+        props: [
+          { name: "state", type: '"connecting" | "connected" | "reconnecting" | "ended"', description: "" },
+          { name: "startedAt", type: "number", description: "Epoch ms. Shows elapsed time while connected." },
+        ],
+      },
+      {
+        component: "CallMute",
+        props: [{ name: "pressed", type: "boolean", description: "Muted. Or use defaultPressed with onPressedChange." }],
+      },
+    ],
+    isNew: true,
+  },
   // Primitives
   ...(
     [

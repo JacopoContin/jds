@@ -23,12 +23,12 @@ const phases = [
   },
   {
     title: "Agent, part two",
-    status: "next",
+    status: "done",
     items: ["Model Picker", "Branch (regenerated responses)", "Artifact panel", "Context Meter", "Mentions in the composer", "Voice Picker, Call Controls"],
   },
   {
     title: "Primitives",
-    status: "planned",
+    status: "next",
     items: ["Accordion, Alert, Checkbox, Combobox, Command", "Field, Form, Menubar, Meter, Number Field", "Radio, Slider, Switch, Toggle Group, Toolbar", "Sheet, Drawer, Table, Pagination"],
   },
   {
