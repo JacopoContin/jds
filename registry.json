@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "jds",
-  "homepage": "https://jds.vercel.app",
+  "homepage": "https://jds-ruddy.vercel.app",
   "items": [
     {
       "name": "style",
@@ -386,12 +386,9 @@
       "title": "Voice Orb",
       "description": "Ambient presence for a voice agent. Breathes when idle, follows loudness while listening or speaking, turns while thinking.",
       "dependencies": [
-        "cn",
-        "motion"
+        "cn"
       ],
-      "registryDependencies": [
-        "@jds/utils"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "components/voice/voice-orb.tsx",
