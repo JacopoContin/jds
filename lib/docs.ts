@@ -11,6 +11,11 @@ export type ComponentDoc = {
   examples?: { name: string; title: string }[]
   api?: { component: string; props: Prop[] }[]
   isNew?: boolean
+  /**
+   * Add-on to another component: documented as a section on the parent's page
+   * (anchored at `#${section}`) instead of its own page. Still its own registry item.
+   */
+  parent?: { slug: string; section: string }
 }
 
 export const components: ComponentDoc[] = [
@@ -134,9 +139,10 @@ const { status, sendMessage, stop } = useChat()
   },
   {
     slug: "prompt-input-mic",
-    title: "Prompt Input Mic",
+    title: "Dictation",
     description: "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
     group: "ai",
+    parent: { slug: "prompt-input", section: "dictation" },
     files: ["components/ai/prompt-input-mic.tsx", "hooks/use-speech-recognition.ts"],
     usage: `import { PromptInputMic } from "@/components/ai/prompt-input-mic"
 
@@ -427,6 +433,7 @@ const { status, sendMessage, stop } = useChat()
     title: "Mentions",
     description: "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
     group: "ai",
+    parent: { slug: "prompt-input", section: "mentions" },
     files: ["components/ai/prompt-input-mentions.tsx"],
     usage: `import { PromptInputMentions } from "@/components/ai/prompt-input-mentions"
 
@@ -688,9 +695,15 @@ export const componentBySlug = Object.fromEntries(components.map((c) => [c.slug,
 export type NavItem = { title: string; href: string; isNew?: boolean }
 export type NavGroup = { title: string; items: NavItem[] }
 
+/** Where a component is documented: its own page, or a section of its parent's. */
+export const docHref = (c: ComponentDoc) =>
+  c.parent ? `/docs/components/${c.parent.slug}#${c.parent.section}` : `/docs/components/${c.slug}`
+
+export const addonsOf = (slug: string) => components.filter((c) => c.parent?.slug === slug)
+
 const toNav = (group: ComponentDoc["group"]) =>
   components
-    .filter((c) => c.group === group)
+    .filter((c) => c.group === group && !c.parent)
     .sort((a, b) => a.title.localeCompare(b.title))
     .map((c) => ({ title: c.title, href: `/docs/components/${c.slug}`, isNew: c.isNew }))
 

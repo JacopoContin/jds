@@ -7,7 +7,7 @@ import { ComponentPreview, readSource } from "@/components/docs/component-previe
 import { InstallTabs } from "@/components/docs/install-tabs"
 import { Code, H2, H3, P, PageHeader, Pager } from "@/components/docs/prose"
 import { PropsTable } from "@/components/docs/props-table"
-import { componentBySlug, components } from "@/lib/docs"
+import { addonsOf, componentBySlug, components } from "@/lib/docs"
 import { site } from "@/lib/site"
 import registry from "@/registry.json"
 
@@ -16,7 +16,7 @@ type RegistryItem = { name: string; dependencies?: string[]; registryDependencie
 export const dynamicParams = false
 
 export function generateStaticParams() {
-  return components.map((c) => ({ slug: c.slug }))
+  return components.filter((c) => !c.parent).map((c) => ({ slug: c.slug }))
 }
 
 export async function generateMetadata({ params }: PageProps<"/docs/components/[slug]">): Promise<Metadata> {
@@ -27,7 +27,8 @@ export async function generateMetadata({ params }: PageProps<"/docs/components/[
 export default async function ComponentPage({ params }: PageProps<"/docs/components/[slug]">) {
   const { slug } = await params
   const doc = componentBySlug[slug]
-  if (!doc) notFound()
+  if (!doc || doc.parent) notFound()
+  const addons = addonsOf(slug)
 
   const item = (registry.items as RegistryItem[]).find((i) => i.name === slug)
   const deps = item?.dependencies ?? []
@@ -89,6 +90,23 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
           ))}
         </>
       )}
+
+      {addons.map((addon) => (
+        <div key={addon.slug} className="flex flex-col gap-6">
+          <H2 id={addon.parent!.section}>{addon.title}</H2>
+          <P>{addon.description}</P>
+          <ComponentPreview name={`${addon.slug}-demo`} />
+          <P>Installed separately, so the base component stays lean:</P>
+          <Command command={`shadcn@latest add ${site.namespace}/${addon.slug}`} />
+          <CodeBlock code={addon.usage} />
+          {addon.api?.map((a) => (
+            <div key={a.component} className="flex flex-col gap-4">
+              <H3 id={`api-${a.component.toLowerCase()}`}>{a.component}</H3>
+              <PropsTable props={a.props} />
+            </div>
+          ))}
+        </div>
+      ))}
 
       {doc.api && doc.api.length > 0 && (
         <>

@@ -3,7 +3,7 @@ import { cn } from "cn"
 
 import { buttonVariants } from "@/components/ui/button"
 import { Example } from "@/components/docs/example"
-import { componentBySlug } from "@/lib/docs"
+import { componentBySlug, docHref } from "@/lib/docs"
 
 type Card = { slug: string; demo?: string; span?: string }
 
@@ -74,7 +74,7 @@ export default function Home() {
                     <Example name={demo ?? `${slug}-demo`} />
                   </div>
                   <Link
-                    href={`/docs/components/${slug}`}
+                    href={docHref(doc)}
                     className="flex items-center justify-between border-t px-4 py-3 text-sm transition-colors hover:bg-muted/50"
                   >
                     <span className="font-medium">{doc.title}</span>

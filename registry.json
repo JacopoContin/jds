@@ -311,7 +311,7 @@
     {
       "name": "prompt-input-mic",
       "type": "registry:component",
-      "title": "Prompt Input Mic",
+      "title": "Dictation",
       "description": "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
       "dependencies": [
         "cn",
