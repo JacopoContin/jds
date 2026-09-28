@@ -1,0 +1,44 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
+
+/** Demo name → lazily loaded component. Source is read from examples/<name>.tsx for the Code tab. */
+export const examples: Record<string, ComponentType> = {
+  "agent-steps-demo": dynamic(() => import("./agent-steps-demo")),
+  "approval-demo": dynamic(() => import("./approval-demo")),
+  "avatar-demo": dynamic(() => import("./avatar-demo")),
+  "badge-demo": dynamic(() => import("./badge-demo")),
+  "button-demo": dynamic(() => import("./button-demo")),
+  "card-demo": dynamic(() => import("./card-demo")),
+  "collapsible-demo": dynamic(() => import("./collapsible-demo")),
+  "conversation-demo": dynamic(() => import("./conversation-demo")),
+  "conversation-empty": dynamic(() => import("./conversation-empty")),
+  "dialog-demo": dynamic(() => import("./dialog-demo")),
+  "dropdown-menu-demo": dynamic(() => import("./dropdown-menu-demo")),
+  "input-demo": dynamic(() => import("./input-demo")),
+  "kbd-demo": dynamic(() => import("./kbd-demo")),
+  "live-transcript-demo": dynamic(() => import("./live-transcript-demo")),
+  "message-demo": dynamic(() => import("./message-demo")),
+  "popover-demo": dynamic(() => import("./popover-demo")),
+  "prompt-input-demo": dynamic(() => import("./prompt-input-demo")),
+  "push-to-talk-demo": dynamic(() => import("./push-to-talk-demo")),
+  "reasoning-demo": dynamic(() => import("./reasoning-demo")),
+  "response-demo": dynamic(() => import("./response-demo")),
+  "scroll-area-demo": dynamic(() => import("./scroll-area-demo")),
+  "select-demo": dynamic(() => import("./select-demo")),
+  "separator-demo": dynamic(() => import("./separator-demo")),
+  "shimmer-demo": dynamic(() => import("./shimmer-demo")),
+  "skeleton-demo": dynamic(() => import("./skeleton-demo")),
+  "sonner-demo": dynamic(() => import("./sonner-demo")),
+  "sources-demo": dynamic(() => import("./sources-demo")),
+  "suggestions-demo": dynamic(() => import("./suggestions-demo")),
+  "tabs-demo": dynamic(() => import("./tabs-demo")),
+  "textarea-demo": dynamic(() => import("./textarea-demo")),
+  "tool-call-demo": dynamic(() => import("./tool-call-demo")),
+  "tooltip-demo": dynamic(() => import("./tooltip-demo")),
+  "voice-orb-demo": dynamic(() => import("./voice-orb-demo")),
+  "waveform-demo": dynamic(() => import("./waveform-demo")),
+  "agent-run": dynamic(() => import("@/particles/agent-run")),
+  "voice-session": dynamic(() => import("@/particles/voice-session")),
+};

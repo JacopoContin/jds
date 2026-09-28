@@ -1,0 +1,770 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "jds",
+  "homepage": "https://jds.vercel.app",
+  "items": [
+    {
+      "name": "style",
+      "type": "registry:style",
+      "title": "JDS style",
+      "description": "Warm paper and charcoal themes, the ember accent, motion keyframes, and shared utilities.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@jds/utils"
+      ],
+      "cssVars": {
+        "theme": {
+          "color-ember": "var(--ember)",
+          "color-ember-foreground": "var(--ember-foreground)",
+          "color-ember-muted": "var(--ember-muted)",
+          "color-success": "var(--success)",
+          "color-success-foreground": "var(--success-foreground)",
+          "color-warning": "var(--warning)",
+          "color-warning-foreground": "var(--warning-foreground)",
+          "color-info": "var(--info)",
+          "color-info-foreground": "var(--info-foreground)",
+          "color-destructive-foreground": "var(--destructive-foreground)",
+          "ease-out-quint": "cubic-bezier(0.22, 1, 0.36, 1)",
+          "ease-in-out-quart": "cubic-bezier(0.76, 0, 0.24, 1)",
+          "animate-shimmer": "shimmer 2s linear infinite",
+          "animate-pulse-soft": "pulse-soft 1.6s var(--ease-in-out-quart) infinite"
+        },
+        "light": {
+          "radius": "0.625rem",
+          "background": "oklch(0.975 0.006 85)",
+          "foreground": "oklch(0.22 0.012 60)",
+          "card": "oklch(0.99 0.004 85)",
+          "card-foreground": "oklch(0.22 0.012 60)",
+          "popover": "oklch(0.99 0.004 85)",
+          "popover-foreground": "oklch(0.22 0.012 60)",
+          "primary": "oklch(0.24 0.012 60)",
+          "primary-foreground": "oklch(0.975 0.006 85)",
+          "secondary": "oklch(0.935 0.01 80)",
+          "secondary-foreground": "oklch(0.24 0.012 60)",
+          "muted": "oklch(0.945 0.009 80)",
+          "muted-foreground": "oklch(0.52 0.014 65)",
+          "accent": "oklch(0.93 0.011 80)",
+          "accent-foreground": "oklch(0.24 0.012 60)",
+          "destructive": "oklch(0.56 0.19 28)",
+          "destructive-foreground": "oklch(0.5 0.19 28)",
+          "border": "oklch(0.89 0.011 78)",
+          "input": "oklch(0.87 0.012 78)",
+          "ring": "oklch(0.66 0.14 50)",
+          "ember": "oklch(0.64 0.16 48)",
+          "ember-foreground": "oklch(0.99 0.004 85)",
+          "ember-muted": "oklch(0.64 0.16 48 / 12%)",
+          "success": "oklch(0.58 0.12 150)",
+          "success-foreground": "oklch(0.45 0.1 150)",
+          "warning": "oklch(0.72 0.14 80)",
+          "warning-foreground": "oklch(0.5 0.11 70)",
+          "info": "oklch(0.6 0.1 240)",
+          "info-foreground": "oklch(0.48 0.1 240)",
+          "chart-1": "oklch(0.64 0.16 48)",
+          "chart-2": "oklch(0.55 0.08 180)",
+          "chart-3": "oklch(0.45 0.05 250)",
+          "chart-4": "oklch(0.72 0.12 85)",
+          "chart-5": "oklch(0.6 0.1 20)",
+          "sidebar": "oklch(0.96 0.008 82)",
+          "sidebar-foreground": "oklch(0.22 0.012 60)",
+          "sidebar-primary": "oklch(0.24 0.012 60)",
+          "sidebar-primary-foreground": "oklch(0.975 0.006 85)",
+          "sidebar-accent": "oklch(0.93 0.011 80)",
+          "sidebar-accent-foreground": "oklch(0.24 0.012 60)",
+          "sidebar-border": "oklch(0.89 0.011 78)",
+          "sidebar-ring": "oklch(0.66 0.14 50)"
+        },
+        "dark": {
+          "background": "oklch(0.175 0.006 60)",
+          "foreground": "oklch(0.93 0.01 80)",
+          "card": "oklch(0.205 0.007 60)",
+          "card-foreground": "oklch(0.93 0.01 80)",
+          "popover": "oklch(0.22 0.008 60)",
+          "popover-foreground": "oklch(0.93 0.01 80)",
+          "primary": "oklch(0.93 0.01 80)",
+          "primary-foreground": "oklch(0.2 0.007 60)",
+          "secondary": "oklch(0.26 0.008 60)",
+          "secondary-foreground": "oklch(0.93 0.01 80)",
+          "muted": "oklch(0.24 0.008 60)",
+          "muted-foreground": "oklch(0.68 0.012 70)",
+          "accent": "oklch(0.27 0.009 60)",
+          "accent-foreground": "oklch(0.93 0.01 80)",
+          "destructive": "oklch(0.68 0.17 25)",
+          "destructive-foreground": "oklch(0.75 0.14 25)",
+          "border": "oklch(0.93 0.01 80 / 9%)",
+          "input": "oklch(0.93 0.01 80 / 13%)",
+          "ring": "oklch(0.72 0.14 52)",
+          "ember": "oklch(0.74 0.15 55)",
+          "ember-foreground": "oklch(0.2 0.007 60)",
+          "ember-muted": "oklch(0.74 0.15 55 / 14%)",
+          "success": "oklch(0.72 0.13 150)",
+          "success-foreground": "oklch(0.8 0.11 150)",
+          "warning": "oklch(0.8 0.13 85)",
+          "warning-foreground": "oklch(0.85 0.11 85)",
+          "info": "oklch(0.7 0.1 240)",
+          "info-foreground": "oklch(0.8 0.08 240)",
+          "chart-1": "oklch(0.74 0.15 55)",
+          "chart-2": "oklch(0.68 0.08 180)",
+          "chart-3": "oklch(0.6 0.06 250)",
+          "chart-4": "oklch(0.8 0.12 85)",
+          "chart-5": "oklch(0.66 0.1 20)",
+          "sidebar": "oklch(0.19 0.007 60)",
+          "sidebar-foreground": "oklch(0.93 0.01 80)",
+          "sidebar-primary": "oklch(0.74 0.15 55)",
+          "sidebar-primary-foreground": "oklch(0.2 0.007 60)",
+          "sidebar-accent": "oklch(0.26 0.008 60)",
+          "sidebar-accent-foreground": "oklch(0.93 0.01 80)",
+          "sidebar-border": "oklch(0.93 0.01 80 / 9%)",
+          "sidebar-ring": "oklch(0.72 0.14 52)"
+        }
+      },
+      "css": {
+        "@keyframes shimmer": {
+          "from": {
+            "background-position": "100% 0"
+          },
+          "to": {
+            "background-position": "-100% 0"
+          }
+        },
+        "@keyframes pulse-soft": {
+          "0%, 100%": {
+            "opacity": "0.4"
+          },
+          "50%": {
+            "opacity": "1"
+          }
+        }
+      }
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Icons and motion",
+      "description": "Semantic icon map and motion presets shared by every component.",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "lib/icons.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/motion.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "conversation",
+      "type": "registry:component",
+      "title": "Conversation",
+      "description": "Scroll container for a chat thread. Stays pinned to the bottom while tokens stream and lets go when the user scrolls up.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/conversation.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "hooks/use-stick-to-bottom.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:component",
+      "title": "Message",
+      "description": "A single turn from the user or the assistant, with hover-revealed actions.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/avatar",
+        "@jds/button",
+        "@jds/tooltip",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/message.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "registry:component",
+      "title": "Prompt Input",
+      "description": "Composer for chat and agent apps. Enter to send, Shift+Enter for a new line, paste or drop files, stop while streaming.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/prompt-input.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "response",
+      "type": "registry:component",
+      "title": "Response",
+      "description": "Markdown renderer that is safe to stream. Closes unterminated syntax as it arrives and highlights code with Shiki.",
+      "dependencies": [
+        "@streamdown/code",
+        "cn",
+        "streamdown"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ai/response.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "reasoning",
+      "type": "registry:component",
+      "title": "Reasoning",
+      "description": "Model thinking, open while it streams, then collapsed to a one-line summary with the time it took.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/collapsible",
+        "@jds/shimmer",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/reasoning.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "tool-call",
+      "type": "registry:component",
+      "title": "Tool Call",
+      "description": "What the agent called, with what input, and what came back. States match AI SDK tool parts.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/badge",
+        "@jds/collapsible",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/tool-call.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "approval",
+      "type": "registry:component",
+      "title": "Approval",
+      "description": "Human-in-the-loop gate. The agent pauses on an irreversible action until the user approves or denies it.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/approval.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "agent-steps",
+      "type": "registry:component",
+      "title": "Agent Steps",
+      "description": "Plan and progress for a multi-step run: what's done, what's running, what's next.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/shimmer",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/agent-steps.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "type": "registry:component",
+      "title": "Sources",
+      "description": "Inline numbered citations with hover previews, and a strip of source cards.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/popover",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/sources.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "suggestions",
+      "type": "registry:component",
+      "title": "Suggestions",
+      "description": "Follow-up prompts as a row of chips.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/suggestions.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "shimmer",
+      "type": "registry:component",
+      "title": "Shimmer",
+      "description": "In-progress text and a typing indicator for the gap before the first token.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ai/shimmer.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "voice-orb",
+      "type": "registry:component",
+      "title": "Voice Orb",
+      "description": "Ambient presence for a voice agent. Breathes when idle, follows loudness while listening or speaking, turns while thinking.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/voice/voice-orb.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "waveform",
+      "type": "registry:component",
+      "title": "Waveform",
+      "description": "Live spectrum bars for microphone input or agent speech.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/voice/waveform.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "hooks/use-audio-level.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "push-to-talk",
+      "type": "registry:component",
+      "title": "Push to Talk",
+      "description": "Hold to speak with pointer or the Space key. The ring grows with input level so users know they're heard.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/voice/push-to-talk.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "live-transcript",
+      "type": "registry:component",
+      "title": "Live Transcript",
+      "description": "Rolling speech transcript per speaker. Interim text is dimmed until recognition commits it.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/voice/live-transcript.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "An image with a text fallback for users and agents.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A small status label.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A button or a component that looks like a button.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A container for grouped content.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Shows and hides a panel.",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/collapsible.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A modal window over the page.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@jds/button"
+      ],
+      "files": [
+        {
+          "path": "components/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "A single-line text field.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "A keyboard key or shortcut.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/kbd.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "A list of actions in a dropdown.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "A floating panel anchored to a trigger.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll Area",
+      "description": "A scroll container with styled scrollbars.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Pick one value from a list.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "A visual divider.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "A placeholder while content loads.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Switch between related views.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "A multi-line text field that grows with content.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "Brief notifications, via Sonner.",
+      "dependencies": [
+        "lucide-react",
+        "next-themes",
+        "sonner"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "A label on hover or focus.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}
