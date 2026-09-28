@@ -38,12 +38,12 @@ const phases = [
   },
   {
     title: "Primitives, part two",
-    status: "next",
+    status: "done",
     items: ["Calendar and Date Picker", "Number Field, Meter", "Toolbar, Form", "Navigation Menu, Resizable, Carousel"],
   },
   {
     title: "Particles",
-    status: "planned",
+    status: "next",
     items: ["Chat app shell", "Agent inbox", "Voice call screen", "Settings for an agent", "Weekly drops"],
   },
 ] as const

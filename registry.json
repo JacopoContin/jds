@@ -1481,6 +1481,155 @@
       ]
     },
     {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "A month grid for picking a date or range.",
+      "dependencies": [
+        "cn",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "Swipe or step through a row of cards.",
+      "dependencies": [
+        "cn",
+        "embla-carousel-react"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ui/carousel.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "form",
+      "type": "registry:ui",
+      "title": "Form",
+      "description": "Consistent form layout with native validation, built on Base UI Form.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/form.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "meter",
+      "type": "registry:ui",
+      "title": "Meter",
+      "description": "A measurement within a known range, like quota used.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/meter.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "Top-level site navigation with rich dropdowns.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ui/navigation-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "number-field",
+      "type": "registry:ui",
+      "title": "Number Field",
+      "description": "A numeric input with steppers, arrow keys and drag-to-scrub.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ui/number-field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "Panels the user can resize by dragging the divider.",
+      "dependencies": [
+        "cn",
+        "react-resizable-panels"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/resizable.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "A row of controls with arrow-key navigation between them.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button"
+      ],
+      "files": [
+        {
+          "path": "components/ui/toolbar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",

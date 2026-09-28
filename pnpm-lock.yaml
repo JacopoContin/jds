@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@base-ui/react':
         specifier: ^1.8.0
-        version: 1.8.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 1.8.0(@date-fns/tz@1.5.0)(@types/react@19.3.0)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@streamdown/code':
         specifier: ^1.1.1
         version: 1.1.1(react@19.2.8)
@@ -23,6 +23,12 @@ importers:
       cn:
         specifier: ^0.4.0
         version: 0.4.0
+      date-fns:
+        specifier: ^4.4.0
+        version: 4.4.0
+      embla-carousel-react:
+        specifier: ^8.6.0
+        version: 8.6.0(react@19.2.8)
       input-otp:
         specifier: ^1.5.0
         version: 1.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -41,9 +47,15 @@ importers:
       react:
         specifier: 19.2.8
         version: 19.2.8
+      react-day-picker:
+        specifier: ^10.0.1
+        version: 10.0.1(@types/react@19.3.0)(react@19.2.8)
       react-dom:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
+      react-resizable-panels:
+        specifier: ^4.14.1
+        version: 4.14.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       shadcn:
         specifier: ^4.21.0
         version: 4.21.0(typescript@5.9.3)
@@ -253,6 +265,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@date-fns/tz@1.5.0':
+    resolution: {integrity: sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg==}
 
   '@dotenvx/dotenvx@1.75.1':
     resolution: {integrity: sha512-/BITOC9dmS/edY2zQwZNicQ059O6RKabtQfyEafV0nGtfYRNHYy1DIPiYVcov40+tob9hfmBnbR963dS+EQ1DQ==}
@@ -1654,6 +1669,9 @@ packages:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
 
+  date-fns@4.4.0:
+    resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
+
   debounce-fn@4.0.0:
     resolution: {integrity: sha512-8pYCQiL9Xdcg0UPSD3d+0KMlOjp+KGU5EPwYddgzQ7DATsg4fuUDjQtsYLmWjnk2obnNHgV3vE2Y4jejSOJVBQ==}
     engines: {node: '>=10'}
@@ -1760,6 +1778,19 @@ packages:
 
   electron-to-chromium@1.5.439:
     resolution: {integrity: sha512-qu6QIPXhsb+CRcAiTMNjR4A1y/7tCYKkKjr5CZXRVih6qkDf79peZ2BpEU3qoDBNCRrcy3Mra3X9nG5oruuA7Q==}
+
+  embla-carousel-react@8.6.0:
+    resolution: {integrity: sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+
+  embla-carousel-reactive-utils@8.6.0:
+    resolution: {integrity: sha512-fMVUDUEx0/uIEDM0Mz3dHznDhfX+znCCDCeIophYb1QGVM7YThSWX+wz11zlYwWFOr74b4QLGg0hrGPJeG2s4A==}
+    peerDependencies:
+      embla-carousel: 8.6.0
+
+  embla-carousel@8.6.0:
+    resolution: {integrity: sha512-SjWyZBHJPbqxHOzckOfo8lHisEaJWmwd23XppYFYVh10bU66/Pn5tkVkbkCMZVdbUE5eTCI2nD8OyIP4Z+uwkA==}
 
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
@@ -3197,6 +3228,16 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
+  react-day-picker@10.0.1:
+    resolution: {integrity: sha512-eNh6BlwcYInWaJtRv18mXQ06Ys/H6rdTZAnTaSdOYJuTpwP1JMCHNd1FDRadA+gbeinq+psdULN5Xnowy9mV8w==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/react': '>=16.8.0'
+      react: '>=16.8.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
   react-dom@19.2.8:
     resolution: {integrity: sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==}
     peerDependencies:
@@ -3224,6 +3265,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-resizable-panels@4.14.1:
+    resolution: {integrity: sha512-OB1bXDNTLcGgTTbaX6Dn5efZhlMboSnkfr1w4xpsJTHPEbRJpACBhXpgRCXozgPO1ztgFeZRUe5J3mFNCVKm5g==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
@@ -4022,7 +4069,7 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@base-ui/react@1.8.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@base-ui/react@1.8.0(@date-fns/tz@1.5.0)(@types/react@19.3.0)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@babel/runtime': 7.29.7
       '@base-ui/utils': 0.4.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4032,7 +4079,9 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       use-sync-external-store: 1.7.0(react@19.2.8)
     optionalDependencies:
+      '@date-fns/tz': 1.5.0
       '@types/react': 19.3.0
+      date-fns: 4.4.0
 
   '@base-ui/utils@0.4.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
@@ -4044,6 +4093,8 @@ snapshots:
       use-sync-external-store: 1.7.0(react@19.2.8)
     optionalDependencies:
       '@types/react': 19.3.0
+
+  '@date-fns/tz@1.5.0': {}
 
   '@dotenvx/dotenvx@1.75.1':
     dependencies:
@@ -5294,6 +5345,8 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
+  date-fns@4.4.0: {}
+
   debounce-fn@4.0.0:
     dependencies:
       mimic-fn: 3.1.0
@@ -5372,6 +5425,18 @@ snapshots:
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.439: {}
+
+  embla-carousel-react@8.6.0(react@19.2.8):
+    dependencies:
+      embla-carousel: 8.6.0
+      embla-carousel-reactive-utils: 8.6.0(embla-carousel@8.6.0)
+      react: 19.2.8
+
+  embla-carousel-reactive-utils@8.6.0(embla-carousel@8.6.0):
+    dependencies:
+      embla-carousel: 8.6.0
+
+  embla-carousel@8.6.0: {}
 
   emoji-regex@10.6.0: {}
 
@@ -7226,6 +7291,14 @@ snapshots:
       iconv-lite: 0.7.3
       unpipe: 1.0.0
 
+  react-day-picker@10.0.1(@types/react@19.3.0)(react@19.2.8):
+    dependencies:
+      '@date-fns/tz': 1.5.0
+      date-fns: 4.4.0
+      react: 19.2.8
+    optionalDependencies:
+      '@types/react': 19.3.0
+
   react-dom@19.2.8(react@19.2.8):
     dependencies:
       react: 19.2.8
@@ -7251,6 +7324,11 @@ snapshots:
       use-sidecar: 1.1.3(@types/react@19.3.0)(react@19.2.8)
     optionalDependencies:
       '@types/react': 19.3.0
+
+  react-resizable-panels@4.14.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   react-style-singleton@2.2.3(@types/react@19.3.0)(react@19.2.8):
     dependencies:

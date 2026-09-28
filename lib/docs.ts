@@ -23,7 +23,8 @@ export const components: ComponentDoc[] = [
   {
     slug: "conversation",
     title: "Conversation",
-    description: "Scroll container for a chat thread. Stays pinned to the bottom while tokens stream and lets go when the user scrolls up.",
+    description:
+      "Scroll container for a chat thread. Stays pinned to the bottom while tokens stream and lets go when the user scrolls up.",
     group: "ai",
     files: ["components/ai/conversation.tsx", "hooks/use-stick-to-bottom.ts"],
     usage: `import {
@@ -41,7 +42,12 @@ export const components: ComponentDoc[] = [
       {
         component: "ConversationEmpty",
         props: [
-          { name: "title", type: "string", default: '"Start a conversation"', description: "Heading shown before the first message." },
+          {
+            name: "title",
+            type: "string",
+            default: '"Start a conversation"',
+            description: "Heading shown before the first message.",
+          },
           { name: "description", type: "string", description: "Supporting text." },
           { name: "icon", type: "ReactNode", description: "Optional icon above the title." },
         ],
@@ -63,7 +69,9 @@ export const components: ComponentDoc[] = [
     api: [
       {
         component: "Message",
-        props: [{ name: "from", type: '"user" | "assistant" | "system"', description: "Sets alignment and bubble style." }],
+        props: [
+          { name: "from", type: '"user" | "assistant" | "system"', description: "Sets alignment and bubble style." },
+        ],
       },
       {
         component: "MessageAction",
@@ -75,7 +83,8 @@ export const components: ComponentDoc[] = [
   {
     slug: "prompt-input",
     title: "Prompt Input",
-    description: "Composer for chat and agent apps. Enter to send, Shift+Enter for a new line, paste or drop files, stop while streaming.",
+    description:
+      "Composer for chat and agent apps. Enter to send, Shift+Enter for a new line, paste or drop files, stop while streaming.",
     group: "ai",
     files: ["components/ai/prompt-input.tsx"],
     usage: `import {
@@ -105,8 +114,17 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "PromptInput",
         props: [
-          { name: "onSubmit", type: "({ text, files }) => void", description: "Called on Enter or the send button. Input clears after." },
-          { name: "status", type: '"ready" | "submitted" | "streaming" | "error"', default: '"ready"', description: "Matches AI SDK useChat. Drives the submit button." },
+          {
+            name: "onSubmit",
+            type: "({ text, files }) => void",
+            description: "Called on Enter or the send button. Input clears after.",
+          },
+          {
+            name: "status",
+            type: '"ready" | "submitted" | "streaming" | "error"',
+            default: '"ready"',
+            description: "Matches AI SDK useChat. Drives the submit button.",
+          },
           { name: "value", type: "string", description: "Controlled value." },
           { name: "onValueChange", type: "(value: string) => void", description: "Change handler for controlled use." },
           { name: "accept", type: "string", description: "File types for the picker." },
@@ -119,7 +137,12 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "PromptInputFrame",
         props: [
-          { name: "children", type: "ReactNode", description: "An optional PromptInputHeader, the PromptInput, and an optional PromptInputFooter. Header and footer animate when added or removed." },
+          {
+            name: "children",
+            type: "ReactNode",
+            description:
+              "An optional PromptInputHeader, the PromptInput, and an optional PromptInputFooter. Header and footer animate when added or removed.",
+          },
         ],
       },
       {
@@ -140,7 +163,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "prompt-input-mic",
     title: "Dictation",
-    description: "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
+    description:
+      "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
     group: "ai",
     parent: { slug: "prompt-input", section: "dictation" },
     files: ["components/ai/prompt-input-mic.tsx", "hooks/use-speech-recognition.ts"],
@@ -155,13 +179,23 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "PromptInputMic",
         props: [
-          { name: "lang", type: "string", default: "navigator.language", description: "BCP 47 language for recognition, e.g. \"it-IT\"." },
+          {
+            name: "lang",
+            type: "string",
+            default: "navigator.language",
+            description: 'BCP 47 language for recognition, e.g. "it-IT".',
+          },
         ],
       },
       {
         component: "useSpeechRecognition",
         props: [
-          { name: "returns", type: "{ supported, listening, transcript, error, start, stop }", description: "Web Speech API. Chrome, Edge and Safari. Elsewhere supported is false and the mic disables itself." },
+          {
+            name: "returns",
+            type: "{ supported, listening, transcript, error, start, stop }",
+            description:
+              "Web Speech API. Chrome, Edge and Safari. Elsewhere supported is false and the mic disables itself.",
+          },
         ],
       },
     ],
@@ -170,7 +204,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "response",
     title: "Response",
-    description: "Markdown renderer that is safe to stream. Closes unterminated syntax as it arrives and highlights code with Shiki.",
+    description:
+      "Markdown renderer that is safe to stream. Closes unterminated syntax as it arrives and highlights code with Shiki.",
     group: "ai",
     files: ["components/ai/response.tsx"],
     usage: `import { Response } from "@/components/ai/response"
@@ -181,7 +216,12 @@ const { status, sendMessage, stop } = useChat()
         component: "Response",
         props: [
           { name: "children", type: "string", description: "Markdown source." },
-          { name: "isAnimating", type: "boolean", default: "false", description: "Streaming mode: fades in new tokens and repairs partial syntax." },
+          {
+            name: "isAnimating",
+            type: "boolean",
+            default: "false",
+            description: "Streaming mode: fades in new tokens and repairs partial syntax.",
+          },
         ],
       },
     ],
@@ -203,8 +243,17 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "Reasoning",
         props: [
-          { name: "isStreaming", type: "boolean", default: "false", description: "Opens the panel and runs the timer. Collapses once when it turns false." },
-          { name: "duration", type: "number", description: "Seconds spent thinking. Measured automatically if omitted." },
+          {
+            name: "isStreaming",
+            type: "boolean",
+            default: "false",
+            description: "Opens the panel and runs the timer. Collapses once when it turns false.",
+          },
+          {
+            name: "duration",
+            type: "number",
+            description: "Seconds spent thinking. Measured automatically if omitted.",
+          },
         ],
       },
     ],
@@ -230,7 +279,11 @@ const { status, sendMessage, stop } = useChat()
         component: "ToolCallHeader",
         props: [
           { name: "name", type: "string", description: "Tool name." },
-          { name: "state", type: '"input-streaming" | "input-available" | "output-available" | "output-error"', description: "Pending, running, done, failed." },
+          {
+            name: "state",
+            type: '"input-streaming" | "input-available" | "output-available" | "output-error"',
+            description: "Pending, running, done, failed.",
+          },
         ],
       },
       {
@@ -247,7 +300,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "approval",
     title: "Approval",
-    description: "Human-in-the-loop gate. The agent pauses on an irreversible action until the user approves or denies it.",
+    description:
+      "Human-in-the-loop gate. The agent pauses on an irreversible action until the user approves or denies it.",
     group: "ai",
     files: ["components/ai/approval.tsx"],
     usage: `import { Approval } from "@/components/ai/approval"
@@ -265,10 +319,20 @@ const { status, sendMessage, stop } = useChat()
         props: [
           { name: "title", type: "ReactNode", description: "The action, in plain words." },
           { name: "description", type: "ReactNode", description: "Consequences." },
-          { name: "decision", type: '"pending" | "approved" | "denied"', default: '"pending"', description: "Resolved state replaces the buttons." },
+          {
+            name: "decision",
+            type: '"pending" | "approved" | "denied"',
+            default: '"pending"',
+            description: "Resolved state replaces the buttons.",
+          },
           { name: "onApprove", type: "() => void", description: "" },
           { name: "onDeny", type: "() => void", description: "" },
-          { name: "approveLabel", type: "string", default: '"Approve"', description: "Use the verb: Refund, Delete, Send." },
+          {
+            name: "approveLabel",
+            type: "string",
+            default: '"Approve"',
+            description: "Use the verb: Refund, Delete, Send.",
+          },
         ],
       },
     ],
@@ -292,7 +356,13 @@ const { status, sendMessage, stop } = useChat()
     api: [
       {
         component: "AgentSteps",
-        props: [{ name: "steps", type: "{ id, label, detail?, status }[]", description: 'status: "pending" | "active" | "complete" | "error"' }],
+        props: [
+          {
+            name: "steps",
+            type: "{ id, label, detail?, status }[]",
+            description: 'status: "pending" | "active" | "complete" | "error"',
+          },
+        ],
       },
     ],
     isNew: true,
@@ -347,7 +417,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "model-picker",
     title: "Model Picker",
-    description: "Choose the model for the next message. A quiet trigger for the prompt toolbar; the menu says what each model is for.",
+    description:
+      "Choose the model for the next message. A quiet trigger for the prompt toolbar; the menu says what each model is for.",
     group: "ai",
     files: ["components/ai/model-picker.tsx"],
     usage: `import { ModelPicker } from "@/components/ai/model-picker"
@@ -364,7 +435,12 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "ModelPicker",
         props: [
-          { name: "models", type: "{ id, name, description?, capabilities?, meta? }[]", description: 'capabilities show as small icons after the name: "reasoning" | "vision" | "fast" | "web". meta is appended to the description, like "$$" or "200k".' },
+          {
+            name: "models",
+            type: "{ id, name, description?, capabilities?, meta? }[]",
+            description:
+              'capabilities show as small icons after the name: "reasoning" | "vision" | "fast" | "web". meta is appended to the description, like "$$" or "200k".',
+          },
           { name: "value", type: "string", description: "Controlled model id. Or use defaultValue." },
           { name: "onValueChange", type: "(id: string) => void", description: "" },
           { name: "label", type: "string", description: "Optional menu heading." },
@@ -402,7 +478,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "context-meter",
     title: "Context Meter",
-    description: "How full the context window is. A small ring for the toolbar that shifts to warning at 80% and destructive at 95%, with a breakdown on hover.",
+    description:
+      "How full the context window is. A small ring for the toolbar that shifts to warning at 80% and destructive at 95%, with a breakdown on hover.",
     group: "ai",
     files: ["components/ai/context-meter.tsx"],
     usage: `import { ContextMeter } from "@/components/ai/context-meter"
@@ -431,7 +508,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "prompt-input-mentions",
     title: "Mentions",
-    description: "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
+    description:
+      "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
     group: "ai",
     parent: { slug: "prompt-input", section: "mentions" },
     files: ["components/ai/prompt-input-mentions.tsx"],
@@ -446,7 +524,11 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "PromptInputMentions",
         props: [
-          { name: "items", type: '{ id, label, type: "file" | "folder" | "tool" | "agent", description? }[]', description: "What can be mentioned. Filtered by the text after @." },
+          {
+            name: "items",
+            type: '{ id, label, type: "file" | "folder" | "tool" | "agent", description? }[]',
+            description: "What can be mentioned. Filtered by the text after @.",
+          },
           { name: "onMentionsChange", type: "(mentions) => void", description: "Current picks. Cleared after submit." },
         ],
       },
@@ -496,7 +578,8 @@ const { status, sendMessage, stop } = useChat()
   {
     slug: "voice-orb",
     title: "Voice Orb",
-    description: "Presence for a voice agent, drawn in the primary color. Three variants: a rotating particle mesh, a soft glowing ring, or twisting ribbons. All react to state and voice level.",
+    description:
+      "Presence for a voice agent, drawn in the primary color. Three variants: a rotating particle mesh, a soft glowing ring, or twisting ribbons. All react to state and voice level.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
@@ -511,16 +594,38 @@ const { status, sendMessage, stop } = useChat()
       {
         component: "VoiceOrb",
         props: [
-          { name: "variant", type: '"particles" | "ring" | "wave"', default: "provider, else \"particles\"", description: "Visual style. Omit to use the nearest VoiceOrbProvider." },
+          {
+            name: "variant",
+            type: '"particles" | "ring" | "wave"',
+            default: 'provider, else "particles"',
+            description: "Visual style. Omit to use the nearest VoiceOrbProvider.",
+          },
           { name: "state", type: '"idle" | "listening" | "thinking" | "speaking"', default: '"idle"', description: "" },
           { name: "level", type: "number", default: "0", description: "Loudness 0 to 1. Smoothed with a spring." },
-          { name: "size", type: "number", default: "160", description: "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Color follows --primary; override with a text-* class." },
-          { name: "particles", type: "number", default: "size² × 0.07", description: "Particles variant only. Approximate count, capped at 6000." },
+          {
+            name: "size",
+            type: "number",
+            default: "160",
+            description:
+              "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Color follows --primary; override with a text-* class.",
+          },
+          {
+            name: "particles",
+            type: "number",
+            default: "size² × 0.07",
+            description: "Particles variant only. Approximate count, capped at 6000.",
+          },
         ],
       },
       {
         component: "VoiceOrbProvider",
-        props: [{ name: "variant", type: '"particles" | "ring" | "wave"', description: "Default variant for every VoiceOrb inside." }],
+        props: [
+          {
+            name: "variant",
+            type: '"particles" | "ring" | "wave"',
+            description: "Default variant for every VoiceOrb inside.",
+          },
+        ],
       },
     ],
     isNew: true,
@@ -549,7 +654,11 @@ const mic = useAudioLevel()
         component: "useAudioLevel",
         props: [
           { name: "bands", type: "number", default: "24", description: "Number of spectrum bands." },
-          { name: "returns", type: "{ level, spectrum, active, error, start, stop }", description: "Call start() from a user gesture." },
+          {
+            name: "returns",
+            type: "{ level, spectrum, active, error, start, stop }",
+            description: "Call start() from a user gesture.",
+          },
         ],
       },
     ],
@@ -558,7 +667,8 @@ const mic = useAudioLevel()
   {
     slug: "push-to-talk",
     title: "Push to Talk",
-    description: "Hold to speak with pointer or the Space key. The ring grows with input level so users know they're heard.",
+    description:
+      "Hold to speak with pointer or the Space key. The ring grows with input level so users know they're heard.",
     group: "voice",
     files: ["components/voice/push-to-talk.tsx"],
     usage: `import { PushToTalk } from "@/components/voice/push-to-talk"
@@ -571,7 +681,12 @@ const mic = useAudioLevel()
           { name: "onPressStart", type: "() => void", description: "" },
           { name: "onPressEnd", type: "() => void", description: "Also fires on window blur." },
           { name: "level", type: "number", default: "0", description: "Input loudness 0 to 1." },
-          { name: "hotkey", type: "boolean", default: "true", description: "Space triggers, except while typing in a field." },
+          {
+            name: "hotkey",
+            type: "boolean",
+            default: "true",
+            description: "Space triggers, except while typing in a field.",
+          },
         ],
       },
     ],
@@ -618,7 +733,11 @@ const mic = useAudioLevel()
         component: "VoicePicker",
         props: [
           { name: "voices", type: "{ id, name, description?, tags? }[]", description: "" },
-          { name: "onPreview", type: "(voice) => Promise<void> | void", description: "Play a sample. The button shows stop until the promise settles." },
+          {
+            name: "onPreview",
+            type: "(voice) => Promise<void> | void",
+            description: "Play a sample. The button shows stop until the promise settles.",
+          },
           { name: "onStopPreview", type: "() => void", description: "Cut a preview short." },
           { name: "value", type: "string", description: "Controlled voice id. Or use defaultValue." },
         ],
@@ -650,7 +769,9 @@ const mic = useAudioLevel()
       },
       {
         component: "CallMute",
-        props: [{ name: "pressed", type: "boolean", description: "Muted. Or use defaultPressed with onPressedChange." }],
+        props: [
+          { name: "pressed", type: "boolean", description: "Muted. Or use defaultPressed with onPressedChange." },
+        ],
       },
     ],
     isNew: true,
@@ -701,18 +822,30 @@ const mic = useAudioLevel()
       ["table", "Table", "Rows and columns of structured data."],
       ["toggle", "Toggle", "A button that stays pressed."],
       ["toggle-group", "Toggle Group", "A set of toggles, single or multiple choice."],
+      [
+        "calendar",
+        "Calendar",
+        "A month grid for picking a date or range.",
+        [{ name: "date-picker", title: "Date picker" }],
+      ],
+      ["carousel", "Carousel", "Swipe or step through a row of cards."],
+      ["form", "Form", "Consistent form layout with native validation, built on Base UI Form."],
+      ["meter", "Meter", "A measurement within a known range, like quota used."],
+      ["navigation-menu", "Navigation Menu", "Top-level site navigation with rich dropdowns."],
+      ["number-field", "Number Field", "A numeric input with steppers, arrow keys and drag-to-scrub."],
+      ["resizable", "Resizable", "Panels the user can resize by dragging the divider."],
+      ["toolbar", "Toolbar", "A row of controls with arrow-key navigation between them."],
       ["tooltip", "Tooltip", "A label on hover or focus."],
-    ] as const
-  ).map(
-    ([slug, title, description]): ComponentDoc => ({
-      slug,
-      title,
-      description,
-      group: "components",
-      files: [`components/ui/${slug}.tsx`],
-      usage: "",
-    })
-  ),
+    ] as [string, string, string, { name: string; title: string }[]?][]
+  ).map(([slug, title, description, examples]): ComponentDoc => ({
+    slug,
+    title,
+    description,
+    group: "components",
+    files: [`components/ui/${slug}.tsx`],
+    usage: "",
+    examples,
+  })),
 ]
 
 export const componentBySlug = Object.fromEntries(components.map((c) => [c.slug, c]))
