@@ -36,7 +36,7 @@ function LiveTranscript({
             <span
               className={cn(
                 "pt-px text-xs font-medium tracking-wide uppercase",
-                s.speaker === "agent" ? "text-ember" : "text-muted-foreground"
+                s.speaker === "agent" ? "text-foreground" : "text-muted-foreground"
               )}
             >
               {s.speaker === "agent" ? agentName : "You"}

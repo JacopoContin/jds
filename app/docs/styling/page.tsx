@@ -11,35 +11,25 @@ export default function StylingPage() {
     <>
       <PageHeader
         title="Styling"
-        description="CSS variables for color, radius and motion, exposed as Tailwind utilities. Warm and paper-like in light, charcoal in dark."
+        description="CSS variables for color, radius and motion, exposed as Tailwind utilities. Neutral by default, so your brand sets the color."
       />
 
       <H2>Overview</H2>
       <P>
         Tokens follow the shadcn convention: a surface variable and a matching <Code>-foreground</Code>, defined on{" "}
         <Code>:root</Code> for light and <Code>.dark</Code> for dark, then mapped to Tailwind in{" "}
-        <Code>@theme inline</Code>. Neutrals carry a slight warm hue (60 to 85 in OKLCH) instead of pure gray.
+        <Code>@theme inline</Code>. The palette is pure grayscale, with color reserved for status.
       </P>
 
       <H2>Colors</H2>
       <TokenSwatches />
 
-      <H3>Ember</H3>
+      <H3>No accent</H3>
       <P>
-        The only accent. Use it for agent activity: thinking, streaming, running tools, listening, pending approval.
-        Don&apos;t use it for primary buttons or links. When everything is ember, activity stops standing out.
+        JDS ships without a brand color. Agent activity (thinking, streaming, running tools, listening) is shown with
+        motion and contrast in <Code>foreground</Code> tones, not a hue. To add your brand, set{" "}
+        <Code>--primary</Code> and <Code>--ring</Code>; everything that should follow it already does.
       </P>
-      <List>
-        <li>
-          <Code>ember</Code> for dots, icons, rings and the voice orb.
-        </li>
-        <li>
-          <Code>ember-muted</Code> for tinted backgrounds, like a pending approval card.
-        </li>
-        <li>
-          <Code>ember-foreground</Code> for text on a solid ember fill.
-        </li>
-      </List>
 
       <H3>Status</H3>
       <P>
@@ -58,17 +48,17 @@ export default function StylingPage() {
         title="app/globals.css"
         code={`:root,
 .light {
-  --background: oklch(0.975 0.006 85);
-  --foreground: oklch(0.22 0.012 60);
-  --ember: oklch(0.64 0.16 48);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --ring: oklch(0.6 0 0);
   /* … */
 }
 
 .dark {
-  --background: oklch(0.175 0.006 60);
-  --foreground: oklch(0.93 0.01 80);
-  --border: oklch(0.93 0.01 80 / 9%);
-  --ember: oklch(0.74 0.15 55);
+  --background: oklch(0.185 0 0);
+  --foreground: oklch(0.94 0 0);
+  --border: oklch(1 0 0 / 9%);
+  --ring: oklch(0.55 0 0);
   /* … */
 }`}
       />
@@ -81,7 +71,7 @@ export default function StylingPage() {
 
       <H2>Customizing</H2>
       <P>
-        Change the variables, not the components. To rebrand, adjust the hue of the neutrals and ember. To add a
+        Change the variables, not the components. To brand it, set <Code>--primary</Code> and <Code>--ring</Code>, or tint the neutrals by giving them a small chroma. To add a
         color, declare <Code>--name</Code> in both themes and <Code>--color-name</Code> in <Code>@theme inline</Code>.
       </P>
 

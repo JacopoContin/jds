@@ -27,7 +27,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 )}
               >
                 {item.title}
-                {item.isNew && <span className="size-1.5 rounded-full bg-ember" aria-label="New" />}
+                {item.isNew && <span className="size-1.5 rounded-full bg-muted-foreground/50" aria-label="New" />}
               </Link>
             )
           })}

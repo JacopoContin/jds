@@ -88,7 +88,7 @@ export default function VoiceSession() {
       <div className="flex min-h-80 flex-col gap-4 p-6">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Transcript</span>
-          <span className="font-mono text-xs text-ember">{state}</span>
+          <span className="font-mono text-xs text-foreground">{state}</span>
         </div>
         {segments.length === 0 ? (
           <p className="my-auto text-center text-sm text-muted-foreground">

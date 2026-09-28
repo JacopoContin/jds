@@ -25,9 +25,9 @@ function TypingIndicator({ className, ...props }: React.ComponentProps<"span">) 
       className={cn("inline-flex items-center gap-1 py-2", className)}
       {...props}
     >
-      <span className="size-1.5 animate-pulse-soft rounded-full bg-ember motion-reduce:animate-none" />
-      <span className="size-1.5 animate-pulse-soft rounded-full bg-ember [animation-delay:150ms] motion-reduce:animate-none" />
-      <span className="size-1.5 animate-pulse-soft rounded-full bg-ember [animation-delay:300ms] motion-reduce:animate-none" />
+      <span className="size-1.5 animate-pulse-soft rounded-full bg-foreground motion-reduce:animate-none" />
+      <span className="size-1.5 animate-pulse-soft rounded-full bg-foreground [animation-delay:150ms] motion-reduce:animate-none" />
+      <span className="size-1.5 animate-pulse-soft rounded-full bg-foreground [animation-delay:300ms] motion-reduce:animate-none" />
     </span>
   )
 }

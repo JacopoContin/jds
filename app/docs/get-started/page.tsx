@@ -40,7 +40,7 @@ export default function GetStartedPage() {
       <Steps>
         <Step title="Add the style">
           <P>
-            Installs the warm paper and charcoal themes, the ember accent, status colors, motion keyframes, and the
+            Installs the neutral light and dark themes, status colors, motion keyframes, and the
             shared icon and motion utilities.
           </P>
           <Command command={`shadcn@latest add ${site.namespace}/style`} />

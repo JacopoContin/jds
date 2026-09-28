@@ -26,8 +26,6 @@ const groups = [
   {
     title: "Signal",
     tokens: [
-      ["ember", "bg-ember"],
-      ["ember-muted", "bg-ember-muted"],
       ["success", "bg-success"],
       ["warning", "bg-warning"],
       ["info", "bg-info"],

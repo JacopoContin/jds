@@ -57,14 +57,11 @@ const items: object[] = [
     name: "style",
     type: "registry:style",
     title: `${site.name} style`,
-    description: "Warm paper and charcoal themes, the ember accent, motion keyframes, and shared utilities.",
+    description: "Neutral light and dark themes, status colors, motion keyframes, and shared utilities.",
     dependencies: ["motion", "lucide-react", "tw-animate-css"],
     registryDependencies: [`${NS}/utils`],
     cssVars: {
       theme: {
-        "color-ember": "var(--ember)",
-        "color-ember-foreground": "var(--ember-foreground)",
-        "color-ember-muted": "var(--ember-muted)",
         "color-success": "var(--success)",
         "color-success-foreground": "var(--success-foreground)",
         "color-warning": "var(--warning)",

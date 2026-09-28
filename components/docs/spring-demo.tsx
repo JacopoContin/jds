@@ -23,7 +23,7 @@ export function SpringDemo() {
             <span className="text-muted-foreground">{use}</span>
           </div>
           <div data-on={on || undefined} className="flex h-8 items-center rounded-lg bg-muted px-1 data-on:justify-end">
-            <motion.div layout className="size-6 rounded-md bg-ember" transition={spring[name]} />
+            <motion.div layout className="size-6 rounded-md bg-foreground" transition={spring[name]} />
           </div>
         </div>
       ))}

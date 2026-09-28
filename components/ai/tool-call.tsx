@@ -19,7 +19,7 @@ const stateMeta: Record<ToolState, { label: string; icon: React.ReactNode; class
   "input-available": {
     label: "Running",
     icon: <SpinnerIcon className="animate-spin" />,
-    className: "text-ember",
+    className: "text-foreground",
   },
   "output-available": {
     label: "Done",

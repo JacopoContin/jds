@@ -25,7 +25,7 @@ function Citation({ index, source, className }: { index: number; source: Source;
         delay={120}
         data-slot="citation"
         className={cn(
-          "mx-0.5 inline-grid h-4 min-w-4 -translate-y-px place-items-center rounded-sm bg-muted px-1 align-middle font-mono text-[10px] text-muted-foreground transition-colors hover:bg-ember-muted hover:text-ember",
+          "mx-0.5 inline-grid h-4 min-w-4 -translate-y-px place-items-center rounded-sm bg-muted px-1 align-middle font-mono text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
           className
         )}
       >

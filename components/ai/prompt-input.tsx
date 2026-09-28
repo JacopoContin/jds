@@ -112,7 +112,7 @@ function PromptInput({
         className={cn(
           "relative flex w-full flex-col rounded-2xl border border-input bg-card shadow-xs transition-[border-color,box-shadow] duration-200",
           "focus-within:border-ring/60 focus-within:ring-4 focus-within:ring-ring/10",
-          "data-dragging:border-ember data-dragging:ring-4 data-dragging:ring-ember-muted",
+          "data-dragging:border-ring data-dragging:ring-4 data-dragging:ring-ring/20",
           className
         )}
         {...props}

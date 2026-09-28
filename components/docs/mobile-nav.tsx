@@ -19,7 +19,7 @@ export function MobileNav() {
         <DialogPrimitive.Popup className="fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto border-r bg-background p-4 transition-transform duration-300 ease-out-quint data-ending-style:-translate-x-full data-starting-style:-translate-x-full">
           <div className="mb-4 flex items-center justify-between">
             <DialogPrimitive.Title className="font-mono text-sm font-medium">
-              JDS<span className="text-ember">.</span>
+              JDS<span className="text-foreground">.</span>
             </DialogPrimitive.Title>
             <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" aria-label="Close menu" />}>
               <CloseIcon />

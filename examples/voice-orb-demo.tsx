@@ -16,7 +16,7 @@ export default function VoiceOrbDemo() {
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <VoiceOrb state={state} level={level} />
+      <VoiceOrb state={state} level={level} size={260} />
       <Tabs value={state} onValueChange={(v) => setState(v as VoiceState)}>
         <TabsList>
           {states.map((s) => (

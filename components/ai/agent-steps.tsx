@@ -51,7 +51,7 @@ function StepMarker({ status }: { status: StepStatus }) {
     <span
       className={cn(
         "relative z-10 grid size-4.5 shrink-0 place-items-center rounded-full border bg-background transition-colors duration-300",
-        status === "active" && "border-ember",
+        status === "active" && "border-foreground",
         status === "complete" && "border-foreground bg-foreground text-background",
         status === "error" && "border-destructive bg-destructive text-background"
       )}
@@ -64,7 +64,7 @@ function StepMarker({ status }: { status: StepStatus }) {
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             transition={spring.snappy}
-            className="size-1.5 animate-pulse-soft rounded-full bg-ember"
+            className="size-1.5 animate-pulse-soft rounded-full bg-foreground"
           />
         )}
         {status === "complete" && (

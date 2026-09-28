@@ -33,8 +33,8 @@ export default function IntroductionPage() {
         each state has a component, so users never wonder if the agent is stuck.
       </P>
       <P>
-        <strong>One accent means activity.</strong> Ember marks the agent doing something. Everything else stays warm
-        and neutral, so activity reads at a glance.
+        <strong>Neutral by default.</strong> No brand color. Activity reads through motion and contrast, so JDS
+        fits your product instead of competing with it.
       </P>
       <P>
         <strong>Motion carries meaning.</strong> Springs are tuned per role: snappy for controls, gentle for content,

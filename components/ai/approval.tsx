@@ -42,7 +42,7 @@ function Approval({
       aria-label="Approval required"
       className={cn(
         "overflow-hidden rounded-xl border bg-card transition-colors duration-300",
-        decision === "pending" && "border-ember/40 bg-ember-muted/40",
+        decision === "pending" && "border-foreground/20 bg-muted/40",
         className
       )}
       {...props}
@@ -51,7 +51,7 @@ function Approval({
         <span
           className={cn(
             "grid size-8 shrink-0 place-items-center rounded-lg",
-            decision === "pending" ? "bg-ember-muted text-ember" : "bg-muted text-muted-foreground"
+            decision === "pending" ? "bg-muted text-foreground" : "bg-muted text-muted-foreground"
           )}
         >
           <ApprovalIcon className="size-4" />

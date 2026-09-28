@@ -56,7 +56,7 @@ export default function RoadmapPage() {
                   className={cn(
                     "size-1.5 shrink-0 rounded-full",
                     phase.status === "done" && "bg-success",
-                    phase.status === "next" && "bg-ember",
+                    phase.status === "next" && "bg-foreground",
                     phase.status === "planned" && "bg-border"
                   )}
                 />

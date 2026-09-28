@@ -70,7 +70,7 @@ function PushToTalk({
     <div className="relative grid place-items-center">
       <motion.span
         aria-hidden
-        className="absolute inset-0 rounded-full bg-ember-muted"
+        className="absolute inset-0 rounded-full bg-muted"
         animate={{ scale: pressed ? 1.25 + level * 0.6 : 1, opacity: pressed ? 1 : 0 }}
         transition={spring.gentle}
       />
@@ -90,7 +90,7 @@ function PushToTalk({
         transition={spring.snappy}
         className={cn(
           "relative grid size-16 touch-none place-items-center rounded-full border bg-card text-foreground shadow-sm transition-colors duration-200 outline-none select-none focus-visible:ring-4 focus-visible:ring-ring/30",
-          "data-pressed:border-ember data-pressed:bg-ember data-pressed:text-ember-foreground",
+          "data-pressed:border-foreground data-pressed:bg-foreground data-pressed:text-background",
           className
         )}
         {...(props as React.ComponentProps<typeof motion.button>)}

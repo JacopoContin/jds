@@ -68,7 +68,7 @@ function ReasoningTrigger({ className, children, ...props }: React.ComponentProp
       )}
       {...props}
     >
-      <ReasoningIcon className={cn("size-4", isStreaming && "text-ember")} />
+      <ReasoningIcon className={cn("size-4", isStreaming && "text-foreground")} />
       {children ??
         (isStreaming ? (
           <Shimmer>Thinking…</Shimmer>
@@ -90,7 +90,7 @@ function ReasoningContent({ className, children, ...props }: React.ComponentProp
       )}
       {...props}
     >
-      <div className="mt-3 border-l-2 border-ember-muted pl-4 text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
+      <div className="mt-3 border-l-2 border-border pl-4 text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
         <AnimatePresence initial={false}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {children}

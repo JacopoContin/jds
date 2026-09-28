@@ -176,7 +176,7 @@ export default function AgentRun() {
   return (
     <div className="flex h-160 flex-col overflow-hidden rounded-2xl border bg-background shadow-2xl shadow-black/20">
       <div className="flex items-center gap-2 border-b px-4 py-3">
-        <span className="size-2 rounded-full bg-ember" />
+        <span className="size-2 rounded-full bg-foreground" />
         <span className="text-sm font-medium">Support agent</span>
         <span className="ml-auto font-mono text-xs text-muted-foreground">demo · scripted</span>
       </div>

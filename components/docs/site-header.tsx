@@ -12,7 +12,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 max-w-screen-2xl items-center gap-6 px-4 md:px-6">
         <MobileNav />
         <Link href="/" className="font-mono text-sm font-medium">
-          JDS<span className="text-ember">.</span>
+          JDS<span className="text-foreground">.</span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm text-muted-foreground md:flex">
           <Link href="/docs" className="transition-colors hover:text-foreground">

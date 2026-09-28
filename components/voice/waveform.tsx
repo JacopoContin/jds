@@ -21,7 +21,7 @@ function Waveform({
       {spectrum.map((v, i) => (
         <motion.span
           key={i}
-          className={cn("w-0.75 rounded-full", active ? "bg-ember" : "bg-muted-foreground/40")}
+          className={cn("w-0.75 rounded-full", active ? "bg-foreground" : "bg-muted-foreground/40")}
           animate={{ height: `${Math.max(12, (active ? v : 0) * 100)}%` }}
           transition={{ type: "spring", stiffness: 600, damping: 30, mass: 0.3 }}
         />
