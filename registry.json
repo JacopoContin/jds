@@ -1925,112 +1925,6 @@
       ]
     },
     {
-      "name": "chat-app",
-      "type": "registry:block",
-      "title": "Chat app",
-      "description": "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
-      "dependencies": [],
-      "registryDependencies": [
-        "@jds/button",
-        "@jds/context-meter",
-        "@jds/conversation",
-        "@jds/input-group",
-        "@jds/message",
-        "@jds/model-picker",
-        "@jds/prompt-input",
-        "@jds/prompt-input-mentions",
-        "@jds/prompt-input-mic",
-        "@jds/response",
-        "@jds/shimmer",
-        "@jds/suggestions",
-        "@jds/utils"
-      ],
-      "files": [
-        {
-          "path": "recipes/chat-app/chat-app.tsx",
-          "type": "registry:component",
-          "target": "components/chat-app/chat-app.tsx"
-        }
-      ]
-    },
-    {
-      "name": "agent-inbox",
-      "type": "registry:block",
-      "title": "Agent inbox",
-      "description": "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [
-        "@jds/agent-steps",
-        "@jds/approval",
-        "@jds/badge",
-        "@jds/empty",
-        "@jds/tabs",
-        "@jds/tool-call",
-        "@jds/utils"
-      ],
-      "files": [
-        {
-          "path": "recipes/agent-inbox/agent-inbox.tsx",
-          "type": "registry:component",
-          "target": "components/agent-inbox/agent-inbox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "run-history",
-      "type": "registry:block",
-      "title": "Run history",
-      "description": "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
-      "dependencies": [
-        "cn",
-        "motion"
-      ],
-      "registryDependencies": [
-        "@jds/badge",
-        "@jds/table",
-        "@jds/tabs",
-        "@jds/toggle-group",
-        "@jds/utils"
-      ],
-      "files": [
-        {
-          "path": "recipes/run-history/run-history.tsx",
-          "type": "registry:component",
-          "target": "components/run-history/run-history.tsx"
-        }
-      ]
-    },
-    {
-      "name": "agent-onboarding",
-      "type": "registry:block",
-      "title": "Agent onboarding",
-      "description": "Set up an agent by answering its questions. Quick replies drive the chat while a live card and progress list fill in beside it.",
-      "dependencies": [
-        "motion",
-        "sonner"
-      ],
-      "registryDependencies": [
-        "@jds/agent-steps",
-        "@jds/badge",
-        "@jds/button",
-        "@jds/conversation",
-        "@jds/message",
-        "@jds/shimmer",
-        "@jds/suggestions",
-        "@jds/toggle",
-        "@jds/utils"
-      ],
-      "files": [
-        {
-          "path": "recipes/agent-onboarding/agent-onboarding.tsx",
-          "type": "registry:component",
-          "target": "components/agent-onboarding/agent-onboarding.tsx"
-        }
-      ]
-    },
-    {
       "name": "agent-run",
       "type": "registry:block",
       "title": "Agent run",
@@ -2099,6 +1993,32 @@
       ]
     },
     {
+      "name": "voice-call",
+      "type": "registry:block",
+      "title": "Voice call",
+      "description": "A realtime call screen: connection status and timer, the orb, live captions, and mute, interrupt and end controls.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/voice-call/voice-call.tsx",
+          "type": "registry:component",
+          "target": "components/voice-call/voice-call.tsx"
+        },
+        {
+          "path": "hooks/use-simulated-spectrum.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "voice-session",
       "type": "registry:block",
       "title": "Voice session",
@@ -2124,28 +2044,56 @@
       ]
     },
     {
-      "name": "voice-call",
+      "name": "chat-app",
       "type": "registry:block",
-      "title": "Voice call",
-      "description": "A realtime call screen: connection status and timer, the orb, live captions, and mute, interrupt and end controls.",
+      "title": "Chat app",
+      "description": "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/context-meter",
+        "@jds/conversation",
+        "@jds/input-group",
+        "@jds/message",
+        "@jds/model-picker",
+        "@jds/prompt-input",
+        "@jds/prompt-input-mentions",
+        "@jds/prompt-input-mic",
+        "@jds/response",
+        "@jds/shimmer",
+        "@jds/suggestions",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/chat-app/chat-app.tsx",
+          "type": "registry:component",
+          "target": "components/chat-app/chat-app.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-inbox",
+      "type": "registry:block",
+      "title": "Agent inbox",
+      "description": "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
       "dependencies": [
         "motion"
       ],
       "registryDependencies": [
-        "@jds/button",
-        "@jds/call-controls",
-        "@jds/utils",
-        "@jds/voice-orb"
+        "@jds/agent-steps",
+        "@jds/approval",
+        "@jds/badge",
+        "@jds/empty",
+        "@jds/tabs",
+        "@jds/tool-call",
+        "@jds/utils"
       ],
       "files": [
         {
-          "path": "recipes/voice-call/voice-call.tsx",
+          "path": "recipes/agent-inbox/agent-inbox.tsx",
           "type": "registry:component",
-          "target": "components/voice-call/voice-call.tsx"
-        },
-        {
-          "path": "hooks/use-simulated-spectrum.ts",
-          "type": "registry:hook"
+          "target": "components/agent-inbox/agent-inbox.tsx"
         }
       ]
     },
@@ -2177,6 +2125,58 @@
           "path": "recipes/agent-settings/agent-settings.tsx",
           "type": "registry:component",
           "target": "components/agent-settings/agent-settings.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-onboarding",
+      "type": "registry:block",
+      "title": "Agent onboarding",
+      "description": "Set up an agent by answering its questions. Quick replies drive the chat while a live card and progress list fill in beside it.",
+      "dependencies": [
+        "motion",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "@jds/agent-steps",
+        "@jds/badge",
+        "@jds/button",
+        "@jds/conversation",
+        "@jds/message",
+        "@jds/shimmer",
+        "@jds/suggestions",
+        "@jds/toggle",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-onboarding/agent-onboarding.tsx",
+          "type": "registry:component",
+          "target": "components/agent-onboarding/agent-onboarding.tsx"
+        }
+      ]
+    },
+    {
+      "name": "run-history",
+      "type": "registry:block",
+      "title": "Run history",
+      "description": "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/badge",
+        "@jds/table",
+        "@jds/tabs",
+        "@jds/toggle-group",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/run-history/run-history.tsx",
+          "type": "registry:component",
+          "target": "components/run-history/run-history.tsx"
         }
       ]
     }
