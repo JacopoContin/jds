@@ -21,10 +21,13 @@ import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
 type Config = {
   variant: VoiceOrbVariant
-  palette: OrbPalette | "custom"
-  /** Base, then three fields. Used when palette is "custom". */
+  /**
+   * One color choice. Primary and foreground tint any style; named palettes and custom
+   * colors apply to the multi-color styles (aura, plasma, liquid, glass).
+   */
+  color: "primary" | "foreground" | Exclude<OrbPalette, "primary"> | "custom"
+  /** Base, then three fields. Used when color is "custom". */
   custom: string[]
-  color: "primary" | "foreground"
   size: number
   glow: number
   speed: number
@@ -46,7 +49,6 @@ type Surface = "stage" | "panel" | "call" | "compact"
 
 const defaults: Config = {
   variant: "particles",
-  palette: "primary",
   custom: [...auraPalettes.iris],
   color: "primary",
   size: 200,
@@ -93,12 +95,12 @@ const presets: { name: string; config: Partial<Config> }[] = [
   { name: "Sphere", config: { variant: "particles" } },
   { name: "Halo", config: { variant: "ring", glow: 0.5 } },
   { name: "Signal", config: { variant: "wave", glow: 0.3, speed: 1.1 } },
-  { name: "Iris", config: { variant: "aura", palette: "iris", glow: 0.35 } },
-  { name: "Ember", config: { variant: "aura", palette: "ember", speed: 0.8 } },
-  { name: "Glass", config: { variant: "glass", palette: "iris", glow: 0.3 } },
-  { name: "Plasma", config: { variant: "plasma", palette: "iris", glow: 0.4 } },
-  { name: "Lava", config: { variant: "liquid", palette: "ember", glow: 0.25 } },
-  { name: "Mercury", config: { variant: "liquid", palette: "mist", speed: 0.8 } },
+  { name: "Iris", config: { variant: "aura", color: "iris", glow: 0.35 } },
+  { name: "Ember", config: { variant: "aura", color: "ember", speed: 0.8 } },
+  { name: "Glass", config: { variant: "glass", color: "iris", glow: 0.3 } },
+  { name: "Plasma", config: { variant: "plasma", color: "iris", glow: 0.4 } },
+  { name: "Lava", config: { variant: "liquid", color: "ember", glow: 0.25 } },
+  { name: "Mercury", config: { variant: "liquid", color: "mist", speed: 0.8 } },
   { name: "Equalizer", config: { variant: "bars", sensitivity: 1.4 } },
   { name: "Print", config: { variant: "halftone", color: "foreground" } },
   { name: "Dot", config: { variant: "dot", size: 32, sensitivity: 1.4 } },
@@ -115,16 +117,19 @@ const states: { value: VoiceState; label: string; body: string; status: string }
 
 const voiced = (s: VoiceState) => s === "listening" || s === "speaking"
 const paletted = (v: VoiceOrbVariant) => v === "aura" || v === "plasma" || v === "liquid" || v === "glass"
-const usesColor = (c: Config) => !paletted(c.variant) || c.palette === "primary"
-const paletteOf = (c: Config) => (c.palette === "custom" ? c.custom : c.palette)
+/** Primary and foreground are tints; anything else is a multi-color palette. */
+const tint = (color: Config["color"]) => color === "primary" || color === "foreground"
+const paletteOf = (c: Config): OrbPalette | string[] =>
+  !paletted(c.variant) || tint(c.color) ? "primary" : c.color === "custom" ? c.custom : (c.color as OrbPalette)
 /** The dot is built for small spots; everything else needs room to show detail. */
 const sizeRange = (v: VoiceOrbVariant) => (v === "dot" ? { min: 16, max: 96, step: 4 } : { min: 96, max: 320, step: 8 })
 
 /** Props that differ from the component's defaults, one per line. */
 function generateCode(c: Config) {
   const p = [`variant="${c.variant}"`]
-  if (paletted(c.variant) && c.palette === "custom") p.push(`palette={[${c.custom.map((x) => `"${x}"`).join(", ")}]}`)
-  else if (paletted(c.variant) && c.palette !== "primary") p.push(`palette="${c.palette}"`)
+  const palette = paletteOf(c)
+  if (Array.isArray(palette)) p.push(`palette={[${palette.map((x) => `"${x}"`).join(", ")}]}`)
+  else if (palette !== "primary") p.push(`palette="${palette}"`)
   p.push("state={state}", "level={level}")
   if (c.size !== 160) p.push(`size={${c.size}}`)
   if (c.glow > 0) p.push(`glow={${c.glow}}`)
@@ -132,7 +137,7 @@ function generateCode(c: Config) {
   if (c.sensitivity !== 1) p.push(`sensitivity={${c.sensitivity}}`)
   if (c.variant === "particles" && c.particles !== null) p.push(`particles={${c.particles}}`)
   for (const m of materials[c.variant] ?? []) if (c[m.key] !== defaults[m.key]) p.push(`${m.key}={${c[m.key]}}`)
-  if (usesColor(c) && c.color === "foreground") p.push(`className="text-foreground"`)
+  if (c.color === "foreground") p.push(`className="text-foreground"`)
   return `import { VoiceOrb } from "@/components/voice/voice-orb"
 
 <VoiceOrb
@@ -160,7 +165,7 @@ function Orb({ c, state, level, size }: { c: Config; state: VoiceState; level: n
       filaments={c.filaments}
       blobs={c.blobs}
       gloss={c.gloss}
-      className={cn(usesColor(c) && c.color === "foreground" && "text-foreground")}
+      className={cn(c.color === "foreground" && "text-foreground")}
     />
   )
 }
@@ -324,7 +329,9 @@ export function VoiceOrbBuilder() {
                 // Keep the size inside the new style's range.
                 const r = sizeRange(v)
                 const size = prev.size < r.min || prev.size > r.max ? (v === "dot" ? 32 : 200) : prev.size
-                return { ...prev, variant: v, size }
+                // Single-color styles can't show a palette; fall back to primary.
+                const color = !paletted(v) && !tint(prev.color) ? "primary" : prev.color
+                return { ...prev, variant: v, size, color }
               })
             }
             options={[
@@ -340,38 +347,30 @@ export function VoiceOrbBuilder() {
               { value: "dot", label: "Dot" },
             ]}
           />
-          {paletted(c.variant) && (
-            <Segmented
-              label="Palette"
-              value={c.palette}
-              onChange={set("palette")}
-              options={[
-                { value: "primary", label: "Primary" },
-                { value: "iris", label: "Iris" },
-                { value: "ember", label: "Ember" },
-                { value: "cocoa", label: "Cocoa" },
-                { value: "mist", label: "Mist" },
-                { value: "custom", label: "Custom" },
-              ]}
-            />
-          )}
-          {paletted(c.variant) && c.palette === "custom" && (
+          <Segmented
+            label="Color"
+            value={c.color}
+            onChange={set("color")}
+            options={[
+              { value: "primary", label: "Primary" },
+              { value: "foreground", label: "Foreground" },
+              ...(paletted(c.variant)
+                ? ([
+                    { value: "iris", label: "Iris" },
+                    { value: "ember", label: "Ember" },
+                    { value: "cocoa", label: "Cocoa" },
+                    { value: "mist", label: "Mist" },
+                    { value: "custom", label: "Custom" },
+                  ] as const)
+                : []),
+            ]}
+          />
+          {c.color === "custom" && (
             <ColorRow
               label="Colors"
               names={["Base", "Field 1", "Field 2", "Field 3"]}
               values={c.custom}
               onChange={set("custom")}
-            />
-          )}
-          {usesColor(c) && (
-            <Segmented
-              label="Color"
-              value={c.color}
-              onChange={set("color")}
-              options={[
-                { value: "primary", label: "Primary" },
-                { value: "foreground", label: "Foreground" },
-              ]}
             />
           )}
           <Range label="Size" value={c.size} {...range} unit="px" onChange={set("size")} />
