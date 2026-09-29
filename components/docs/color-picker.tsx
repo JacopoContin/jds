@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useSiteSettings } from "@/components/docs/site-settings"
+import { ThemeExport } from "@/components/docs/theme-export"
 import type { VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { baseColors, colorPresets } from "@/lib/colors"
 import { CheckIcon } from "@/lib/icons"
@@ -120,7 +121,10 @@ function Swatches({
   )
 }
 
-/** Header customizer: primary and base color, radius, font and voice orb, applied across the site. */
+/**
+ * Header customizer: primary and base color, radius, font and voice orb, applied across the
+ * site as a live preview. "Use this theme in your app" exports the same choices.
+ */
 export function ColorPicker() {
   const { orb, setOrb } = useSiteSettings()
   const [values, setValues] = React.useState<Record<DomSetting, string>>({
@@ -129,6 +133,8 @@ export function ColorPicker() {
     radius: "0.625",
     font: "geist",
   })
+  const [popover, setPopover] = React.useState(false)
+  const [exporting, setExporting] = React.useState(false)
 
   React.useEffect(() => {
     queueMicrotask(() =>
@@ -147,67 +153,79 @@ export function ColorPicker() {
   }
 
   return (
-    <Popover>
-      <PopoverTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Customize" />}>
-        <span className={cn("size-3.5 rounded-full ring-1 ring-border", primarySwatch[values.color])} />
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 gap-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Customize</span>
-          <Button variant="ghost" size="xs" onClick={reset}>
-            Reset
+    <>
+      <Popover open={popover} onOpenChange={setPopover}>
+        <PopoverTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Customize" />}>
+          <span className={cn("size-3.5 rounded-full ring-1 ring-border", primarySwatch[values.color])} />
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-80 gap-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Customize</span>
+            <Button variant="ghost" size="xs" onClick={reset}>
+              Reset
+            </Button>
+          </div>
+          <Section title="Primary color">
+            <Swatches options={primaries} value={values.color} swatch={primarySwatch} onChange={(v) => set("color", v)} />
+          </Section>
+          <Section title="Base color">
+            <Swatches options={bases} value={values.base} swatch={baseSwatch} onChange={(v) => set("base", v)} />
+          </Section>
+          <Section title="Radius">
+            <ToggleGroup
+              value={[values.radius]}
+              onValueChange={(v) => v[0] && set("radius", v[0] as string)}
+              variant="outline"
+              size="sm"
+            >
+              {radii.map((r) => (
+                <ToggleGroupItem key={r} value={r} aria-label={`Radius ${r}rem`}>
+                  {r}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </Section>
+          <Section title="Font">
+            <ToggleGroup
+              value={[values.font]}
+              onValueChange={(v) => v[0] && set("font", v[0] as string)}
+              variant="outline"
+              size="sm"
+            >
+              {fonts.map((f) => (
+                <ToggleGroupItem key={f.value} value={f.value}>
+                  {f.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </Section>
+          <Section title="Voice orb">
+            <ToggleGroup
+              value={[orb]}
+              onValueChange={(v) => v[0] && setOrb(v[0] as VoiceOrbVariant)}
+              variant="outline"
+              size="sm"
+              className="grid grid-cols-3"
+            >
+              {orbs.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </Section>
+          <Button
+            size="sm"
+            onClick={() => {
+              setPopover(false)
+              setExporting(true)
+            }}
+          >
+            Use this theme in your app
           </Button>
-        </div>
-        <Section title="Primary color">
-          <Swatches options={primaries} value={values.color} swatch={primarySwatch} onChange={(v) => set("color", v)} />
-        </Section>
-        <Section title="Base color">
-          <Swatches options={bases} value={values.base} swatch={baseSwatch} onChange={(v) => set("base", v)} />
-        </Section>
-        <Section title="Radius">
-          <ToggleGroup
-            value={[values.radius]}
-            onValueChange={(v) => v[0] && set("radius", v[0] as string)}
-            variant="outline"
-            size="sm"
-          >
-            {radii.map((r) => (
-              <ToggleGroupItem key={r} value={r} aria-label={`Radius ${r}rem`}>
-                {r}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </Section>
-        <Section title="Font">
-          <ToggleGroup
-            value={[values.font]}
-            onValueChange={(v) => v[0] && set("font", v[0] as string)}
-            variant="outline"
-            size="sm"
-          >
-            {fonts.map((f) => (
-              <ToggleGroupItem key={f.value} value={f.value}>
-                {f.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </Section>
-        <Section title="Voice orb">
-          <ToggleGroup
-            value={[orb]}
-            onValueChange={(v) => v[0] && setOrb(v[0] as VoiceOrbVariant)}
-            variant="outline"
-            size="sm"
-            className="grid grid-cols-3"
-          >
-            {orbs.map((o) => (
-              <ToggleGroupItem key={o.value} value={o.value}>
-                {o.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </Section>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+      <ThemeExport theme={{ ...values, orb }} open={exporting} onOpenChange={setExporting} />
+    </>
   )
 }

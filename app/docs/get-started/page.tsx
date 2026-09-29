@@ -41,7 +41,9 @@ export default function GetStartedPage() {
         <Step title="Add the style">
           <P>
             Installs the neutral light and dark themes, status colors, motion keyframes, and the shared icon and motion
-            utilities.
+            utilities. To start from your own look, pick a color, base, radius, font and orb in the Customize menu in
+            the header, then choose <strong>Use this theme in your app</strong>: one command installs the style with
+            your theme.
           </P>
           <Command command={`shadcn@latest add ${site.namespace}/style`} />
         </Step>

@@ -15,8 +15,8 @@ export function studioMarkdown({
   intro: string
   /** [setting, value] pairs, in the order the Studio shows them. */
   choices: [string, string][]
-  /** Registry items, without the namespace. */
-  install: string[]
+  /** Registry items without the namespace, or a full install command. */
+  install: string[] | string
   /** Where the code goes, one step per line. */
   placement: string[]
   code: string
@@ -34,7 +34,7 @@ export function studioMarkdown({
     "## Install",
     "",
     "```bash",
-    `npx shadcn@latest add ${install.map((i) => `@jds/${i}`).join(" ")}`,
+    typeof install === "string" ? install : `npx shadcn@latest add ${install.map((i) => `@jds/${i}`).join(" ")}`,
     "```",
     "",
     "## Where it goes",
