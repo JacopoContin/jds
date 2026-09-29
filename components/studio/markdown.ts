@@ -53,6 +53,6 @@ export function studioMarkdown({
 
 /** Registry items a generated snippet imports, e.g. "@/components/ai/tool-call" becomes "tool-call". */
 export function installFromCode(code: string) {
-  const items = [...code.matchAll(/from "@\/components\/(?:ai|voice)\/([\w-]+)"/g)].map((m) => m[1])
+  const items = [...code.matchAll(/from "@\/components\/(?:ai|voice|ui)\/([\w-]+)"/g)].map((m) => m[1])
   return [...new Set(items)].sort()
 }

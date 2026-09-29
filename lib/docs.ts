@@ -127,6 +127,73 @@ export const components: ComponentDoc[] = [
     isNew: true,
   },
   {
+    slug: "command-bar",
+    title: "Command Bar",
+    description:
+      "A ⌘K palette that also asks the agent. Typing filters commands; the Ask row turns the same text into a question, and the answer replaces the list until Escape. Choose whether Enter asks or runs a command.",
+    group: "ai",
+    files: ["components/ai/command-bar.tsx"],
+    usage: `import {
+  CommandBar,
+  CommandBarAnswer,
+  CommandBarAsk,
+  CommandBarDialog,
+  CommandBarFooter,
+  CommandBarInput,
+  CommandBarList,
+} from "@/components/ai/command-bar"
+import { CommandGroup, CommandItem } from "@/components/ui/command"
+
+<CommandBarDialog>
+  <CommandBar onAsk={(question) => sendMessage({ text: question })}>
+    <CommandBarInput />
+    <CommandBarList>
+      <CommandBarAsk />
+      <CommandGroup heading="Actions">
+        <CommandItem onSelect={newInvoice}>New invoice</CommandItem>
+      </CommandGroup>
+    </CommandBarList>
+    <CommandBarAnswer actions={<Button onClick={openChat}>Continue in chat</Button>}>
+      <Response>{answer}</Response>
+    </CommandBarAnswer>
+    <CommandBarFooter />
+  </CommandBar>
+</CommandBarDialog>`,
+    api: [
+      {
+        component: "CommandBar",
+        props: [
+          { name: "onAsk", type: "(question: string) => void", description: "Called when someone asks. Stream the reply into CommandBarAnswer." },
+          { name: "onBack", type: "() => void", description: "Called when leaving the answer, e.g. to cancel a stream." },
+        ],
+      },
+      {
+        component: "CommandBarAsk",
+        props: [
+          {
+            name: "label",
+            type: "string",
+            default: '"Ask AI"',
+            description:
+              "Row text before the question. Place the row before your groups to make Enter ask, after them to make Enter run the best-matching command.",
+          },
+        ],
+      },
+      {
+        component: "CommandBarAnswer",
+        props: [{ name: "actions", type: "ReactNode", description: "Buttons under the answer, like Copy or Continue in chat." }],
+      },
+      {
+        component: "CommandBarDialog",
+        props: [
+          { name: "hotkey", type: "string | false", default: '"k"', description: "Toggles with ⌘ or Ctrl plus this key." },
+          { name: "open", type: "boolean", description: "Controlled open state. Leave out to let the hotkey manage it." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "prompt-input",
     title: "Prompt Input",
     description:

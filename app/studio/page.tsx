@@ -40,6 +40,12 @@ const tools = [
     ready: true,
   },
   {
+    href: "/studio/command-bar",
+    title: "Command bar",
+    body: "A ⌘K bar that runs commands and asks the agent: ask row placement, groups, shortcuts, answer actions.",
+    ready: true,
+  },
+  {
     href: "",
     title: "Motion and backgrounds",
     body: "Motion presets to feel, and ambient backgrounds for agent surfaces.",

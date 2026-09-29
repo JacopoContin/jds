@@ -53,6 +53,7 @@ export const examples: Record<string, ComponentType> = {
   "popover-demo": dynamic(() => import("./popover-demo")),
   "progress-demo": dynamic(() => import("./progress-demo")),
   "prompt-input-demo": dynamic(() => import("./prompt-input-demo")),
+  "command-bar-demo": dynamic(() => import("./command-bar-demo")),
   "prompt-input-frame": dynamic(() => import("./prompt-input-frame")),
   "prompt-input-mentions-demo": dynamic(() => import("./prompt-input-mentions-demo")),
   "prompt-input-mic-demo": dynamic(() => import("./prompt-input-mic-demo")),

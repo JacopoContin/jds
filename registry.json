@@ -475,6 +475,27 @@
       ]
     },
     {
+      "name": "command-bar",
+      "type": "registry:component",
+      "title": "Command Bar",
+      "description": "A ⌘K palette that also asks the agent. Typing filters commands; the Ask row turns the same text into a question, and the answer replaces the list until Escape. Choose whether Enter asks or runs a command.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/command",
+        "@jds/dialog",
+        "@jds/kbd",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/command-bar.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "prompt-input",
       "type": "registry:component",
       "title": "Prompt Input",
