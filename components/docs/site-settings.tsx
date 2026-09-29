@@ -23,7 +23,7 @@ export function SiteSettingsProvider({ children }: { children: React.ReactNode }
   React.useEffect(() => {
     try {
       const saved = localStorage.getItem(ORB_KEY)
-      if (saved && ["particles", "ring", "wave", "aura", "bars", "halftone", "plasma", "liquid"].includes(saved)) queueMicrotask(() => setOrbState(saved as VoiceOrbVariant))
+      if (saved && ["particles", "ring", "wave", "aura", "bars", "halftone", "plasma", "liquid", "glass", "dot"].includes(saved)) queueMicrotask(() => setOrbState(saved as VoiceOrbVariant))
     } catch {}
   }, [])
 

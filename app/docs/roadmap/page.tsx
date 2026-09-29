@@ -21,13 +21,32 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: voice orb",
-    status: "next",
+    status: "done",
     items: [
       "One state API for every orb: idle, connecting, listening, thinking, speaking, error",
-      "Distinct orb families: liquid, plasma, glass, mesh gradient, aurora, sonic rings, metaball, halo, minimal dot",
-      "Visualizers: circular waveform, radial bars, spectrogram, audio ribbon, pulsing rings",
-      "Start from a preset, then tune shape, material, particles, glow and motion",
-      "Preview every state, copy the code",
+      "Presets, speed, glow and sensitivity, previewed in every state, with generated code",
+      "Plasma and liquid, the first WebGL shader families",
+    ],
+  },
+  {
+    title: "Studio: voice orb, round two",
+    status: "next",
+    items: [
+      "Custom palettes",
+      "Preview the orb inside real surfaces",
+      "Minimal dot for composer buttons, headers and call pills",
+      "Glass orb",
+      "Shape and material controls per family",
+    ],
+  },
+  {
+    title: "Studio: prompt input",
+    status: "planned",
+    items: [
+      "Frame, context header and option chips",
+      "Attachments, model picker, tools, suggestions, dictation, mentions",
+      "Send button and submit styles",
+      "Generated code",
     ],
   },
   {
@@ -40,16 +59,6 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
       "Voice receptionist: orb, live transcript, actions, call controls",
       "Copilot side panel: context, conversation, actions, artifact",
       "Built on particles: each one a working composition, installed with one command",
-    ],
-  },
-  {
-    title: "Studio: prompt input",
-    status: "planned",
-    items: [
-      "Frame, context header and option chips",
-      "Attachments, model picker, tools, suggestions, dictation, mentions",
-      "Send button and submit styles",
-      "Generated code",
     ],
   },
   {
@@ -90,6 +99,14 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
+    title: "Orbs: more families and visualizers",
+    status: "planned",
+    items: [
+      "Mesh gradient, aurora, sonic rings and halo",
+      "Visualizers: circular waveform, radial bars, spectrogram, audio ribbon, pulsing rings",
+    ],
+  },
+  {
     title: "Portable foundations",
     status: "planned",
     items: [
@@ -120,7 +137,7 @@ export default function RoadmapPage() {
       <P>
         Component libraries are plentiful; tools for designing AI interfaces are not. The Studio is where JDS earns its
         place: pick a preset, tune it visually, preview every state, copy the code. It grows in small steps, one surface
-        at a time (orbs, then recipes, then prompt, conversation and activity), until it can configure a whole agent
+        at a time (orbs, then prompt input, then recipes, conversation and activity), until it can configure a whole agent
         experience. Tokens and specs stay platform-neutral so iOS and Android can follow.
       </P>
       {phases.map((phase) => (

@@ -4,16 +4,26 @@ import * as React from "react"
 import { cn } from "cn"
 
 import { CopyButton } from "@/components/docs/copy-button"
-import { ControlGroup, Range, Segmented, Toggle } from "@/components/studio/controls"
+import { ColorRow, ControlGroup, Range, Segmented, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { VoiceOrb, type OrbPalette, type VoiceOrbVariant, type VoiceState } from "@/components/voice/voice-orb"
+import { CallControls, CallEnd, CallInterrupt, CallMute, CallStatus } from "@/components/voice/call-controls"
+import { LiveTranscript } from "@/components/voice/live-transcript"
+import {
+  VoiceOrb,
+  auraPalettes,
+  type OrbPalette,
+  type VoiceOrbVariant,
+  type VoiceState,
+} from "@/components/voice/voice-orb"
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
 type Config = {
   variant: VoiceOrbVariant
-  palette: OrbPalette
+  palette: OrbPalette | "custom"
+  /** Base, then three fields. Used when palette is "custom". */
+  custom: string[]
   color: "primary" | "foreground"
   size: number
   glow: number
@@ -23,9 +33,12 @@ type Config = {
   particles: number | null
 }
 
+type Surface = "stage" | "panel" | "call" | "compact"
+
 const defaults: Config = {
   variant: "particles",
   palette: "primary",
+  custom: [...auraPalettes.iris],
   color: "primary",
   size: 200,
   glow: 0,
@@ -41,32 +54,36 @@ const presets: { name: string; config: Partial<Config> }[] = [
   { name: "Signal", config: { variant: "wave", glow: 0.3, speed: 1.1 } },
   { name: "Iris", config: { variant: "aura", palette: "iris", glow: 0.35 } },
   { name: "Ember", config: { variant: "aura", palette: "ember", speed: 0.8 } },
-  { name: "Mist", config: { variant: "aura", palette: "mist", speed: 0.7 } },
+  { name: "Glass", config: { variant: "glass", palette: "iris", glow: 0.3 } },
   { name: "Plasma", config: { variant: "plasma", palette: "iris", glow: 0.4 } },
   { name: "Lava", config: { variant: "liquid", palette: "ember", glow: 0.25 } },
   { name: "Mercury", config: { variant: "liquid", palette: "mist", speed: 0.8 } },
   { name: "Equalizer", config: { variant: "bars", sensitivity: 1.4 } },
   { name: "Print", config: { variant: "halftone", color: "foreground" } },
-  { name: "Pulse", config: { variant: "ring", color: "foreground", speed: 1.4, sensitivity: 1.6 } },
+  { name: "Dot", config: { variant: "dot", size: 32, sensitivity: 1.4 } },
 ]
 
-const states: { value: VoiceState; label: string; body: string }[] = [
-  { value: "idle", label: "Idle", body: "Waiting. Slow, low-energy motion." },
-  { value: "connecting", label: "Connecting", body: "Session opening. Breathes until ready." },
-  { value: "listening", label: "Listening", body: "Hearing the user. Follows mic level." },
-  { value: "thinking", label: "Thinking", body: "Working. Faster, turning motion." },
-  { value: "speaking", label: "Speaking", body: "Agent talking. Follows output level." },
-  { value: "error", label: "Error", body: "Something failed. Destructive and nearly still." },
+const states: { value: VoiceState; label: string; body: string; status: string }[] = [
+  { value: "idle", label: "Idle", body: "Waiting. Slow, low-energy motion.", status: "Tap to talk" },
+  { value: "connecting", label: "Connecting", body: "Session opening. Breathes until ready.", status: "Connecting…" },
+  { value: "listening", label: "Listening", body: "Hearing the user. Follows mic level.", status: "Listening…" },
+  { value: "thinking", label: "Thinking", body: "Working. Faster, turning motion.", status: "Thinking…" },
+  { value: "speaking", label: "Speaking", body: "Agent talking. Follows output level.", status: "Speaking…" },
+  { value: "error", label: "Error", body: "Something failed. Destructive and nearly still.", status: "Couldn't connect" },
 ]
 
 const voiced = (s: VoiceState) => s === "listening" || s === "speaking"
-const paletted = (v: VoiceOrbVariant) => v === "aura" || v === "plasma" || v === "liquid"
+const paletted = (v: VoiceOrbVariant) => v === "aura" || v === "plasma" || v === "liquid" || v === "glass"
 const usesColor = (c: Config) => !paletted(c.variant) || c.palette === "primary"
+const paletteOf = (c: Config) => (c.palette === "custom" ? c.custom : c.palette)
+/** The dot is built for small spots; everything else needs room to show detail. */
+const sizeRange = (v: VoiceOrbVariant) => (v === "dot" ? { min: 16, max: 96, step: 4 } : { min: 96, max: 320, step: 8 })
 
 /** Props that differ from the component's defaults, one per line. */
 function generateCode(c: Config) {
   const p = [`variant="${c.variant}"`]
-  if (paletted(c.variant) && c.palette !== "primary") p.push(`palette="${c.palette}"`)
+  if (paletted(c.variant) && c.palette === "custom") p.push(`palette={[${c.custom.map((x) => `"${x}"`).join(", ")}]}`)
+  else if (paletted(c.variant) && c.palette !== "primary") p.push(`palette="${c.palette}"`)
   p.push("state={state}", "level={level}")
   if (c.size !== 160) p.push(`size={${c.size}}`)
   if (c.glow > 0) p.push(`glow={${c.glow}}`)
@@ -85,7 +102,7 @@ function Orb({ c, state, level, size }: { c: Config; state: VoiceState; level: n
   return (
     <VoiceOrb
       variant={c.variant}
-      palette={c.palette}
+      palette={paletteOf(c)}
       state={state}
       level={level}
       size={size ?? c.size}
@@ -95,6 +112,83 @@ function Orb({ c, state, level, size }: { c: Config; state: VoiceState; level: n
       particles={c.particles ?? undefined}
       className={cn(usesColor(c) && c.color === "foreground" && "text-foreground")}
     />
+  )
+}
+
+type SurfaceProps = { c: Config; state: VoiceState; level: number }
+
+/** Voice mode of an agent side panel. */
+function PanelSurface({ c, state, level }: SurfaceProps) {
+  return (
+    <div className="flex h-104 w-90 max-w-full flex-col overflow-hidden rounded-2xl border bg-card shadow-lg">
+      <div className="flex items-center justify-between border-b px-4 py-3">
+        <span className="text-sm font-medium">Agent</span>
+        <span className="text-xs text-muted-foreground">Voice</span>
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 p-6">
+        <Orb c={c} state={state} level={level} size={Math.min(c.size, 180)} />
+        <span className="text-sm text-muted-foreground">{states.find((s) => s.value === state)!.status}</span>
+      </div>
+      <div className="flex justify-center border-t p-3">
+        <Button variant="outline" size="sm">
+          Back to chat
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+/** A full voice call: orb, transcript and call controls. */
+function CallSurface({ c, state, level }: SurfaceProps) {
+  const [startedAt] = React.useState(() => Date.now())
+  const segments = [
+    { id: "a", speaker: "agent" as const, text: "Hi, this is Aria at Harbor Dental. How can I help?", final: true },
+    { id: "u", speaker: "user" as const, text: "I need to move my cleaning to next week.", final: state !== "listening" },
+  ]
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-sm font-medium">Aria</span>
+        <span className="text-xs text-muted-foreground">Front desk · Harbor Dental</span>
+      </div>
+      <Orb c={c} state={state} level={level} size={Math.min(c.size, 180)} />
+      <LiveTranscript segments={segments} agentName="Aria" className="w-full" />
+      <CallControls>
+        <CallStatus state={state === "connecting" ? "connecting" : "connected"} startedAt={startedAt} />
+        <CallMute />
+        <CallInterrupt disabled={state !== "speaking"} />
+        <CallEnd />
+      </CallControls>
+    </div>
+  )
+}
+
+/** Small placements: a composer voice button, a panel header and a call pill. */
+function CompactSurface({ c, state, level }: SurfaceProps) {
+  return (
+    <div className="flex w-full max-w-md flex-col gap-6">
+      <div className="flex items-center gap-2 rounded-2xl border bg-card p-2 pl-4">
+        <span className="flex-1 text-sm text-muted-foreground">Ask anything…</span>
+        <span className="flex size-10 items-center justify-center rounded-full bg-muted">
+          <Orb c={c} state={state} level={level} size={24} />
+        </span>
+      </div>
+      <div className="flex items-center justify-between rounded-xl border bg-card px-4 py-3">
+        <span className="flex items-center gap-2 text-sm font-medium">
+          <Orb c={c} state={state} level={level} size={18} />
+          Agent
+        </span>
+        <span className="text-xs text-muted-foreground">{states.find((s) => s.value === state)!.status}</span>
+      </div>
+      <div className="flex items-center gap-2 self-center rounded-full border bg-card py-1.5 pr-4 pl-2">
+        <Orb c={c} state={state} level={level} size={20} />
+        <span className="text-sm">On call</span>
+        <span className="font-mono text-xs text-muted-foreground tabular-nums">02:14</span>
+      </div>
+      <p className="text-center text-xs text-muted-foreground">
+        Small spots favour the dot. Richer orbs lose their detail below about 32px.
+      </p>
+    </div>
   )
 }
 
@@ -117,6 +211,7 @@ export function VoiceOrbBuilder() {
   const [c, setC] = React.useState<Config>(defaults)
   const [state, setState] = React.useState<VoiceState>("listening")
   const [cycle, setCycle] = React.useState(false)
+  const [surface, setSurface] = React.useState<Surface>("stage")
   const { level } = useSimulatedSpectrum(voiced(state))
   const set =
     <K extends keyof Config>(key: K) =>
@@ -133,6 +228,8 @@ export function VoiceOrbBuilder() {
   }, [cycle])
 
   const current = states.find((s) => s.value === state)!
+  const range = sizeRange(c.variant)
+  const surfaceProps = { c, state, level }
 
   return (
     <div className="grid min-h-0 flex-1 lg:grid-cols-[20rem_minmax(0,1fr)]">
@@ -155,7 +252,12 @@ export function VoiceOrbBuilder() {
                   className="flex flex-col items-center gap-2 rounded-lg border bg-background p-2 text-xs transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <span className="flex h-10 items-center justify-center">
-                    <Orb c={preset} state="idle" level={0} size={preset.variant === "wave" ? 24 : 40} />
+                    <Orb
+                      c={preset}
+                      state="idle"
+                      level={0}
+                      size={preset.variant === "wave" ? 24 : preset.variant === "dot" ? 20 : 40}
+                    />
                   </span>
                   {p.name}
                 </button>
@@ -167,7 +269,14 @@ export function VoiceOrbBuilder() {
           <Segmented
             label="Style"
             value={c.variant}
-            onChange={set("variant")}
+            onChange={(v) =>
+              setC((prev) => {
+                // Keep the size inside the new style's range.
+                const r = sizeRange(v)
+                const size = prev.size < r.min || prev.size > r.max ? (v === "dot" ? 32 : 200) : prev.size
+                return { ...prev, variant: v, size }
+              })
+            }
             options={[
               { value: "particles", label: "Particles" },
               { value: "ring", label: "Ring" },
@@ -177,6 +286,8 @@ export function VoiceOrbBuilder() {
               { value: "halftone", label: "Halftone" },
               { value: "plasma", label: "Plasma" },
               { value: "liquid", label: "Liquid" },
+              { value: "glass", label: "Glass" },
+              { value: "dot", label: "Dot" },
             ]}
           />
           {paletted(c.variant) && (
@@ -190,7 +301,16 @@ export function VoiceOrbBuilder() {
                 { value: "ember", label: "Ember" },
                 { value: "cocoa", label: "Cocoa" },
                 { value: "mist", label: "Mist" },
+                { value: "custom", label: "Custom" },
               ]}
+            />
+          )}
+          {paletted(c.variant) && c.palette === "custom" && (
+            <ColorRow
+              label="Colors"
+              names={["Base", "Field 1", "Field 2", "Field 3"]}
+              values={c.custom}
+              onChange={set("custom")}
             />
           )}
           {usesColor(c) && (
@@ -204,7 +324,7 @@ export function VoiceOrbBuilder() {
               ]}
             />
           )}
-          <Range label="Size" value={c.size} min={96} max={320} step={8} unit="px" onChange={set("size")} />
+          <Range label="Size" value={c.size} {...range} unit="px" onChange={set("size")} />
           <Range label="Glow" value={c.glow} min={0} max={1} step={0.05} onChange={set("glow")} />
           {c.variant === "particles" && (
             <Range
@@ -241,8 +361,28 @@ export function VoiceOrbBuilder() {
         </div>
         <TabsContent value="preview">
           <div className="flex h-160 flex-col overflow-hidden rounded-2xl border bg-background">
-            <div className="flex flex-1 items-center justify-center p-6">
-              <Orb c={c} state={state} level={level} />
+            <div className="flex justify-center border-b p-3">
+              <ToggleGroup
+                value={[surface]}
+                onValueChange={(v) => v[0] && setSurface(v[0] as Surface)}
+                variant="outline"
+                size="sm"
+                aria-label="Preview surface"
+              >
+                <ToggleGroupItem value="stage">Stage</ToggleGroupItem>
+                <ToggleGroupItem value="panel">Side panel</ToggleGroupItem>
+                <ToggleGroupItem value="call">Call</ToggleGroupItem>
+                <ToggleGroupItem value="compact">Compact</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+            <div className="flex min-h-0 flex-1 overflow-auto p-6">
+              {/* Auto margins centre the surface but let it scroll from the top when taller than the stage. */}
+              <div className="m-auto flex w-full justify-center">
+                {surface === "stage" && <Orb {...surfaceProps} />}
+                {surface === "panel" && <PanelSurface {...surfaceProps} />}
+                {surface === "call" && <CallSurface {...surfaceProps} />}
+                {surface === "compact" && <CompactSurface {...surfaceProps} />}
+              </div>
             </div>
             <div className="flex flex-col items-center gap-4 border-t p-5">
               <p className="text-sm text-muted-foreground" aria-live="polite">

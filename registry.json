@@ -801,7 +801,7 @@
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",
-      "description": "Presence for a voice agent, drawn in the primary color. Eight variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, and two WebGL shaders, plasma and liquid. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
+      "description": "Presence for a voice agent, drawn in the primary color. Ten variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, three WebGL shaders (plasma, liquid and glass), and a minimal dot for small spots. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
       "dependencies": [
         "cn"
       ],

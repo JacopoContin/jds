@@ -699,7 +699,7 @@ const { status, sendMessage, stop } = useChat()
     slug: "voice-orb",
     title: "Voice Orb",
     description:
-      "Presence for a voice agent, drawn in the primary color. Eight variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, and two WebGL shaders, plasma and liquid. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
+      "Presence for a voice agent, drawn in the primary color. Ten variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, three WebGL shaders (plasma, liquid and glass), and a minimal dot for small spots. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
@@ -719,7 +719,7 @@ const { status, sendMessage, stop } = useChat()
         props: [
           {
             name: "variant",
-            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid"',
+            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"',
             default: 'provider, else "particles"',
             description: "Visual style. Omit to use the nearest VoiceOrbProvider.",
           },
@@ -749,14 +749,14 @@ const { status, sendMessage, stop } = useChat()
             type: "number",
             default: "160",
             description:
-              "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Color follows --primary; override with a text-* class.",
+              "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Dot is built for 16 to 48px. Color follows --primary; override with a text-* class.",
           },
           {
             name: "palette",
             type: '"primary" | "iris" | "ember" | "cocoa" | "mist" | string[]',
             default: '"primary"',
             description:
-              "Aura, plasma and liquid. A named palette, or four colors: base, then three fields. Primary builds shades of --primary.",
+              "Aura, plasma, liquid and glass. A named palette, or four colors: base, then three fields. Primary builds shades of --primary.",
           },
           {
             name: "particles",
@@ -771,7 +771,7 @@ const { status, sendMessage, stop } = useChat()
         props: [
           {
             name: "variant",
-            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid"',
+            type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"',
             description: "Default variant for every VoiceOrb inside.",
           },
         ],

@@ -61,6 +61,8 @@ const orbs: { value: VoiceOrbVariant; label: string }[] = [
   { value: "halftone", label: "Halftone" },
   { value: "plasma", label: "Plasma" },
   { value: "liquid", label: "Liquid" },
+  { value: "glass", label: "Glass" },
+  { value: "dot", label: "Dot" },
 ]
 
 function readDom(attr: DomSetting) {

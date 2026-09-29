@@ -114,3 +114,36 @@ export function Text({ label, value, onChange }: { label: string; value: string;
     </div>
   )
 }
+
+/** A row of named color swatches, each opening the native color picker. */
+export function ColorRow({
+  label,
+  names,
+  values,
+  onChange,
+}: {
+  label: string
+  names: string[]
+  values: string[]
+  onChange: (v: string[]) => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label>{label}</Label>
+      <div className="grid grid-cols-4 gap-2">
+        {values.map((value, i) => (
+          <label key={names[i]} className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
+            <input
+              type="color"
+              value={value}
+              aria-label={names[i]}
+              onChange={(e) => onChange(values.map((v, j) => (j === i ? e.target.value : v)))}
+              className="h-8 w-full cursor-pointer rounded-md border bg-transparent p-0.5"
+            />
+            {names[i]}
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}

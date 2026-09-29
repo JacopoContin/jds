@@ -7,7 +7,7 @@ import { VoiceOrb, type VoiceOrbVariant, type VoiceState } from "@/components/vo
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
 const states: VoiceState[] = ["idle", "listening", "thinking", "speaking"]
-const variants: VoiceOrbVariant[] = ["particles", "ring", "aura", "plasma", "liquid", "bars", "halftone", "wave"]
+const variants: VoiceOrbVariant[] = ["particles", "ring", "aura", "plasma", "liquid", "glass", "bars", "halftone", "wave", "dot"]
 
 export default function VoiceOrbVariantsDemo() {
   const [state, setState] = React.useState<VoiceState>("listening")
@@ -18,7 +18,7 @@ export default function VoiceOrbVariantsDemo() {
       <div className="grid w-full grid-cols-2 gap-8 sm:grid-cols-4">
         {variants.map((v) => (
           <div key={v} className="flex flex-col items-center justify-end gap-3">
-            <VoiceOrb variant={v} state={state} level={level} size={v === "wave" ? 70 : 130} />
+            <VoiceOrb variant={v} state={state} level={level} size={v === "wave" ? 70 : v === "dot" ? 40 : 130} />
             <code className="font-mono text-xs text-muted-foreground">{v}</code>
           </div>
         ))}

@@ -868,7 +868,68 @@ function HalftoneOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 
   return orbFrame("halftone", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
-/* ---------- Shader orbs: plasma and liquid ---------- */
+/* ---------- Dot: minimal presence for tight spots ---------- */
+
+const dotTargets: Record<VoiceState, { breathe: number; react: number; arc: number; spin: number }> = {
+  idle: { breathe: 1, react: 0, arc: 0, spin: 0.5 },
+  connecting: { breathe: 0, react: 0, arc: 0.6, spin: 2 },
+  listening: { breathe: 0.3, react: 1, arc: 0, spin: 0.5 },
+  thinking: { breathe: 0, react: 0, arc: 1, spin: 4 },
+  speaking: { breathe: 0.3, react: 1.2, arc: 0, spin: 0.5 },
+  error: { breathe: 0, react: 0, arc: 0, spin: 0 },
+}
+
+/** Circumference of the arc track (r = 42 in a 100 box). */
+const DOT_TRACK = 2 * Math.PI * 42
+
+/**
+ * A single dot for composer buttons, headers and call pills, legible down to 16px.
+ * Breathes when idle, swells with a halo on `level` while listening or speaking, and
+ * an arc circles it while connecting or thinking.
+ */
+function DotOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
+  const core = React.useRef<SVGCircleElement>(null)
+  const halo = React.useRef<SVGCircleElement>(null)
+  const arc = React.useRef<SVGCircleElement>(null)
+  const angle = React.useRef(0)
+
+  useOrbLoop(state, level, speed, dotTargets, (c) => {
+    angle.current += c.spin * c.dt
+    const swell = c.react * c.level
+    core.current?.setAttribute("r", (24 * (1 + c.breathe * 0.05 * Math.sin(c.time * 2) + swell * 0.3)).toFixed(2))
+    halo.current?.setAttribute("r", (30 + swell * 14).toFixed(2))
+    halo.current?.setAttribute("opacity", Math.min(0.45, swell * 0.6).toFixed(2))
+    arc.current?.setAttribute("opacity", c.arc.toFixed(2))
+    arc.current?.setAttribute("transform", `rotate(${((angle.current * 180) / Math.PI).toFixed(1)} 50 50)`)
+  })
+
+  return orbFrame(
+    "dot",
+    state,
+    size,
+    glow,
+    className,
+    props,
+    <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+      <circle ref={halo} cx="50" cy="50" r="30" fill="currentColor" opacity="0" />
+      <circle
+        ref={arc}
+        cx="50"
+        cy="50"
+        r="42"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeDasharray={`${DOT_TRACK * 0.28} ${DOT_TRACK}`}
+        opacity="0"
+      />
+      <circle ref={core} cx="50" cy="50" r="24" fill="currentColor" />
+    </svg>,
+  )
+}
+
+/* ---------- Shader orbs: plasma, liquid and glass ---------- */
 
 const VERTEX = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"
 
@@ -1133,7 +1194,77 @@ function LiquidOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
   )
 }
 
-type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid"
+const glassTargets: Record<VoiceState, { pace: number; core: number; swirl: number }> = {
+  idle: { pace: 0.4, core: 0.9, swirl: 0 },
+  connecting: { pace: 1, core: 0.6, swirl: 0.5 },
+  listening: { pace: 0.8, core: 1.1, swirl: 0 },
+  thinking: { pace: 1.5, core: 0.9, swirl: 1 },
+  speaking: { pace: 1.1, core: 1.2, swirl: 0.2 },
+  error: { pace: 0.15, core: 0.7, swirl: 0 },
+}
+
+/** Colored light seen through a thick glass sphere: refraction, dispersion, fresnel rim and highlights. */
+const GLASS = `uniform float u_phase;
+uniform float u_core;
+uniform float u_swirl;
+vec3 inner(vec2 p){
+  vec3 col=u_c0*.55;
+  float size=u_core*(1.+u_level*.4)*.75;
+  for(int i=0;i<3;i++){
+    float fi=float(i);
+    float a=u_phase*(.6+fi*.3)*(1.+u_swirl)+fi*2.1;
+    vec2 c=vec2(cos(a),sin(a*.8))*.32;
+    vec3 ci=fi<.5?u_c1:fi<1.5?u_c2:u_c3;
+    // Mixed rather than added, so overlapping light never blows out to white.
+    col=mix(col,ci,smoothstep(size,0.,length(p-c))*.8);
+  }
+  return col;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy*2.-u_res)/u_res.y;
+  float R=.9;
+  vec2 q=uv/R;
+  float r=length(q);
+  float aa=3./u_res.y;
+  float mask=1.-smoothstep(1.-aa,1.+aa,r);
+  if(mask<=0.){gl_FragColor=vec4(0.);return;}
+  float z=sqrt(max(0.,1.-r*r));
+  vec3 n=vec3(q,z);
+  // Thick glass magnifies the centre and bends the edges; channels bend slightly apart.
+  vec2 rp=q*(.55+.45*z);
+  float disp=.06*(1.-z);
+  vec3 col=vec3(inner(rp*(1.+disp)).r,inner(rp).g,inner(rp*(1.-disp)).b);
+  // Thicker glass toward the rim absorbs more; the very edge catches a bright fresnel line.
+  col*=.55+.45*z;
+  float fres=pow(1.-z,4.);
+  col=mix(col,vec3(1.),fres*.65);
+  vec3 L=normalize(vec3(-.5,.6,.8));
+  col+=pow(max(dot(reflect(-L,n),vec3(0.,0.,1.)),0.),60.)*.9;
+  col+=pow(max(dot(reflect(-normalize(vec3(.6,-.5,.6)),n),vec3(0.,0.,1.)),0.),12.)*.12;
+  gl_FragColor=vec4(col*mask,mask);
+}`
+
+/**
+ * A glass sphere with colored light drifting inside, bent and split by the glass.
+ * The light swells with `level`, circles faster while thinking, and pulls in while
+ * connecting. `palette` picks the colors.
+ */
+function GlassOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+  const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, GLASS, glassTargets)
+  return orbFrame(
+    "glass",
+    state,
+    size,
+    glow,
+    className,
+    rest,
+    <canvas ref={canvasRef} className="size-full" />,
+    paletteGlow(palette, state === "error"),
+  )
+}
+
+type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"
 
 const VoiceOrbContext = React.createContext<VoiceOrbVariant>("particles")
 
@@ -1147,8 +1278,9 @@ function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; chi
  * `particles`: a rotating particle mesh. `ring`: a soft glowing ring.
  * `wave`: twisting ribbons along a line, twice as wide as `size`.
  * `aura`: soft blurred blobs. `bars`: a circular equalizer. `halftone`: a rippling dot matrix.
- * `plasma`: glowing warped noise in a sphere. `liquid`: glossy merging metaballs. Both are
- * WebGL shaders and fall back to `aura` where WebGL is unavailable.
+ * `plasma`: glowing warped noise in a sphere. `liquid`: glossy merging metaballs. `glass`: light
+ * refracted through a glass sphere. These three are WebGL shaders and fall back to `aura`
+ * where WebGL is unavailable. `dot`: a minimal dot for tight spots, legible down to 16px.
  * Every variant takes the same states, `speed`, `glow` and `sensitivity`.
  */
 function VoiceOrb({
@@ -1165,7 +1297,7 @@ function VoiceOrb({
   variant?: VoiceOrbVariant
   /** Particle count for the particles variant. */
   particles?: number
-  /** Aura, plasma and liquid colors: a named palette, custom colors (base + 3), or "primary" (default). */
+  /** Aura, plasma, liquid and glass colors: a named palette, custom colors (base + 3), or "primary" (default). */
   palette?: Palette
 }) {
   const fallback = React.useContext(VoiceOrbContext)
@@ -1176,6 +1308,8 @@ function VoiceOrb({
   if (resolved === "wave") return <WaveOrb {...props} />
   if (resolved === "aura") return <AuraOrb palette={palette} {...props} />
   if (resolved === "plasma") return webgl ? <PlasmaOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
+  if (resolved === "glass") return webgl ? <GlassOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
+  if (resolved === "dot") return <DotOrb {...props} />
   if (resolved === "liquid") return webgl ? <LiquidOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
   if (resolved === "bars") return <BarsOrb {...props} />
   if (resolved === "halftone") return <HalftoneOrb {...props} />
