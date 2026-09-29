@@ -71,11 +71,12 @@ function ModelPicker({
             variant="ghost"
             size="sm"
             data-slot="model-picker"
-            className={cn("gap-1 text-muted-foreground", className)}
+            // Shrinks and truncates in a tight toolbar so the send button never gets pushed out.
+            className={cn("min-w-0 shrink gap-1 text-muted-foreground", className)}
           />
         }
       >
-        {current?.name ?? "Select model"}
+        <span className="truncate">{current?.name ?? "Select model"}</span>
         <SelectIcon className="size-3 opacity-50" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">

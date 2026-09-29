@@ -23,6 +23,7 @@ import {
 } from "@/components/ai/prompt-input"
 import { PromptInputMentions, type Mention } from "@/components/ai/prompt-input-mentions"
 import { PromptInputMic } from "@/components/ai/prompt-input-mic"
+import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"
 import { PromptInputScope, type Scope } from "@/components/ai/prompt-input-scope"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 import { CopyButton } from "@/components/docs/copy-button"
@@ -38,8 +39,8 @@ type Config = {
   placeholder: string
   header: boolean
   headerText: string
-  /** Where option chips sit: a footer row under the input, inline in the toolbar, or nowhere. */
-  options: "footer" | "toolbar" | "off"
+  /** Where options sit: chips in a footer row, folded into a toolbar menu (fits any width), or nowhere. */
+  options: "footer" | "menu" | "off"
   web: boolean
   research: boolean
   think: boolean
@@ -92,7 +93,7 @@ const presets: { name: string; body: string; config: Partial<Config> }[] = [
   { name: "Chat", body: "Attach, model, dictation", config: {} },
   {
     name: "Research",
-    body: "Search and research chips",
+    body: "Search, research and think tools",
     config: { options: "footer", web: true, research: true, think: true, model: false, suggestions: "below" },
   },
   {
@@ -207,18 +208,24 @@ function generateCode(c: Config) {
   const imports: string[] = []
   const options = c.options === "off" ? [] : chips(c)
 
-  const chipNodes: Node[] = options.map((k) => {
-    icons.push(optionMeta[k].icon)
-    return { tag: "PromptInputOption", props: [`icon={<${optionMeta[k].icon} />}`], text: optionMeta[k].label }
-  })
-  if (options.length) parts.add("PromptInputOption")
+  const chipNodes: Node[] =
+    c.options === "footer"
+      ? options.map((k) => {
+          icons.push(optionMeta[k].icon)
+          return { tag: "PromptInputOption", props: [`icon={<${optionMeta[k].icon} />}`], text: optionMeta[k].label }
+        })
+      : []
+  if (chipNodes.length) parts.add("PromptInputOption")
 
   const tools: Node[] = []
   if (c.attach) {
     parts.add("PromptInputAttachButton").add("PromptInputAttachments")
     tools.push("<PromptInputAttachButton />")
   }
-  if (c.options === "toolbar") tools.push(...chipNodes)
+  if (c.options === "menu" && options.length) {
+    imports.push(`import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"`)
+    tools.push("<PromptInputOptionMenu options={tools} value={enabled} onValueChange={setEnabled} />")
+  }
 
   const actions: Node[] = []
   if (c.context) {
@@ -262,7 +269,7 @@ function generateCode(c: Config) {
     tag: "PromptInputToolbar",
     children: [
       tools.length ? { tag: "PromptInputTools", children: tools } : "<PromptInputTools />",
-      actions.length > 1 ? { tag: "div", props: ['className="flex items-center gap-1"'], children: actions } : actions[0],
+      actions.length > 1 ? { tag: "div", props: ['className="flex min-w-0 items-center gap-1"'], children: actions } : actions[0],
     ],
   })
   let composer: Node = { tag: "PromptInput", props: inputProps, children: inputChildren }
@@ -370,9 +377,14 @@ function Composer({ c, status }: { c: Config; status: ChatStatus }) {
       <PromptInputToolbar>
         <PromptInputTools>
           {c.attach && <PromptInputAttachButton />}
-          {c.options === "toolbar" && chipEls}
+          {c.options === "menu" && options.length > 0 && (
+            <PromptInputOptionMenu
+              options={options.map((k) => ({ id: k, label: optionMeta[k].label, icon: optionMeta[k].node }))}
+              defaultValue={["web"]}
+            />
+          )}
         </PromptInputTools>
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 items-center gap-1">
           {c.context && <ContextMeter used={128_000} max={200_000} showLabel={false} />}
           {c.model && <ModelPicker models={models} defaultValue="sonnet" />}
           {c.mic && <PromptInputMic />}
@@ -528,14 +540,14 @@ export function PromptInputBuilder() {
             ]}
           />
         </ControlGroup>
-        <ControlGroup title="Options">
+        <ControlGroup title="Tools">
           <Segmented
             label="Placement"
             value={c.options}
             onChange={set("options")}
             options={[
               { value: "footer", label: "Footer" },
-              { value: "toolbar", label: "Toolbar" },
+              { value: "menu", label: "Menu" },
               { value: "off", label: "Off" },
             ]}
           />
@@ -547,7 +559,7 @@ export function PromptInputBuilder() {
             </>
           )}
         </ControlGroup>
-        <ControlGroup title="Tools">
+        <ControlGroup title="Composer">
           <Toggle label="Attachments" checked={c.attach} onChange={set("attach")} />
           <Toggle label="@ mentions" checked={c.mentions} onChange={set("mentions")} />
           <Toggle label="Model picker" checked={c.model} onChange={set("model")} />

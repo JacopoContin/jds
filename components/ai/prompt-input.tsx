@@ -253,7 +253,7 @@ function PromptInputToolbar({ className, ...props }: React.ComponentProps<"div">
 }
 
 function PromptInputTools({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="prompt-input-tools" className={cn("flex items-center gap-1", className)} {...props} />
+  return <div data-slot="prompt-input-tools" className={cn("flex min-w-0 items-center gap-1", className)} {...props} />
 }
 
 function PromptInputAttachButton(props: React.ComponentProps<typeof Button>) {
