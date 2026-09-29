@@ -19,6 +19,8 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Studio Code tabs: choose whether choices apply to one component or the whole app, and Copy as Markdown for a spec to hand to a teammate or a coding agent.",
+          "VoiceOrbProvider takes the full orb style (palette, glow, speed, sensitivity, material), not just the variant, so one provider styles every orb in an app.",
           "Conversation Studio: bubbles, shape, density, avatars and actions, plus how reasoning, plans, tool calls, approvals, sources and artifacts show in a turn, working or done, on a page or in a side panel.",
           "Conversation bubbles, shape and density props, applied to every Message inside (or via MessageStyleProvider).",
           "Agent side panel recipe, rebuilt on Agent Panel: panel, orb and composer come from their Studios, chat plus hold-to-talk voice whose turns land in the chat, and a session shaped like the AI SDK's useChat.",

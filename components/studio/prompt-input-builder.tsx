@@ -26,8 +26,9 @@ import { PromptInputMic } from "@/components/ai/prompt-input-mic"
 import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"
 import { PromptInputScope, type Scope } from "@/components/ai/prompt-input-scope"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
-import { CopyButton } from "@/components/docs/copy-button"
 import { CodePanel } from "@/components/studio/code-panel"
+import { installFromCode, studioMarkdown } from "@/components/studio/markdown"
+import { StudioCode } from "@/components/studio/studio-code"
 import { render, type Node } from "@/components/studio/jsx"
 import { ControlGroup, Segmented, Text, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
@@ -344,6 +345,38 @@ function generateCode(c: Config) {
   return `${[...new Set(head)].join("\n")}\n\n${render(root)}`
 }
 
+function generateMarkdown(c: Config, code: string) {
+  const tools = chips(c).map((k) => optionMeta[k].label.toLowerCase())
+  const on = (v: boolean) => (v ? "on" : "off")
+  return studioMarkdown({
+    title: "Prompt input",
+    intro: "A composer with these settings. They apply to this composer only.",
+    choices: [
+      ["Placeholder", `"${c.placeholder}"`],
+      ["Context header", c.header ? `"${c.headerText}"` : "off"],
+      ["Scope picker", c.scope ? `"${c.scopeLabel}"` : "off"],
+      ["Caption", c.caption ? `"${c.captionText}"` : "off"],
+      ["Suggestions", c.suggestions],
+      ["Tools", c.options === "off" || !tools.length ? "off" : `${tools.join(", ")} (${c.options === "menu" ? "in a toolbar menu" : "as footer chips"})`],
+      ["Attachments", on(c.attach)],
+      ["@ mentions", on(c.mentions)],
+      ["Model picker", on(c.model)],
+      ["Context meter", on(c.context)],
+      ["Dictation", on(c.mic)],
+      ["Voice mode button", on(c.voice)],
+      ["Send button", `${c.submitShape}, ${c.submitStyle}`],
+      ["Send with", c.submitOn === "mod-enter" ? "⌘/Ctrl+Enter (Enter adds a line)" : "Enter (Shift+Enter adds a line)"],
+    ],
+    install: installFromCode(code),
+    placement: [
+      "Render the composer under the conversation, or in the footer of a side panel.",
+      "Wire it to useChat: status, sendMessage and stop. Define the lists it references (models, mentionables, modules) and their state.",
+    ],
+    code,
+    notes: ["Inside the agent-side-panel recipe, pass it as composer; the recipe supplies status, sendMessage and stop."],
+  })
+}
+
 /** The same composer dropped into the Agent side panel recipe, which supplies status, sendMessage and stop. */
 function generateRecipeCode(code: string) {
   const jsx = code.slice(code.indexOf("\n\n") + 2)
@@ -644,29 +677,38 @@ export function PromptInputBuilder() {
           </div>
         </TabsContent>
         <TabsContent value="code" className="min-h-0 overflow-y-auto">
-          <div className="relative overflow-hidden rounded-2xl border bg-card">
-            <CopyButton value={code} className="absolute top-3 right-3" />
-            <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{code}</pre>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Install with <code className="font-mono">npx shadcn@latest add @jds/prompt-input</code> plus each add-on you
-            use. <code className="font-mono">status</code>, <code className="font-mono">sendMessage</code> and{" "}
-            <code className="font-mono">stop</code> come from the AI SDK&apos;s <code className="font-mono">useChat</code>.
-          </p>
-          <div className="mt-8">
-            <CodePanel
-              title="In the Agent side panel recipe"
-              code={generateRecipeCode(code)}
-              note={
-                <>
-                  The recipe passes <code className="font-mono">status</code>,{" "}
-                  <code className="font-mono">sendMessage</code> and <code className="font-mono">stop</code>. For voice
-                  mode inside the panel, use <code className="font-mono">&lt;AgentPanelVoiceButton /&gt;</code> in place
-                  of a custom voice button.
-                </>
-              }
-            />
-          </div>
+          <StudioCode
+            markdown={() => generateMarkdown(c, code)}
+            scopes={[
+              {
+                value: "instance",
+                label: "This composer",
+                code,
+                note: (
+                  <>
+                    Configures this composer only. <code className="font-mono">status</code>,{" "}
+                    <code className="font-mono">sendMessage</code> and <code className="font-mono">stop</code> come from
+                    the AI SDK&apos;s <code className="font-mono">useChat</code>.
+                  </>
+                ),
+              },
+            ]}
+          >
+            <div className="mt-4">
+              <CodePanel
+                title="In the Agent side panel recipe"
+                code={generateRecipeCode(code)}
+                note={
+                  <>
+                    The recipe passes <code className="font-mono">status</code>,{" "}
+                    <code className="font-mono">sendMessage</code> and <code className="font-mono">stop</code>. For voice
+                    mode inside the panel, use <code className="font-mono">&lt;AgentPanelVoiceButton /&gt;</code> in place
+                    of a custom voice button.
+                  </>
+                }
+              />
+            </div>
+          </StudioCode>
         </TabsContent>
       </Tabs>
     </div>

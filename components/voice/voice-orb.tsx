@@ -1337,11 +1337,23 @@ function GlassOrb({
 
 type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"
 
-const VoiceOrbContext = React.createContext<VoiceOrbVariant>("particles")
+/** Style an orb can take from a provider. Size stays per orb, since it depends on where the orb sits. */
+type OrbStyle = OrbMaterial &
+  Pick<OrbProps, "glow" | "speed" | "className"> & {
+    variant?: VoiceOrbVariant
+    palette?: Palette
+    sensitivity?: number
+  }
 
-/** Sets the default orb variant for everything inside it. A `variant` prop still wins. */
-function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; children: React.ReactNode }) {
-  return <VoiceOrbContext.Provider value={variant}>{children}</VoiceOrbContext.Provider>
+const VoiceOrbContext = React.createContext<OrbStyle>({})
+
+/**
+ * Sets the default orb style for everything inside it: variant, palette, glow, speed,
+ * sensitivity and material. Put it at the root to style every orb in an app; any prop on
+ * a VoiceOrb still wins, and classes are combined.
+ */
+function VoiceOrbProvider({ children, ...style }: OrbStyle & { children: React.ReactNode }) {
+  return <VoiceOrbContext.Provider value={style}>{children}</VoiceOrbContext.Provider>
 }
 
 /**
@@ -1376,33 +1388,37 @@ type OrbMaterial = {
   gloss?: number
 }
 
-function VoiceOrb({
-  variant,
-  palette,
-  level = 0,
-  sensitivity = 1,
-  particles,
-  thickness,
-  grain,
-  bars,
-  density,
-  turbulence,
-  filaments,
-  blobs,
-  gloss,
-  ...rest
-}: OrbProps &
+type VoiceOrbProps = OrbProps &
   OrbMaterial & {
-  /** How strongly `level` moves the orb. 1 is as measured; 2 doubles it, capped at full. */
-  sensitivity?: number
-  /** Defaults to the nearest VoiceOrbProvider, then "particles". */
-  variant?: VoiceOrbVariant
-  /** Aura, plasma, liquid and glass colors: a named palette, custom colors (base + 3), or "primary" (default). */
-  palette?: Palette
-}) {
-  const fallback = React.useContext(VoiceOrbContext)
+    /** How strongly `level` moves the orb. 1 is as measured; 2 doubles it, capped at full. */
+    sensitivity?: number
+    /** Defaults to the nearest VoiceOrbProvider, then "particles". */
+    variant?: VoiceOrbVariant
+    /** Aura, plasma, liquid and glass colors: a named palette, custom colors (base + 3), or "primary" (default). */
+    palette?: Palette
+  }
+
+function VoiceOrb(own: VoiceOrbProps) {
+  const defaults = React.useContext(VoiceOrbContext)
+  // Props set on this orb win over the provider's; unset ones fall through to it.
+  const set = Object.fromEntries(Object.entries(own).filter(([, v]) => v !== undefined)) as VoiceOrbProps
+  const {
+    variant: resolved = "particles",
+    palette,
+    level = 0,
+    sensitivity = 1,
+    particles,
+    thickness,
+    grain,
+    bars,
+    density,
+    turbulence,
+    filaments,
+    blobs,
+    gloss,
+    ...rest
+  }: VoiceOrbProps = { ...defaults, ...set, className: cn(defaults.className, own.className) || undefined }
   const webgl = React.useSyncExternalStore(noSubscribe, hasWebGL, () => true)
-  const resolved = variant ?? fallback
   const props = { ...rest, level: Math.min(1, level * sensitivity) }
   const aura = <AuraOrb palette={palette} grain={grain} {...props} />
   if (resolved === "ring") return <RingOrb thickness={thickness} {...props} />
@@ -1425,6 +1441,7 @@ export {
   auraPalettes,
   type OrbMaterial,
   type OrbPalette,
+  type OrbStyle,
   type VoiceOrbVariant,
   type VoiceState,
 }

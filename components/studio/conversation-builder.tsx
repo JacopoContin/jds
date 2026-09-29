@@ -20,7 +20,8 @@ import { Response } from "@/components/ai/response"
 import { TypingIndicator } from "@/components/ai/shimmer"
 import { Citation, Sources, type Source } from "@/components/ai/sources"
 import { ToolCall, ToolCallContent, ToolCallHeader, ToolCallSection } from "@/components/ai/tool-call"
-import { CodePanel } from "@/components/studio/code-panel"
+import { installFromCode, studioMarkdown } from "@/components/studio/markdown"
+import { StudioCode } from "@/components/studio/studio-code"
 import { ControlGroup, Segmented, Toggle } from "@/components/studio/controls"
 import { render, type Node } from "@/components/studio/jsx"
 import { Button } from "@/components/ui/button"
@@ -107,7 +108,8 @@ const steps = (phase: Phase): AgentStep[] => [
 
 /* ---------- Code generation ---------- */
 
-function generateCode(c: Config) {
+/** The conversation markup. With `styled`, bubbles, shape and density go on this Conversation. */
+function generateCode(c: Config, styled = true) {
   const imports = new Map<string, Set<string>>()
   const need = (from: string, ...names: string[]) => {
     const set = imports.get(from) ?? new Set<string>()
@@ -198,10 +200,7 @@ function generateCode(c: Config) {
     })
   }
 
-  const style: string[] = []
-  if (c.bubbles !== "user") style.push(`bubbles="${c.bubbles}"`)
-  if (c.shape !== "tail") style.push(`shape="${c.shape}"`)
-  if (c.density !== "comfortable") style.push(`density="${c.density}"`)
+  const style = styled ? styleProps(c) : []
 
   const tree: Node = {
     tag: "Conversation",
@@ -230,6 +229,71 @@ function generateCode(c: Config) {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([from, names]) => `import { ${order(names).join(", ")} } from "${from}"`)
   return `${head.join("\n")}\n\n${render(tree)}`
+}
+
+/** Message style settings that differ from the defaults, as JSX attributes. */
+function styleProps(c: Config) {
+  const style: string[] = []
+  if (c.bubbles !== "user") style.push(`bubbles="${c.bubbles}"`)
+  if (c.shape !== "tail") style.push(`shape="${c.shape}"`)
+  if (c.density !== "comfortable") style.push(`density="${c.density}"`)
+  return style
+}
+
+/** The same look for every conversation: a provider in the root layout, then plain conversations. */
+function generateAppCode(c: Config) {
+  const provider = styleProps(c)
+  return `// app/layout.tsx: once, around your whole app
+import { MessageStyleProvider } from "@/components/ai/message"
+
+<MessageStyleProvider${provider.length ? " " + provider.join(" ") : ""}>
+  {children}
+</MessageStyleProvider>
+
+// Any conversation, anywhere in the app, picks it up
+${generateCode(c, false)}`
+}
+
+const choices = (c: Config): [string, string][] => [
+  ["Bubbles", { user: "user only", all: "user and agent", none: "none" }[c.bubbles]],
+  ...(c.bubbles !== "none" ? ([["Bubble shape", c.shape]] as [string, string][]) : []),
+  ["Density", c.density],
+  ["Avatars", { none: "none", assistant: "agent only", both: "user and agent" }[c.avatars]],
+  ["Message actions", c.actions ? "copy and regenerate" : "off"],
+  ["Reasoning", c.reasoning ? "shown, collapses when done" : "hidden"],
+  ["Plan", c.plan ? "shown" : "hidden"],
+  ["Tool calls", c.tools],
+  ["Approval", c.approval ? "inline card" : "off"],
+  ["Sources", { list: "cards under the answer", citations: "inline citations", both: "inline citations and cards", off: "off" }[c.sources]],
+  ["Artifact card", c.artifact ? "shown" : "off"],
+]
+
+function generateMarkdown(c: Config, scope: string) {
+  const app = scope === "app"
+  const code = app ? generateAppCode(c) : generateCode(c)
+  return studioMarkdown({
+    title: "Conversation style",
+    intro: app
+      ? "Apply this conversation style to every conversation in the app."
+      : "Apply this conversation style to one conversation. Other conversations keep the defaults.",
+    choices: choices(c),
+    install: installFromCode(code),
+    placement: app
+      ? [
+          "Wrap the app once in MessageStyleProvider, in the root layout (app/layout.tsx), with the bubbles, shape and density above.",
+          "Render conversations anywhere; they pick up the style. Props on a single Conversation override it there.",
+          "Map your useChat message parts onto the parts in the code: reasoning, tool calls, sources.",
+        ]
+      : [
+          "Render this Conversation where the chat lives. Bubbles, shape and density are props on it, so they style this conversation only.",
+          "Map your useChat message parts onto the parts in the code: reasoning, tool calls, sources.",
+        ],
+    code,
+    notes: [
+      "Avatars, message actions and activity parts are elements in the code, so they appear only where you render them.",
+      "Part state names follow the AI SDK, so part.state and part.input come straight from useChat.",
+    ],
+  })
 }
 
 /* ---------- Preview ---------- */
@@ -476,15 +540,31 @@ export function ConversationBuilder() {
           </div>
         </TabsContent>
         <TabsContent value="code" className="min-h-0 overflow-y-auto">
-          <CodePanel
-            code={code}
-            note={
-              <>
-                Each part installs on its own, e.g. <code className="font-mono">npx shadcn@latest add @jds/message</code>
-                . Part names follow the AI SDK&apos;s message parts, so <code className="font-mono">part.state</code>{" "}
-                and friends come straight from <code className="font-mono">useChat</code>.
-              </>
-            }
+          <StudioCode
+            markdown={(scope) => generateMarkdown(c, scope)}
+            scopes={[
+              {
+                value: "instance",
+                label: "This conversation",
+                code,
+                note: (
+                  <>
+                    Styles this conversation only; other conversations in your app keep the defaults. Part names follow
+                    the AI SDK, so <code className="font-mono">part.state</code> comes straight from{" "}
+                    <code className="font-mono">useChat</code>.
+                  </>
+                ),
+              },
+              {
+                value: "app",
+                label: "Whole app",
+                code: generateAppCode(c),
+                note:
+                  styleProps(c).length === 0
+                    ? "These are the default bubbles, shape and density, so the provider is optional. Avatars, actions and activity parts are still per conversation."
+                    : "Every conversation inside the provider gets this look; props on a single Conversation override it. Avatars, actions and activity parts are still per conversation.",
+              },
+            ]}
           />
         </TabsContent>
       </Tabs>

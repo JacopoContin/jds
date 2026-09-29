@@ -29,8 +29,9 @@ import {
 } from "@/components/ai/prompt-input"
 import { PromptInputMic } from "@/components/ai/prompt-input-mic"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
-import { CopyButton } from "@/components/docs/copy-button"
 import { CodePanel } from "@/components/studio/code-panel"
+import { installFromCode, studioMarkdown } from "@/components/studio/markdown"
+import { StudioCode } from "@/components/studio/studio-code"
 import { ControlGroup, Range, Segmented, Text, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -101,6 +102,34 @@ function generateRecipeCode(c: Config) {
   if (c.title !== "Agent") props.push(`title="${c.title}"`)
   if (c.context) props.push('context="Orders · 128 rows"')
   return `<AgentSidePanel\n  ${props.join("\n  ")}\n/>`
+}
+
+function generateMarkdown(c: Config) {
+  const code = generateCode(c)
+  return studioMarkdown({
+    title: "Agent side panel",
+    intro: "An agent side panel with these settings. The props apply to this panel only.",
+    choices: [
+      ["Side", c.side],
+      ["Style", c.variant === "floating" ? `floating, ${c.inset}px from the edges` : "docked to the edge"],
+      ["Surface", { card: "card", background: "page", glass: "glass" }[c.surface]],
+      ["Width", `${c.width}px`],
+      ["Entrance", c.motion],
+      ["Title", c.title],
+      ["Header icon", c.icon],
+      ["Voice entry", { composer: "button in the composer", header: "switch in the header", both: "composer and header", off: "off" }[c.voiceEntry]],
+      ["Page context", c.context ? "shown above the composer" : "off"],
+      ["Attachments", c.attach ? "on" : "off"],
+      ["Dictation", c.mic ? "on" : "off"],
+    ],
+    install: installFromCode(code),
+    placement: [
+      "Render the panel once, near the root of the page it assists, and keep open state in the page (a header button toggles it).",
+      "Fill the chat area with your conversation and wire the composer to useChat (status, sendMessage, stop).",
+      "For a ready-made panel with chat and voice wired up, install the agent-side-panel recipe and pass these props as panel.",
+    ],
+    code,
+  })
 }
 
 function generateCode(c: Config) {
@@ -394,27 +423,31 @@ export function SidePanelBuilder() {
           </div>
         </TabsContent>
         <TabsContent value="code" className="min-h-0 overflow-y-auto">
-          <div className="relative overflow-hidden rounded-2xl border bg-card">
-            <CopyButton value={generateCode(c)} className="absolute top-3 right-3" />
-            <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateCode(c)}</pre>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Install with <code className="font-mono">npx shadcn@latest add @jds/agent-panel</code>. Only props that
-            differ from the defaults are included.
-          </p>
-          <div className="mt-8">
-            <CodePanel
-              title="In the Agent panel recipe"
-              code={generateRecipeCode(c)}
-              note={
-                <>
-                  The recipe brings chat, dictation and voice mode; leave <code className="font-mono">voice</code> out of
-                  its session to turn voice off. Install it with{" "}
-                  <code className="font-mono">npx shadcn@latest add @jds/agent-side-panel</code>.
-                </>
-              }
-            />
-          </div>
+          <StudioCode
+            markdown={() => generateMarkdown(c)}
+            scopes={[
+              {
+                value: "instance",
+                label: "This panel",
+                code: generateCode(c),
+                note: "Styles this panel only; the props sit on this AgentPanel. Only props that differ from the defaults are included.",
+              },
+            ]}
+          >
+            <div className="mt-4">
+              <CodePanel
+                title="In the Agent side panel recipe"
+                code={generateRecipeCode(c)}
+                note={
+                  <>
+                    The recipe brings chat, dictation and voice mode; leave <code className="font-mono">voice</code> out
+                    of its session to turn voice off. Install it with{" "}
+                    <code className="font-mono">npx shadcn@latest add @jds/agent-side-panel</code>.
+                  </>
+                }
+              />
+            </div>
+          </StudioCode>
         </TabsContent>
       </Tabs>
     </div>

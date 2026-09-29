@@ -826,8 +826,8 @@ const { status, sendMessage, stop } = useChat()
 <VoiceOrb state="listening" level={level} />
 <VoiceOrb variant="ring" state="thinking" />
 
-// Or set the variant once for the whole app
-<VoiceOrbProvider variant="ring">{children}</VoiceOrbProvider>`,
+// Or style every orb in the app once, at the root
+<VoiceOrbProvider variant="glass" palette="iris" glow={0.3}>{children}</VoiceOrbProvider>`,
     examples: [
       { name: "voice-orb-variants", title: "Variants" },
       { name: "voice-orb-aura", title: "Aura palettes" },
@@ -905,6 +905,12 @@ const { status, sendMessage, stop } = useChat()
             name: "variant",
             type: '"particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"',
             description: "Default variant for every VoiceOrb inside.",
+          },
+          {
+            name: "palette, glow, speed, sensitivity, …",
+            type: "same as VoiceOrb",
+            description:
+              "Any style prop except size becomes the default for every orb inside, so one provider at the root styles the whole app. Props on a VoiceOrb win; classes combine.",
           },
         ],
       },

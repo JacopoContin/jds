@@ -3,8 +3,11 @@
 import * as React from "react"
 import { cn } from "cn"
 
-import { CopyButton } from "@/components/docs/copy-button"
+import { CodePanel } from "@/components/studio/code-panel"
 import { ColorRow, ControlGroup, Range, Segmented, Toggle } from "@/components/studio/controls"
+import { render } from "@/components/studio/jsx"
+import { studioMarkdown } from "@/components/studio/markdown"
+import { StudioCode } from "@/components/studio/studio-code"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
@@ -153,6 +156,52 @@ function generateCode(c: Config) {
 <VoiceOrb
   ${p.join("\n  ")}
 />`
+}
+
+/** Every orb in the app: a provider in the root layout, then orbs that only set size and live props. */
+function generateAppCode(c: Config) {
+  const attr = ([k, v]: [string, string]) => (v.startsWith('"') ? `${k}=${v}` : `${k}={${v}}`)
+  const style = styleProps(c).filter(([k]) => k !== "size")
+  const provider = render({ tag: "VoiceOrbProvider", props: style.map(attr), children: ["{children}"] })
+  return `// app/layout.tsx: once, around your whole app
+import { VoiceOrbProvider } from "@/components/voice/voice-orb"
+
+${provider}
+
+// Any orb, anywhere in the app, picks it up
+<VoiceOrb state={state} level={level} size={${c.size}} />`
+}
+
+function generateMarkdown(c: Config, scope: string) {
+  const app = scope === "app"
+  const style = styleProps(c)
+  const choices: [string, string][] = [
+    ["Style", c.variant],
+    ["Color", c.color === "custom" ? `custom palette ${c.custom.join(", ")}` : c.color],
+    ["Size", `${c.size}px`],
+    ...style
+      .filter(([k]) => !["variant", "palette", "size", "className"].includes(k))
+      .map(([k, v]) => [k[0].toUpperCase() + k.slice(1), v] as [string, string]),
+  ]
+  return studioMarkdown({
+    title: "Voice orb style",
+    intro: app
+      ? "Apply this orb style to every voice orb in the app."
+      : "Apply this orb style to one voice orb. Other orbs keep their own props.",
+    choices,
+    install: ["voice-orb"],
+    placement: app
+      ? [
+          "Wrap the app once in VoiceOrbProvider, in the root layout (app/layout.tsx), with the props shown.",
+          "Render VoiceOrb anywhere with size, state and level; it picks up the style. Props on a single orb override it.",
+        ]
+      : [
+          "Render this VoiceOrb where the agent's presence shows: a call screen, a panel's voice mode, a composer button.",
+          "Drive state from the voice session (idle, connecting, listening, thinking, speaking, error) and level from mic or playback loudness, 0 to 1.",
+        ],
+    code: app ? generateAppCode(c) : generateCode(c),
+    notes: ["Plasma, liquid and glass are WebGL shaders and fall back to aura where WebGL isn't available."],
+  })
 }
 
 /** The same style as the `orb` prop of the Voice agent recipe, which supplies state and level itself. */
@@ -506,24 +555,42 @@ export function VoiceOrbBuilder() {
           </div>
         </TabsContent>
         <TabsContent value="code" className="min-h-0 overflow-y-auto">
-          <div className="relative overflow-hidden rounded-2xl border bg-card">
-            <CopyButton value={generateCode(c)} className="absolute top-3 right-3" />
-            <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateCode(c)}</pre>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Install with <code className="font-mono">npx shadcn@latest add @jds/voice-orb</code>. Only props that differ
-            from the defaults are included. Drive <code className="font-mono">state</code> from your session and{" "}
-            <code className="font-mono">level</code> from mic or playback loudness.
-          </p>
-          <h2 className="mt-8 mb-3 text-sm font-medium">In the Voice agent recipe</h2>
-          <div className="relative overflow-hidden rounded-2xl border bg-card">
-            <CopyButton value={generateRecipeCode(c)} className="absolute top-3 right-3" />
-            <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateRecipeCode(c)}</pre>
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            The recipe supplies state and level from its session, and the same object works as <code className="font-mono">orb</code> on the Agent side panel recipe. Install the voice agent with{" "}
-            <code className="font-mono">npx shadcn@latest add @jds/voice-agent</code>.
-          </p>
+          <StudioCode
+            markdown={(scope) => generateMarkdown(c, scope)}
+            scopes={[
+              {
+                value: "instance",
+                label: "This orb",
+                code: generateCode(c),
+                note: (
+                  <>
+                    Styles this orb only; other orbs keep their own props. Drive{" "}
+                    <code className="font-mono">state</code> from your session and{" "}
+                    <code className="font-mono">level</code> from mic or playback loudness.
+                  </>
+                ),
+              },
+              {
+                value: "app",
+                label: "Whole app",
+                code: generateAppCode(c),
+                note: "Every orb inside the provider gets this style; props on a single orb override it. Size stays per orb, since it depends on where the orb sits.",
+              },
+            ]}
+          >
+            <div className="mt-4">
+              <CodePanel
+                title="In the Voice agent recipe"
+                code={generateRecipeCode(c)}
+                note={
+                  <>
+                    The recipe supplies state and level from its session, and the same object works as{" "}
+                    <code className="font-mono">orb</code> on the Agent side panel recipe.
+                  </>
+                }
+              />
+            </div>
+          </StudioCode>
         </TabsContent>
       </Tabs>
     </div>
