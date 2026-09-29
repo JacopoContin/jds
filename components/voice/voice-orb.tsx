@@ -515,87 +515,179 @@ function orbFrame(
   )
 }
 
-/* ---------- Aura: soft blobs drifting inside a circle ---------- */
+/* ---------- Aura: grainy colored sphere ---------- */
 
-const auraTargets: Record<VoiceState, { speed: number; spread: number; scale: number; glow: number }> = {
-  idle: { speed: 0.35, spread: 0.16, scale: 1, glow: 0.35 },
-  listening: { speed: 0.7, spread: 0.2, scale: 1.02, glow: 0.5 },
-  thinking: { speed: 1.8, spread: 0.24, scale: 0.94, glow: 0.4 },
-  speaking: { speed: 0.9, spread: 0.18, scale: 1.04, glow: 0.6 },
+/** Named aura palettes: base, then three drifting color fields. */
+const auraPalettes = {
+  iris: ["#6d5bd0", "#f48fe8", "#7aa2ff", "#b27bff"],
+  ember: ["#e8552a", "#ffb86b", "#f47a3d", "#c93d1c"],
+  cocoa: ["#4a3530", "#8a5a4c", "#c98a7a", "#2c2220"],
+  mist: ["#d9ded6", "#f4efe2", "#b9cfc4", "#eef3ea"],
+} as const
+
+type OrbPalette = keyof typeof auraPalettes | "primary"
+
+const auraTargets: Record<VoiceState, { speed: number; spread: number; swirl: number; swell: number }> = {
+  idle: { speed: 0.25, spread: 0.5, swirl: 0, swell: 0 },
+  listening: { speed: 0.6, spread: 0.58, swirl: 0, swell: 1 },
+  thinking: { speed: 0.9, spread: 0.46, swirl: 1, swell: 0 },
+  speaking: { speed: 0.8, spread: 0.55, swirl: 0.2, swell: 0.8 },
 }
 
-const AURA_BLOBS = [
-  { r: 26, w: 0.9, phase: 0, opacity: 0.95 },
-  { r: 22, w: -1.2, phase: 2.1, opacity: 0.6 },
-  { r: 18, w: 1.6, phase: 4.2, opacity: 0.45 },
+const AURA_FIELDS = [
+  { w: 0.7, phase: 0, r: 1.05 },
+  { w: -0.9, phase: 2.1, r: 0.95 },
+  { w: 1.2, phase: 4.2, r: 0.8 },
 ]
 
-/**
- * Soft, blurred blobs of the primary color drifting inside a circle. They swirl
- * faster while thinking and swell with `level` while listening or speaking.
- */
-function AuraOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
-  const id = React.useId().replace(/:/g, "")
-  const blobs = React.useRef<(SVGCircleElement | null)[]>([])
-  const halo = React.useRef<SVGCircleElement>(null)
-  const body = React.useRef<SVGGElement>(null)
+/** Film grain, generated once per size: gray noise with transparent gaps, blended over the sphere. */
+function makeGrain(px: number) {
+  const grain = document.createElement("canvas")
+  grain.width = px
+  grain.height = px
+  const g = grain.getContext("2d")!
+  const img = g.createImageData(px, px)
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = Math.random() * 255
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v
+    img.data[i + 3] = 255
+  }
+  g.putImageData(img, 0, 0)
+  return grain
+}
 
-  useOrbLoop(state, level, auraTargets, (c) => {
-    const t = c.time * c.speed
-    AURA_BLOBS.forEach((b, i) => {
-      const el = blobs.current[i]
-      if (!el) return
-      const orbit = 50 * c.spread * (1 + c.level * 0.6)
-      el.setAttribute("cx", (50 + Math.cos(t * b.w + b.phase) * orbit).toFixed(2))
-      el.setAttribute("cy", (50 + Math.sin(t * b.w * 0.8 + b.phase) * orbit).toFixed(2))
-      el.setAttribute("r", (b.r * (1 + c.level * 0.35 + Math.sin(t * 1.3 + b.phase) * 0.05)).toFixed(2))
-    })
-    halo.current?.setAttribute("opacity", (c.glow + c.level * 0.3).toFixed(2))
-    body.current?.setAttribute(
-      "transform",
-      `translate(50 50) scale(${(c.scale * (1 + c.level * 0.05)).toFixed(3)}) translate(-50 -50)`,
-    )
+/** Resolves CSS colors (including color-mix) to values canvas understands. */
+function resolveColors(el: HTMLElement, colors: string[]) {
+  const probe = document.createElement("span")
+  probe.style.display = "none"
+  el.appendChild(probe)
+  const out = colors.map((c) => {
+    probe.style.color = ""
+    probe.style.color = c
+    return getComputedStyle(probe).color
+  })
+  probe.remove()
+  return out
+}
+
+/**
+ * A grainy sphere of drifting color fields with a soft highlight and darker rim.
+ * Fields drift slowly when idle, move and swell with `level` while listening or
+ * speaking, and swirl while thinking. `palette` picks the colors.
+ */
+function AuraOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  palette = "primary",
+  className,
+  ...props
+}: OrbProps & { palette?: OrbPalette | string[] }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const colorsRef = React.useRef<string[]>([])
+  const grainRef = React.useRef<HTMLCanvasElement | null>(null)
+  // Re-resolve when the palette's value changes, not its array identity.
+  const key = Array.isArray(palette) ? palette.join(",") : palette
+  const paletteRef = React.useRef(palette)
+  React.useEffect(() => {
+    paletteRef.current = palette
   })
 
-  return orbFrame(
-    "aura",
-    state,
-    size,
-    className,
-    props,
-    <svg viewBox="0 0 100 100" className="size-full overflow-visible">
-      <defs>
-        <filter id={`${id}-soft`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="7" />
-        </filter>
-        <filter id={`${id}-halo`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="9" />
-        </filter>
-        <clipPath id={`${id}-clip`}>
-          <circle cx="50" cy="50" r="40" />
-        </clipPath>
-      </defs>
-      <circle ref={halo} cx="50" cy="50" r="38" fill="currentColor" filter={`url(#${id}-halo)`} opacity="0.35" />
-      <g ref={body}>
-        <circle cx="50" cy="50" r="40" fill="currentColor" opacity="0.12" />
-        <g clipPath={`url(#${id}-clip)`} filter={`url(#${id}-soft)`}>
-          {AURA_BLOBS.map((b, i) => (
-            <circle
-              key={i}
-              ref={(el) => {
-                blobs.current[i] = el
-              }}
-              cx="50"
-              cy="50"
-              r={b.r}
-              fill="currentColor"
-              opacity={b.opacity}
-            />
-          ))}
-        </g>
-      </g>
-    </svg>,
-  )
+  // Resolve palette colors once per palette/theme change; "primary" builds shades from --primary.
+  React.useEffect(() => {
+    const el = canvasRef.current
+    if (!el) return
+    const read = () => {
+      const palette = paletteRef.current
+      const list = Array.isArray(palette)
+        ? palette
+        : palette === "primary"
+          ? [
+              "color-mix(in oklch, currentColor 70%, black)",
+              "color-mix(in oklch, currentColor 55%, white)",
+              "currentColor",
+              "color-mix(in oklch, currentColor 80%, var(--background))",
+            ]
+          : [...auraPalettes[palette]]
+      colorsRef.current = resolveColors(el, list)
+    }
+    read()
+    const observer = new MutationObserver(read)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-color", "data-base"],
+    })
+    return () => observer.disconnect()
+  }, [key])
+
+  useOrbLoop(state, level, auraTargets, (c) => {
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext("2d")
+    const colors = colorsRef.current
+    if (!canvas || !ctx || colors.length < 4) return
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const px = Math.round(size * dpr)
+    // Compare both sides: a fresh canvas is 300×150, so width alone can match by accident.
+    if (canvas.width !== px || canvas.height !== px) {
+      canvas.width = px
+      canvas.height = px
+      grainRef.current = makeGrain(px)
+    }
+    const r = px / 2
+    const t = c.time * c.speed
+    const swell = 1 + c.swell * c.level * 0.06
+
+    ctx.clearRect(0, 0, px, px)
+    ctx.save()
+    ctx.translate(r, r)
+    ctx.scale(swell, swell)
+    ctx.translate(-r, -r)
+    ctx.beginPath()
+    ctx.arc(r, r, r * 0.96, 0, Math.PI * 2)
+    ctx.clip()
+
+    // Base, then three soft color fields orbiting inside.
+    ctx.fillStyle = colors[0]
+    ctx.fillRect(0, 0, px, px)
+    AURA_FIELDS.forEach((f, i) => {
+      const a = t * f.w + f.phase + c.swirl * c.time * 1.5
+      const orbit = r * c.spread * (1 + c.level * c.swell * 0.5)
+      const x = r + Math.cos(a) * orbit
+      const y = r + Math.sin(a * 0.8) * orbit
+      const rad = r * f.r * (1 + c.level * c.swell * 0.25)
+      const g = ctx.createRadialGradient(x, y, 0, x, y, rad)
+      // Solid core, long soft falloff: fields read as distinct color areas, not spots.
+      g.addColorStop(0, colors[i + 1])
+      g.addColorStop(0.45, colors[i + 1])
+      g.addColorStop(1, "transparent")
+      ctx.fillStyle = g
+      ctx.fillRect(0, 0, px, px)
+    })
+
+    // Sphere shading: soft highlight upper left, darker rim.
+    const hl = ctx.createRadialGradient(r * 0.65, r * 0.55, 0, r * 0.65, r * 0.55, r * 1.1)
+    hl.addColorStop(0, "rgba(255,255,255,0.28)")
+    hl.addColorStop(1, "rgba(255,255,255,0)")
+    ctx.fillStyle = hl
+    ctx.fillRect(0, 0, px, px)
+    const rim = ctx.createRadialGradient(r, r, r * 0.55, r, r, r)
+    rim.addColorStop(0, "rgba(0,0,0,0)")
+    rim.addColorStop(1, "rgba(0,0,0,0.28)")
+    ctx.fillStyle = rim
+    ctx.fillRect(0, 0, px, px)
+
+    // Grain.
+    if (grainRef.current) {
+      ctx.globalCompositeOperation = "overlay"
+      ctx.globalAlpha = 0.22
+      ctx.drawImage(grainRef.current, 0, 0)
+      ctx.globalAlpha = 1
+      ctx.globalCompositeOperation = "source-over"
+    }
+    ctx.restore()
+  })
+
+  return orbFrame("aura", state, size, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
 /* ---------- Bars: circular equalizer ---------- */
@@ -684,7 +776,8 @@ function HalftoneOrb({ state = "idle", level = 0, size = 160, className, ...prop
     if (!canvas || !ctx) return
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const px = size * dpr
-    if (canvas.width !== px) {
+    // Compare both sides: a fresh canvas is 300×150, so width alone can match by accident.
+    if (canvas.width !== px || canvas.height !== px) {
       canvas.width = px
       canvas.height = px
     }
@@ -734,21 +827,24 @@ function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; chi
 function VoiceOrb({
   variant,
   particles,
+  palette,
   ...props
 }: OrbProps & {
   /** Defaults to the nearest VoiceOrbProvider, then "particles". */
   variant?: VoiceOrbVariant
   /** Particle count for the particles variant. */
   particles?: number
+  /** Aura colors: a named palette, custom colors (base + 3), or "primary" (default). */
+  palette?: OrbPalette | string[]
 }) {
   const fallback = React.useContext(VoiceOrbContext)
   const resolved = variant ?? fallback
   if (resolved === "ring") return <RingOrb {...props} />
   if (resolved === "wave") return <WaveOrb {...props} />
-  if (resolved === "aura") return <AuraOrb {...props} />
+  if (resolved === "aura") return <AuraOrb palette={palette} {...props} />
   if (resolved === "bars") return <BarsOrb {...props} />
   if (resolved === "halftone") return <HalftoneOrb {...props} />
   return <ParticleOrb particles={particles} {...props} />
 }
 
-export { VoiceOrb, VoiceOrbProvider, type VoiceOrbVariant, type VoiceState }
+export { VoiceOrb, VoiceOrbProvider, auraPalettes, type OrbPalette, type VoiceOrbVariant, type VoiceState }

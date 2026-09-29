@@ -709,7 +709,10 @@ const { status, sendMessage, stop } = useChat()
 
 // Or set the variant once for the whole app
 <VoiceOrbProvider variant="ring">{children}</VoiceOrbProvider>`,
-    examples: [{ name: "voice-orb-variants", title: "Variants" }],
+    examples: [
+      { name: "voice-orb-variants", title: "Variants" },
+      { name: "voice-orb-aura", title: "Aura palettes" },
+    ],
     api: [
       {
         component: "VoiceOrb",
@@ -728,6 +731,13 @@ const { status, sendMessage, stop } = useChat()
             default: "160",
             description:
               "Size in px. Wave renders 2x wide and 0.6x tall, capped to its container. Color follows --primary; override with a text-* class.",
+          },
+          {
+            name: "palette",
+            type: '"primary" | "iris" | "ember" | "cocoa" | "mist" | string[]',
+            default: '"primary"',
+            description:
+              "Aura only. A named palette, or four colors: base, then three drifting fields. Primary builds shades of --primary.",
           },
           {
             name: "particles",

@@ -82,6 +82,7 @@ export const examples: Record<string, ComponentType> = {
   "toolbar-demo": dynamic(() => import("./toolbar-demo")),
   "tooltip-demo": dynamic(() => import("./tooltip-demo")),
   "voice-orb-demo": dynamic(() => import("./voice-orb-demo")),
+  "voice-orb-aura": dynamic(() => import("./voice-orb-aura")),
   "voice-orb-variants": dynamic(() => import("./voice-orb-variants")),
   "voice-picker-demo": dynamic(() => import("./voice-picker-demo")),
   "waveform-demo": dynamic(() => import("./waveform-demo")),
