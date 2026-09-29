@@ -23,14 +23,14 @@ import {
 } from "@/components/ai/prompt-input"
 import { PromptInputMentions, type Mention } from "@/components/ai/prompt-input-mentions"
 import { PromptInputMic } from "@/components/ai/prompt-input-mic"
+import { PromptInputScope, type Scope } from "@/components/ai/prompt-input-scope"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 import { CopyButton } from "@/components/docs/copy-button"
 import { ControlGroup, Segmented, Text, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { VoiceOrb } from "@/components/voice/voice-orb"
-import { InfoIcon, ReasoningIcon, ResearchIcon, WebSearchIcon } from "@/lib/icons"
+import { FolderIcon, InfoIcon, ReasoningIcon, ResearchIcon, VoiceIcon, WebSearchIcon } from "@/lib/icons"
 
 type OptionKey = "web" | "research" | "think"
 
@@ -50,6 +50,12 @@ type Config = {
   mic: boolean
   voice: boolean
   suggestions: "above" | "below" | "off"
+  /** Module picker in the footer that limits what the agent works on. */
+  scope: boolean
+  scopeLabel: string
+  /** A short line under the composer, e.g. which tools are connected. */
+  caption: boolean
+  captionText: string
   submitShape: "round" | "square"
   submitStyle: "filled" | "outline"
   submitOn: SubmitKey
@@ -72,6 +78,10 @@ const defaults: Config = {
   mic: true,
   voice: false,
   suggestions: "off",
+  scope: false,
+  scopeLabel: "Workspace context",
+  caption: false,
+  captionText: "Connected to CRM, billing and support",
   submitShape: "round",
   submitStyle: "filled",
   submitOn: "enter",
@@ -112,6 +122,16 @@ const presets: { name: string; body: string; config: Partial<Config> }[] = [
     },
   },
   {
+    name: "Workspace",
+    body: "Module scope, connections",
+    config: {
+      placeholder: "Describe a project, ask a question, or bring your work together…",
+      options: "off",
+      scope: true,
+      caption: true,
+    },
+  },
+  {
     name: "Minimal",
     body: "Just text and send",
     config: { options: "off", attach: false, model: false, mic: false },
@@ -137,6 +157,13 @@ const mentionItems: Mention[] = [
   { id: "a1", label: "reviewer", type: "agent", description: "Code review agent" },
 ]
 
+const modules: Scope[] = [
+  { id: "sales", label: "Sales", description: "Pipeline, deals, contacts" },
+  { id: "finance", label: "Finance", description: "Invoices, payments, forecasts" },
+  { id: "operations", label: "Operations", description: "Orders, inventory, suppliers" },
+  { id: "support", label: "Support", description: "Tickets and customer history" },
+]
+
 const suggestionList = ["Summarize this page", "Draft a reply", "Find overdue orders"]
 
 const statuses: { value: ChatStatus; label: string }[] = [
@@ -147,7 +174,8 @@ const statuses: { value: ChatStatus; label: string }[] = [
 ]
 
 const chips = (c: Config) => (["web", "research", "think"] as const).filter((k) => c[k])
-const framed = (c: Config) => c.header || (c.options === "footer" && chips(c).length > 0)
+const hasFooter = (c: Config) => (c.options === "footer" && chips(c).length > 0) || c.scope
+const framed = (c: Config) => c.header || hasFooter(c)
 const submitProps = (c: Config) => ({
   variant: c.submitStyle === "outline" ? ("outline" as const) : undefined,
   className: c.submitShape === "square" ? "rounded-lg" : undefined,
@@ -160,9 +188,14 @@ type Node = string | { tag: string; props?: string[]; children?: Node[]; text?: 
 function render(node: Node, depth = 0): string {
   const pad = "  ".repeat(depth)
   if (typeof node === "string") return pad + node
-  const open = [node.tag, ...(node.props ?? [])].join(" ")
+  const props = node.props ?? []
+  // Past about 100 columns, put one prop per line, the way Prettier would.
+  const wide = pad.length + node.tag.length + props.join(" ").length > 96
+  const open = wide
+    ? `${node.tag}\n${props.map((prop) => `${pad}  ${prop}`).join("\n")}\n${pad}`
+    : [node.tag, ...props].join(" ")
   if (node.text !== undefined) return `${pad}<${open}>${node.text}</${node.tag}>`
-  if (!node.children?.length) return `${pad}<${open} />`
+  if (!node.children?.length) return `${pad}<${open}${wide ? "" : " "}/>`
   return [`${pad}<${open}>`, ...node.children.map((child) => render(child, depth + 1)), `${pad}</${node.tag}>`].join(
     "\n",
   )
@@ -201,11 +234,12 @@ function generateCode(c: Config) {
     actions.push("<PromptInputMic />")
   }
   if (c.voice) {
-    imports.push(`import { Button } from "@/components/ui/button"`, `import { VoiceOrb } from "@/components/voice/voice-orb"`)
+    imports.push(`import { Button } from "@/components/ui/button"`)
+    icons.push("VoiceIcon")
     actions.push({
       tag: "Button",
-      props: ['type="button"', 'variant="ghost"', 'size="icon-sm"', 'aria-label="Start voice mode"', "onClick={startVoice}"],
-      children: ['<VoiceOrb variant="dot" size={18} />'],
+      props: ['type="button"', 'variant="ghost"', 'size="icon-sm"', 'aria-label="Voice mode"', "onClick={startVoice}"],
+      children: ["<VoiceIcon />"],
     })
   }
   const submit = ["onStop={stop}"]
@@ -242,11 +276,43 @@ function generateCode(c: Config) {
       frame.push({ tag: "PromptInputHeader", props: ["icon={<InfoIcon />}"], text: c.headerText })
     }
     frame.push(composer)
-    if (c.options === "footer" && options.length) {
+    if (hasFooter(c)) {
       parts.add("PromptInputFooter")
-      frame.push({ tag: "PromptInputFooter", children: chipNodes })
+      const footer: Node[] = c.options === "footer" ? [...chipNodes] : []
+      if (c.scope) {
+        imports.push(`import { PromptInputScope } from "@/components/ai/prompt-input-scope"`)
+        icons.push("FolderIcon")
+        footer.push({
+          tag: "PromptInputScope",
+          props: [
+            `label="${c.scopeLabel}"`,
+            "icon={<FolderIcon />}",
+            "scopes={modules}",
+            'allLabel="All modules"',
+            "value={scope}",
+            "onValueChange={setScope}",
+          ],
+        })
+      }
+      frame.push({ tag: "PromptInputFooter", children: footer })
     }
     composer = { tag: "PromptInputFrame", children: frame }
+  }
+
+  if (c.caption) {
+    icons.push("InfoIcon")
+    composer = {
+      tag: "div",
+      props: ['className="flex flex-col gap-3"'],
+      children: [
+        composer,
+        {
+          tag: "p",
+          props: ['className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground"'],
+          children: ['<InfoIcon className="size-3.5" />', c.captionText],
+        },
+      ],
+    }
   }
 
   let root = composer
@@ -311,8 +377,8 @@ function Composer({ c, status }: { c: Config; status: ChatStatus }) {
           {c.model && <ModelPicker models={models} defaultValue="sonnet" />}
           {c.mic && <PromptInputMic />}
           {c.voice && (
-            <Button type="button" variant="ghost" size="icon-sm" aria-label="Start voice mode">
-              <VoiceOrb variant="dot" size={18} />
+            <Button type="button" variant="ghost" size="icon-sm" aria-label="Voice mode">
+              <VoiceIcon />
             </Button>
           )}
           <PromptInputSubmit {...submitProps(c)} />
@@ -324,12 +390,36 @@ function Composer({ c, status }: { c: Config; status: ChatStatus }) {
     <PromptInputFrame>
       {c.header && <PromptInputHeader icon={<InfoIcon />}>{c.headerText}</PromptInputHeader>}
       {input}
-      {c.options === "footer" && options.length > 0 && <PromptInputFooter>{chipEls}</PromptInputFooter>}
+      {hasFooter(c) && (
+        <PromptInputFooter>
+          {c.options === "footer" && chipEls}
+          {c.scope && (
+            <PromptInputScope
+              label={c.scopeLabel}
+              icon={<FolderIcon />}
+              scopes={modules}
+              allLabel="All modules"
+              menuLabel="Let the agent work in"
+            />
+          )}
+        </PromptInputFooter>
+      )}
     </PromptInputFrame>
   ) : (
     input
   )
-  if (c.suggestions === "off") return composer
+  const withCaption = c.caption ? (
+    <div className="flex w-full flex-col gap-3">
+      {composer}
+      <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+        <InfoIcon className="size-3.5" />
+        {c.captionText}
+      </p>
+    </div>
+  ) : (
+    composer
+  )
+  if (c.suggestions === "off") return withCaption
   const list = (
     <Suggestions>
       {suggestionList.map((s) => (
@@ -340,7 +430,7 @@ function Composer({ c, status }: { c: Config; status: ChatStatus }) {
   return (
     <div className="flex w-full flex-col gap-3">
       {c.suggestions === "above" && list}
-      {composer}
+      {withCaption}
       {c.suggestions === "below" && list}
     </div>
   )
@@ -423,6 +513,10 @@ export function PromptInputBuilder() {
           <Text label="Placeholder" value={c.placeholder} onChange={set("placeholder")} />
           <Toggle label="Context header" checked={c.header} onChange={set("header")} />
           {c.header && <Text label="Header text" value={c.headerText} onChange={set("headerText")} />}
+          <Toggle label="Scope picker" checked={c.scope} onChange={set("scope")} />
+          {c.scope && <Text label="Scope label" value={c.scopeLabel} onChange={set("scopeLabel")} />}
+          <Toggle label="Caption" checked={c.caption} onChange={set("caption")} />
+          {c.caption && <Text label="Caption text" value={c.captionText} onChange={set("captionText")} />}
           <Segmented
             label="Suggestions"
             value={c.suggestions}

@@ -543,6 +543,45 @@ const { status, sendMessage, stop } = useChat()
     isNew: true,
   },
   {
+    slug: "prompt-input-scope",
+    title: "Scope",
+    description:
+      "Tell the agent which parts of the product it may work on. A context label and a multi-select of modules in the composer footer; nothing selected means everything.",
+    group: "ai",
+    parent: { slug: "prompt-input", section: "scope" },
+    files: ["components/ai/prompt-input-scope.tsx"],
+    usage: `import { PromptInputScope } from "@/components/ai/prompt-input-scope"
+
+<PromptInputFrame>
+  <PromptInput onSubmit={({ text }) => send({ text, scope })}>…</PromptInput>
+  <PromptInputFooter>
+    <PromptInputScope
+      label="Workspace context"
+      icon={<FolderIcon />}
+      scopes={modules}
+      allLabel="All modules"
+      value={scope}
+      onValueChange={setScope}
+    />
+  </PromptInputFooter>
+</PromptInputFrame>`,
+    api: [
+      {
+        component: "PromptInputScope",
+        props: [
+          { name: "scopes", type: "{ id, label, description? }[]", description: "What the agent can be limited to." },
+          { name: "value", type: "string[]", description: "Selected ids. Empty means all; picking every scope also resets to empty." },
+          { name: "onValueChange", type: "(ids: string[]) => void", description: "Send it with the message." },
+          { name: "label", type: "ReactNode", description: "Context line on the left, e.g. \"Workspace context\"." },
+          { name: "icon", type: "ReactNode", description: "Icon before the label." },
+          { name: "allLabel", type: "string", default: '"All"', description: "Shown when nothing is selected." },
+          { name: "menuLabel", type: "string", description: "Heading at the top of the menu." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "artifact",
     title: "Artifact",
     description: "A generated document or file in its own panel beside the chat, opened from a card in the message.",

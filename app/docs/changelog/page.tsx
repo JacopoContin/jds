@@ -15,6 +15,7 @@ const releases = [
         items: [
           "Prompt Input Studio: presets, context header, option chips, tools, voice mode and send behaviour, previewed on a new-chat page, under a conversation and in a side panel, with generated code.",
           "Prompt Input submitOn prop: send with Enter or with ⌘/Ctrl+Enter.",
+          "Prompt Input Scope: a module picker in the composer footer that limits what the agent works on.",
           "Voice Orb Studio: presets, style, palette, size, glow, speed and sensitivity, previewed in every state, with generated code.",
           "Voice Orb connecting and error states, plus speed, glow and sensitivity props, on every variant.",
           "Voice Orb plasma and liquid variants: WebGL shaders that take the same palettes as aura, and fall back to aura without WebGL.",
