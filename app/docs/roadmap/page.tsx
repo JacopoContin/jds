@@ -41,7 +41,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: prompt input",
-    status: "next",
+    status: "done",
     items: [
       "Frame, context header and option chips",
       "Attachments, model picker, tools, suggestions, dictation, mentions",
@@ -51,7 +51,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Recipes",
-    status: "planned",
+    status: "next",
     items: [
       "Research agent: prompt, reasoning, sources, artifact",
       "Coding agent: plan, file edits, terminal, approval, result",

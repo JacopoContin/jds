@@ -22,10 +22,10 @@ const tools = [
     ready: true,
   },
   {
-    href: "",
+    href: "/studio/prompt-input",
     title: "Prompt input",
-    body: "Frame, context, option chips, attachments, model picker, mic, mentions, send button.",
-    ready: false,
+    body: "Presets, context header, option chips, tools, voice and send behaviour, previewed where composers live.",
+    ready: true,
   },
   {
     href: "",

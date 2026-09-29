@@ -19,6 +19,7 @@ type PromptInputContextValue = {
   addFiles: (files: FileList | File[]) => void
   removeFile: (index: number) => void
   status: ChatStatus
+  submitOn: SubmitKey
   submit: () => void
   openFilePicker: () => void
   textareaRef: React.RefObject<HTMLTextAreaElement | null>
@@ -33,6 +34,9 @@ type PromptInputContextValue = {
 
 type KeyHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => boolean
 
+/** "enter" sends on Enter (Shift+Enter for a new line); "mod-enter" sends on ⌘/Ctrl+Enter, so Enter adds lines. */
+type SubmitKey = "enter" | "mod-enter"
+
 const PromptInputContext = React.createContext<PromptInputContextValue | null>(null)
 
 function usePromptInput() {
@@ -46,6 +50,7 @@ type PromptInputProps = Omit<React.ComponentProps<"form">, "onSubmit"> & {
   onValueChange?: (value: string) => void
   onSubmit: (message: { text: string; files: File[] }) => void
   status?: ChatStatus
+  submitOn?: SubmitKey
   accept?: string
 }
 
@@ -54,6 +59,7 @@ function PromptInput({
   onValueChange,
   onSubmit,
   status = "ready",
+  submitOn = "enter",
   accept,
   className,
   children,
@@ -104,6 +110,7 @@ function PromptInput({
     addFiles,
     removeFile,
     status,
+    submitOn,
     submit,
     openFilePicker: () => fileInputRef.current?.click(),
     textareaRef,
@@ -162,7 +169,7 @@ function PromptInputTextarea({
   placeholder = "Ask anything…",
   ...props
 }: React.ComponentProps<"textarea">) {
-  const { value, setValue, submit, addFiles, textareaRef, keyHandlers } = usePromptInput()
+  const { value, setValue, submit, submitOn, addFiles, textareaRef, keyHandlers } = usePromptInput()
   return (
     <textarea
       ref={textareaRef}
@@ -186,7 +193,9 @@ function PromptInputTextarea({
         }
         onKeyDown?.(e)
         if (e.defaultPrevented) return
-        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+        if (e.key !== "Enter" || e.nativeEvent.isComposing) return
+        const send = submitOn === "mod-enter" ? e.metaKey || e.ctrlKey : !e.shiftKey
+        if (send) {
           e.preventDefault()
           submit()
         }
@@ -405,4 +414,5 @@ export {
   PromptInputOption,
   usePromptInput,
   type ChatStatus,
+  type SubmitKey,
 }

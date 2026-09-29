@@ -117,7 +117,7 @@ const { status, sendMessage, stop } = useChat()
           {
             name: "onSubmit",
             type: "({ text, files }) => void",
-            description: "Called on Enter or the send button. Input clears after.",
+            description: "Called on the send key or the send button. Input clears after.",
           },
           {
             name: "status",
@@ -127,6 +127,13 @@ const { status, sendMessage, stop } = useChat()
           },
           { name: "value", type: "string", description: "Controlled value." },
           { name: "onValueChange", type: "(value: string) => void", description: "Change handler for controlled use." },
+          {
+            name: "submitOn",
+            type: '"enter" | "mod-enter"',
+            default: '"enter"',
+            description:
+              "Enter sends and Shift+Enter adds a line, or ⌘/Ctrl+Enter sends and Enter adds a line (better for long prompts and code).",
+          },
           { name: "accept", type: "string", description: "File types for the picker." },
         ],
       },
