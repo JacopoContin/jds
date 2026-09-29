@@ -27,6 +27,7 @@ import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"
 import { PromptInputScope, type Scope } from "@/components/ai/prompt-input-scope"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 import { CopyButton } from "@/components/docs/copy-button"
+import { CodePanel } from "@/components/studio/code-panel"
 import { ControlGroup, Segmented, Text, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -360,6 +361,22 @@ function generateCode(c: Config) {
   return `${[...new Set(head)].join("\n")}\n\n${render(root)}`
 }
 
+/** The same composer dropped into the Agent side panel recipe, which supplies status, sendMessage and stop. */
+function generateRecipeCode(code: string) {
+  const jsx = code.slice(code.indexOf("\n\n") + 2)
+  return `<AgentSidePanel
+  session={session}
+  open={open}
+  onOpenChange={setOpen}
+  composer={({ status, sendMessage, stop }) => (
+${jsx
+  .split("\n")
+  .map((line) => `    ${line}`)
+  .join("\n")}
+  )}
+/>`
+}
+
 /* ---------- Preview ---------- */
 
 function Composer({ c, status }: { c: Config; status: ChatStatus }) {
@@ -653,6 +670,20 @@ export function PromptInputBuilder() {
             use. <code className="font-mono">status</code>, <code className="font-mono">sendMessage</code> and{" "}
             <code className="font-mono">stop</code> come from the AI SDK&apos;s <code className="font-mono">useChat</code>.
           </p>
+          <div className="mt-8">
+            <CodePanel
+              title="In the Agent side panel recipe"
+              code={generateRecipeCode(code)}
+              note={
+                <>
+                  The recipe passes <code className="font-mono">status</code>,{" "}
+                  <code className="font-mono">sendMessage</code> and <code className="font-mono">stop</code>. For voice
+                  mode inside the panel, use <code className="font-mono">&lt;AgentPanelVoiceButton /&gt;</code> in place
+                  of a custom voice button.
+                </>
+              }
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -74,12 +74,52 @@ const allRecipes: Recipe[] = [
     files: ["recipes/agent-run/agent-run.tsx"],
   },
   {
-    slug: "agent-panel",
+    slug: "agent-side-panel",
     tags: ["panel", "chat", "voice"],
-    title: "Agent panel",
+    title: "Agent side panel",
     description:
-      "A side panel agent over an app page. Chat with page context, dictate with the mic, or switch to voice mode; the voice turns land back in the chat.",
-    files: ["recipes/agent-panel/agent-panel.tsx", SIMULATED_SPECTRUM],
+      "An agent side panel over your app: chat with page context, dictation, and a hold-to-talk voice mode whose turns land back in the chat. Style the panel and orb in the Studio, bring your own composer, connect useChat.",
+    steps: [
+      {
+        title: "Style the panel and orb",
+        body: "Copy the panel props from the Side Panel Studio and the orb props from the Voice Orb Studio.",
+        code: `<AgentSidePanel
+  session={session}
+  open={open}
+  onOpenChange={setOpen}
+  panel={{ variant: "floating", surface: "glass", width: 420, motion: "spring" }}
+  orb={{ variant: "liquid", palette: "ember", glow: 0.25 }}
+/>`,
+      },
+      {
+        title: "Place it over your app",
+        body: "It sits fixed against the viewport edge; pass contained in panel to keep it inside a positioned container. Tell people what the agent sees with context.",
+        code: `<AgentSidePanel session={session} open={open} onOpenChange={setOpen} context="Orders · 128 rows" />`,
+      },
+      {
+        title: "Bring your composer",
+        body: "The default composer has attachments, dictation and voice. Paste one from the Prompt Input Studio instead; it gets status, sendMessage and stop.",
+        code: `<AgentSidePanel
+  session={session}
+  open={open}
+  composer={({ status, sendMessage, stop }) => (
+    <PromptInput status={status} onSubmit={({ text, files }) => sendMessage({ text, files })}>
+      …
+    </PromptInput>
+  )}
+/>`,
+      },
+      {
+        title: "Connect your session",
+        body: "chat has the shape of the AI SDK's useChat, with messages flattened to text. Add voice to enable voice mode, or leave it out.",
+        code: `const { messages, status, sendMessage, stop } = useChat()
+const session = {
+  chat: { messages: toPanelMessages(messages), status, sendMessage, stop },
+}`,
+      },
+    ],
+    files: ["recipes/agent-side-panel/agent-side-panel.tsx", "recipes/agent-side-panel/session.ts", SIMULATED_SPECTRUM],
+    session: "recipes/agent-side-panel/session.ts",
   },
   {
     slug: "voice-call",
@@ -101,7 +141,20 @@ const allRecipes: Recipe[] = [
     tags: ["chat"],
     title: "Chat app",
     description:
-      "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
+      "A full chat screen: searchable conversation list, model picker and context meter in the header, and a composer you can swap for one from the Prompt Input Studio.",
+    steps: [
+      {
+        title: "Bring your composer",
+        body: "Design the composer in the Prompt Input Studio and pass it as composer; it gets status, sendMessage and stop. The conversation is scripted, so wire your own messages in the source.",
+        code: `<ChatApp
+  composer={({ status, sendMessage, stop }) => (
+    <PromptInput status={status} onSubmit={({ text, files }) => sendMessage({ text, files })}>
+      …
+    </PromptInput>
+  )}
+/>`,
+      },
+    ],
     files: ["recipes/chat-app/chat-app.tsx"],
   },
   {

@@ -30,6 +30,7 @@ import {
 import { PromptInputMic } from "@/components/ai/prompt-input-mic"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 import { CopyButton } from "@/components/docs/copy-button"
+import { CodePanel } from "@/components/studio/code-panel"
 import { ControlGroup, Range, Segmented, Text, Toggle } from "@/components/studio/controls"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -84,6 +85,22 @@ function panelProps(c: Config) {
   if (c.variant === "floating" && c.inset !== 12) p.push(`inset={${c.inset}}`)
   if (c.motion !== "spring") p.push(`motion="${c.motion}"`)
   return p
+}
+
+/** The same panel as the Agent panel recipe, which brings its own chat, composer and voice mode. */
+function generateRecipeCode(c: Config) {
+  const panel: string[] = []
+  if (c.side !== "right") panel.push(`side: "${c.side}"`)
+  if (c.variant !== "docked") panel.push(`variant: "${c.variant}"`)
+  if (c.surface !== "card") panel.push(`surface: "${c.surface}"`)
+  if (c.width !== 400) panel.push(`width: ${c.width}`)
+  if (c.variant === "floating" && c.inset !== 12) panel.push(`inset: ${c.inset}`)
+  if (c.motion !== "spring") panel.push(`motion: "${c.motion}"`)
+  const props = ["session={session}", "open={open}", "onOpenChange={setOpen}"]
+  if (panel.length) props.push(`panel={{ ${panel.join(", ")} }}`)
+  if (c.title !== "Agent") props.push(`title="${c.title}"`)
+  if (c.context) props.push('context="Orders · 128 rows"')
+  return `<AgentSidePanel\n  ${props.join("\n  ")}\n/>`
 }
 
 function generateCode(c: Config) {
@@ -385,6 +402,19 @@ export function SidePanelBuilder() {
             Install with <code className="font-mono">npx shadcn@latest add @jds/agent-panel</code>. Only props that
             differ from the defaults are included.
           </p>
+          <div className="mt-8">
+            <CodePanel
+              title="In the Agent panel recipe"
+              code={generateRecipeCode(c)}
+              note={
+                <>
+                  The recipe brings chat, dictation and voice mode; leave <code className="font-mono">voice</code> out of
+                  its session to turn voice off. Install it with{" "}
+                  <code className="font-mono">npx shadcn@latest add @jds/agent-side-panel</code>.
+                </>
+              }
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

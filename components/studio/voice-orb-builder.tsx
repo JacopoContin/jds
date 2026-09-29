@@ -521,7 +521,7 @@ export function VoiceOrbBuilder() {
             <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateRecipeCode(c)}</pre>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            The recipe supplies state and level from its session. Install it with{" "}
+            The recipe supplies state and level from its session, and the same object works as <code className="font-mono">orb</code> on the Agent side panel recipe. Install the voice agent with{" "}
             <code className="font-mono">npx shadcn@latest add @jds/voice-agent</code>.
           </p>
         </TabsContent>

@@ -61,7 +61,23 @@ I moved the annual-plan reassurance up front, since that's what most customers w
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export default function ChatApp() {
+/** What a custom composer gets: the same names the Prompt Input Studio's code uses. */
+type ComposerApi = {
+  status: ChatStatus
+  sendMessage: (message: { text: string; files?: File[] }) => void
+  stop: () => void
+}
+
+/** Renders a custom composer as its own component, so its callbacks are ordinary props. */
+function ComposerSlot({ render, ...api }: ComposerApi & { render: (api: ComposerApi) => React.ReactNode }) {
+  return render(api)
+}
+
+/**
+ * A full chat screen. Pass `composer` to replace the default composer, e.g. with code from
+ * the Prompt Input Studio; the conversation itself is scripted.
+ */
+export default function ChatApp({ composer }: { composer?: (api: ComposerApi) => React.ReactNode }) {
   const [active, setActive] = React.useState("t1")
   const [query, setQuery] = React.useState("")
   const [turns, setTurns] = React.useState<Turn[]>([])
@@ -88,6 +104,11 @@ export default function ChatApp() {
       await wait(14 + Math.random() * 14)
     }
     setUsed((u) => u + 2_400)
+    setStatus("ready")
+  }
+
+  const stop = () => {
+    run.current++
     setStatus("ready")
   }
 
@@ -213,24 +234,23 @@ export default function ChatApp() {
         </Conversation>
 
         <div className="mx-auto w-full max-w-3xl p-3 pt-0">
-          <PromptInput status={status} onSubmit={({ text }) => text && send(text)}>
-            <PromptInputMentions items={mentionables} />
-            <PromptInputTextarea placeholder="Message, or @ to mention" />
-            <PromptInputToolbar>
-              <PromptInputTools>
-                <PromptInputAttachButton />
-              </PromptInputTools>
-              <div className="flex items-center gap-1">
-                <PromptInputMic />
-                <PromptInputSubmit
-                  onStop={() => {
-                    run.current++
-                    setStatus("ready")
-                  }}
-                />
-              </div>
-            </PromptInputToolbar>
-          </PromptInput>
+          {composer ? (
+            <ComposerSlot render={composer} status={status} sendMessage={({ text }) => text && send(text)} stop={stop} />
+          ) : (
+            <PromptInput status={status} onSubmit={({ text }) => text && send(text)}>
+              <PromptInputMentions items={mentionables} />
+              <PromptInputTextarea placeholder="Message, or @ to mention" />
+              <PromptInputToolbar>
+                <PromptInputTools>
+                  <PromptInputAttachButton />
+                </PromptInputTools>
+                <div className="flex items-center gap-1">
+                  <PromptInputMic />
+                  <PromptInputSubmit onStop={stop} />
+                </div>
+              </PromptInputToolbar>
+            </PromptInput>
+          )}
         </div>
       </section>
     </div>

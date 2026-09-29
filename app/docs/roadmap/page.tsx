@@ -51,18 +51,19 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Recipes",
-    status: "next",
+    status: "done",
     items: [
       "Voice agent: orb styled in the Studio, split or focus layout, session interface (live)",
       "Particles merged in: chat app, agent panel, agent run, inbox and more, each installable (live)",
-      "Side panel agent: panel and composer from their Studios, conversation, tool calls, artifacts",
-      "Chat page: composer from the Studio, conversation, reasoning, sources",
-      "Studio choices carry into recipes: copy a configuration, not just a component",
+      "Agent side panel: panel, orb and composer from their Studios, chat and hold-to-talk voice, useChat-shaped session (live)",
+      "Chat app: composer from the Prompt Input Studio (live)",
+      "Studio choices carry into recipes: each Studio's Code tab has the matching recipe snippet (live)",
+      "Quick filters by voice, side panel, chat and operations (live)",
     ],
   },
   {
     title: "Studio: conversation and agent activity",
-    status: "planned",
+    status: "next",
     items: [
       "Bubbles, citations, artifacts, thinking and streaming",
       "Steps, progress, tool calls, approvals and background work",

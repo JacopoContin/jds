@@ -162,6 +162,11 @@ const items: object[] = [
   })),
 ]
 
+// Components and recipes share one namespace; a clash would silently shadow an item.
+const names = items.map((i) => (i as { name: string }).name)
+const clash = names.filter((n, i) => names.indexOf(n) !== i)
+if (clash.length) throw new Error(`Duplicate registry item names: ${clash.join(", ")}`)
+
 writeFileSync(
   "registry.json",
   JSON.stringify(

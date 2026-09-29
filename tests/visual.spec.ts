@@ -57,7 +57,7 @@ const recipePreviews = [
   "run-history",
   "agent-onboarding",
   "agent-run",
-  "agent-panel",
+  "agent-side-panel",
   "voice-session",
   "voice-call",
   "agent-settings",

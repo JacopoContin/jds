@@ -19,6 +19,9 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Agent side panel recipe, rebuilt on Agent Panel: panel, orb and composer come from their Studios, chat plus hold-to-talk voice whose turns land in the chat, and a session shaped like the AI SDK's useChat.",
+          "Chat app recipe takes a composer from the Prompt Input Studio. Each Studio's Code tab now includes the matching recipe snippet.",
+          "Recipe quick filters: voice, side panel, chat, operations.",
           "Voice agent recipe: the orb, live captions and call controls, with tool calls and transcript beside them. Takes the orb style straight from the Voice Orb Studio, a split or focus layout, and a session interface for your realtime provider, with a simulated session to run it today.",
           "Prompt Input Studio: presets, context header, option chips, tools, voice mode and send behaviour, previewed on a new-chat page, under a conversation and in a side panel, with generated code.",
           "Prompt Input submitOn prop: send with Enter or with ⌘/Ctrl+Enter.",
