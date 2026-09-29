@@ -557,18 +557,30 @@ function makeGrain(px: number) {
 }
 
 /** Resolves CSS colors (including color-mix) to values canvas understands. */
-function resolveColors(el: HTMLElement, colors: string[]) {
+/**
+ * Resolves CSS colors (including color-mix and oklch) to [r, g, b] by painting each
+ * into a 1×1 canvas. Gradients need explicit channels: fading to "transparent" means
+ * transparent black, which drags every field through gray at its edges.
+ */
+function resolveColors(el: HTMLElement, colors: string[]): [number, number, number][] {
   const probe = document.createElement("span")
   probe.style.display = "none"
   el.appendChild(probe)
+  const pixel = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
   const out = colors.map((c) => {
     probe.style.color = ""
     probe.style.color = c
-    return getComputedStyle(probe).color
+    pixel.clearRect(0, 0, 1, 1)
+    pixel.fillStyle = getComputedStyle(probe).color
+    pixel.fillRect(0, 0, 1, 1)
+    const [r, g, b] = pixel.getImageData(0, 0, 1, 1).data
+    return [r, g, b] as [number, number, number]
   })
   probe.remove()
   return out
 }
+
+const rgba = ([r, g, b]: [number, number, number], a = 1) => `rgba(${r},${g},${b},${a})`
 
 /**
  * A grainy sphere of drifting color fields with a soft highlight and darker rim.
@@ -584,7 +596,7 @@ function AuraOrb({
   ...props
 }: OrbProps & { palette?: OrbPalette | string[] }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const colorsRef = React.useRef<string[]>([])
+  const colorsRef = React.useRef<[number, number, number][]>([])
   const grainRef = React.useRef<HTMLCanvasElement | null>(null)
   // Re-resolve when the palette's value changes, not its array identity.
   const key = Array.isArray(palette) ? palette.join(",") : palette
@@ -606,7 +618,7 @@ function AuraOrb({
               "color-mix(in oklch, currentColor 90%, black)",
               "color-mix(in oklch, currentColor 55%, white)",
               "currentColor",
-              "color-mix(in oklch, currentColor 80%, var(--background))",
+              "color-mix(in oklch, currentColor 80%, white)",
             ]
           : [...auraPalettes[palette]]
       colorsRef.current = resolveColors(el, list)
@@ -647,7 +659,7 @@ function AuraOrb({
     ctx.clip()
 
     // Base, then three soft color fields orbiting inside.
-    ctx.fillStyle = colors[0]
+    ctx.fillStyle = rgba(colors[0])
     ctx.fillRect(0, 0, px, px)
     AURA_FIELDS.forEach((f, i) => {
       const a = t * f.w + f.phase + c.swirl * c.time * 1.5
@@ -657,9 +669,9 @@ function AuraOrb({
       const rad = r * f.r * (1 + c.level * c.swell * 0.25)
       const g = ctx.createRadialGradient(x, y, 0, x, y, rad)
       // Solid core, long soft falloff: fields read as distinct color areas, not spots.
-      g.addColorStop(0, colors[i + 1])
-      g.addColorStop(0.45, colors[i + 1])
-      g.addColorStop(1, "transparent")
+      g.addColorStop(0, rgba(colors[i + 1]))
+      g.addColorStop(0.45, rgba(colors[i + 1]))
+      g.addColorStop(1, rgba(colors[i + 1], 0))
       ctx.fillStyle = g
       ctx.fillRect(0, 0, px, px)
     })
