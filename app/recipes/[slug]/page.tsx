@@ -5,8 +5,8 @@ import { notFound } from "next/navigation"
 import { CodeBlock } from "@/components/docs/code-block"
 import { Command } from "@/components/docs/command"
 import { readSource } from "@/components/docs/component-preview"
-import { RecipeDemo } from "@/components/docs/recipe-demo"
-import { recipeBySlug, recipes } from "@/lib/recipes"
+import { Example } from "@/components/docs/example"
+import { installedPath, recipeBySlug, recipes } from "@/lib/recipes"
 import { site } from "@/lib/site"
 
 export const dynamicParams = false
@@ -25,7 +25,7 @@ export default async function RecipePage({ params }: PageProps<"/recipes/[slug]"
   if (!recipe) notFound()
   const sources = await Promise.all(recipe.files.map(async (file) => ({ file, code: await readSource(file) })))
   // Show just the interface to implement, not the whole simulated session.
-  const session = (await readSource(recipe.session)).match(/\/\*\*[^]*?\*\/\ntype \w+Session = \{[^]*?\n\}/)?.[0]
+  const session = recipe.session && (await readSource(recipe.session)).match(/\/\*\*[^]*?\*\/\ntype \w+Session = \{[^]*?\n\}/)?.[0]
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-16 md:px-6">
@@ -37,26 +37,38 @@ export default async function RecipePage({ params }: PageProps<"/recipes/[slug]"
         <p className="text-muted-foreground">{recipe.description}</p>
       </div>
 
-      <RecipeDemo slug={recipe.slug} />
+      <Example name={recipe.slug} />
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold tracking-tight">How it flows</h2>
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {recipe.flow.map((step, i) => (
-            <li key={step.title} className="flex flex-col gap-1.5 rounded-xl border bg-card p-4">
-              <span className="font-mono text-xs text-muted-foreground">{i + 1}</span>
-              <span className="text-sm font-medium">{step.title}</span>
-              <span className="text-sm text-muted-foreground">{step.body}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {recipe.steps && (
+        <section className="flex max-w-3xl flex-col gap-6">
+          <h2 className="text-xl font-semibold tracking-tight">Use it in your app</h2>
+          <ol className="flex flex-col gap-8">
+            {recipe.steps.map((step, i) => (
+              <li key={step.title} className="flex flex-col gap-3">
+                <div className="flex items-baseline gap-3">
+                  <span className="font-mono text-xs text-muted-foreground">{i + 1}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">{step.title}</span>
+                    <span className="text-sm text-muted-foreground">{step.body}</span>
+                  </div>
+                </div>
+                {step.code && <CodeBlock code={step.code} />}
+              </li>
+            ))}
+          </ol>
+          {recipe.slug === "voice-agent" && (
+            <Link href="/studio/voice-orb" className="text-sm underline underline-offset-4 hover:text-foreground">
+              Open the Voice Orb Studio
+            </Link>
+          )}
+        </section>
+      )}
 
       <section className="flex max-w-3xl flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight">Install</h2>
         <Command command={`shadcn@latest add ${site.namespace}/${recipe.slug}`} />
         <p className="text-sm text-muted-foreground">
-          Installs the recipe and every component it uses. It runs straight away on the simulated session.
+          Installs the recipe and every component it uses into your project, ready to run.
         </p>
       </section>
 
@@ -74,17 +86,8 @@ export default async function RecipePage({ params }: PageProps<"/recipes/[slug]"
       <section className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight">Source</h2>
         {sources.map((s) => (
-          <CodeBlock key={s.file} code={s.code} title={s.file.replace(/^recipes\//, "components/")} />
+          <CodeBlock key={s.file} code={s.code} title={installedPath(s.file)} />
         ))}
-        {recipe.particle && (
-          <p className="text-sm text-muted-foreground">
-            Grew from the{" "}
-            <Link href={`/particles#${recipe.particle}`} className="underline underline-offset-4 hover:text-foreground">
-              {recipe.particle.replace("-", " ")} particle
-            </Link>
-            .
-          </p>
-        )}
       </section>
     </main>
   )

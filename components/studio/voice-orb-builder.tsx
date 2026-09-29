@@ -124,24 +124,46 @@ const paletteOf = (c: Config): OrbPalette | string[] =>
 /** The dot is built for small spots; everything else needs room to show detail. */
 const sizeRange = (v: VoiceOrbVariant) => (v === "dot" ? { min: 16, max: 96, step: 4 } : { min: 96, max: 320, step: 8 })
 
-/** Props that differ from the component's defaults, one per line. */
-function generateCode(c: Config) {
-  const p = [`variant="${c.variant}"`]
+/** Style settings that differ from the component's defaults, as [prop, JS value] pairs. */
+function styleProps(c: Config): [string, string][] {
+  const p: [string, string][] = [["variant", `"${c.variant}"`]]
   const palette = paletteOf(c)
-  if (Array.isArray(palette)) p.push(`palette={[${palette.map((x) => `"${x}"`).join(", ")}]}`)
-  else if (palette !== "primary") p.push(`palette="${palette}"`)
-  p.push("state={state}", "level={level}")
-  if (c.size !== 160) p.push(`size={${c.size}}`)
-  if (c.glow > 0) p.push(`glow={${c.glow}}`)
-  if (c.speed !== 1) p.push(`speed={${c.speed}}`)
-  if (c.sensitivity !== 1) p.push(`sensitivity={${c.sensitivity}}`)
-  if (c.variant === "particles" && c.particles !== null) p.push(`particles={${c.particles}}`)
-  for (const m of materials[c.variant] ?? []) if (c[m.key] !== defaults[m.key]) p.push(`${m.key}={${c[m.key]}}`)
-  if (c.color === "foreground") p.push(`className="text-foreground"`)
+  if (Array.isArray(palette)) p.push(["palette", `[${palette.map((x) => `"${x}"`).join(", ")}]`])
+  else if (palette !== "primary") p.push(["palette", `"${palette}"`])
+  if (c.size !== 160) p.push(["size", `${c.size}`])
+  if (c.glow > 0) p.push(["glow", `${c.glow}`])
+  if (c.speed !== 1) p.push(["speed", `${c.speed}`])
+  if (c.sensitivity !== 1) p.push(["sensitivity", `${c.sensitivity}`])
+  if (c.variant === "particles" && c.particles !== null) p.push(["particles", `${c.particles}`])
+  for (const m of materials[c.variant] ?? []) if (c[m.key] !== defaults[m.key]) p.push([m.key, `${c[m.key]}`])
+  if (c.color === "foreground") p.push(["className", `"text-foreground"`])
+  return p
+}
+
+/** The orb on its own, as JSX. */
+function generateCode(c: Config) {
+  const attr = ([k, v]: [string, string]) => (v.startsWith('"') ? `${k}=${v}` : `${k}={${v}}`)
+  // Look first (variant, palette), then the live props, then the rest of the style.
+  const style = styleProps(c)
+  const look = style.filter(([k]) => k === "variant" || k === "palette")
+  const rest = style.filter(([k]) => k !== "variant" && k !== "palette")
+  const p = [...look.map(attr), "state={state}", "level={level}", ...rest.map(attr)]
   return `import { VoiceOrb } from "@/components/voice/voice-orb"
 
 <VoiceOrb
   ${p.join("\n  ")}
+/>`
+}
+
+/** The same style as the `orb` prop of the Voice agent recipe, which supplies state and level itself. */
+function generateRecipeCode(c: Config) {
+  return `<VoiceAgent
+  session={session}
+  orb={{
+    ${styleProps(c)
+      .map(([k, v]) => `${k}: ${v},`)
+      .join("\n    ")}
+  }}
 />`
 }
 
@@ -492,6 +514,15 @@ export function VoiceOrbBuilder() {
             Install with <code className="font-mono">npx shadcn@latest add @jds/voice-orb</code>. Only props that differ
             from the defaults are included. Drive <code className="font-mono">state</code> from your session and{" "}
             <code className="font-mono">level</code> from mic or playback loudness.
+          </p>
+          <h2 className="mt-8 mb-3 text-sm font-medium">In the Voice agent recipe</h2>
+          <div className="relative overflow-hidden rounded-2xl border bg-card">
+            <CopyButton value={generateRecipeCode(c)} className="absolute top-3 right-3" />
+            <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateRecipeCode(c)}</pre>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            The recipe supplies state and level from its session. Install it with{" "}
+            <code className="font-mono">npx shadcn@latest add @jds/voice-agent</code>.
           </p>
         </TabsContent>
       </Tabs>

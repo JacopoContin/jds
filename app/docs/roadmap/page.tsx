@@ -53,13 +53,11 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     title: "Recipes",
     status: "next",
     items: [
-      "Voice receptionist: orb, live transcript, actions, call controls (live)",
-      "Research agent: prompt, reasoning, sources, artifact",
-      "Coding agent: plan, file edits, terminal, approval, result",
-      "Support agent: conversation, tool call, customer data, approval, response",
-      "Copilot side panel: context, conversation, actions, artifact",
-      "Built on particles: each one a working composition, installed with one command",
-      "A session interface per recipe, with a simulated session so it runs before the backend exists",
+      "Voice agent: orb styled in the Studio, split or focus layout, session interface (live)",
+      "Particles merged in: chat app, agent panel, agent run, inbox and more, each installable (live)",
+      "Side panel agent: panel and composer from their Studios, conversation, tool calls, artifacts",
+      "Chat page: composer from the Studio, conversation, reasoning, sources",
+      "Studio choices carry into recipes: copy a configuration, not just a component",
     ],
   },
   {
@@ -117,12 +115,12 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
-    title: "Foundation, components and particles",
+    title: "Foundation, components and compositions",
     status: "done",
     items: [
       "Tokens, themes and customizer",
       "21 agent and voice components, 52 primitives",
-      "10 particles",
+      "10 compositions, since merged into recipes",
       "Docs for humans and agents, visual regression tests",
     ],
   },

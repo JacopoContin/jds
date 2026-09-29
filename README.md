@@ -29,7 +29,7 @@ pnpm registry:build  # regenerate registry.json and public/r
 pnpm lint
 ```
 
-Component metadata lives in `lib/docs.ts`. Components are in `components/{ai,voice,ui}`, demos in `examples/`, full compositions in `particles/`.
+Component metadata lives in `lib/docs.ts`. Components are in `components/{ai,voice,ui}`, demos in `examples/`, recipes (complete experiences, installable as blocks) in `recipes/` and `lib/recipes.ts`.
 
 ## License
 

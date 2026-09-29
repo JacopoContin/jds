@@ -52,7 +52,7 @@ pnpm dev`}
         lang="bash"
         code={`npx tsc --noEmit    # types
 pnpm lint           # design-system rules: 0 errors, no eslint-disable
-pnpm test:visual    # every component and particle, light and dark`}
+pnpm test:visual    # every component and recipe, light and dark`}
       />
       <List>
         <li>
@@ -71,7 +71,7 @@ pnpm test:visual    # every component and particle, light and dark`}
 
       <H2>Visual tests</H2>
       <P>
-        Every component preview and particle is screenshotted in light and dark with the clock paused, so timers and
+        Every component preview and recipe is screenshotted in light and dark with the clock paused, so timers and
         animations land in the same state each run. Voice visuals, which are random by design, are masked. Baselines are
         Linux screenshots made in CI: if a change is meant to look different, run the <strong>Visual tests</strong>{" "}
         workflow with <strong>update</strong> to regenerate them.
@@ -79,7 +79,7 @@ pnpm test:visual    # every component and particle, light and dark`}
 
       <H2>Releases</H2>
       <P>
-        Conventional commits, a changelog line for anything user-facing, and new particles in weekly drops of one or two
+        Conventional commits, a changelog line for anything user-facing, and new recipes in weekly drops of one or two
         complete screens.
       </P>
 

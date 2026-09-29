@@ -8,7 +8,7 @@ import type { TranscriptSegment } from "@/components/voice/live-transcript"
 import type { VoiceState } from "@/components/voice/voice-orb"
 
 /** Something the agent did during the call, shown as a tool call. */
-type ReceptionistAction = {
+type AgentAction = {
   id: string
   /** Tool name, e.g. "calendar.availability". */
   tool: string
@@ -18,27 +18,27 @@ type ReceptionistAction = {
 }
 
 /**
- * Everything the receptionist UI needs from a voice session. Implement it on top of
- * your realtime provider (OpenAI Realtime, ElevenLabs, Vapi, LiveKit…) and pass it to
- * <VoiceReceptionist>. `useSimulatedReceptionist` is a scripted stand-in.
+ * Everything <VoiceAgent> reads from a voice session. Implement it on top of your
+ * realtime provider (OpenAI Realtime, ElevenLabs, Vapi, LiveKit…) and pass it in.
+ * `useSimulatedVoiceAgent` is a scripted stand-in so the UI runs before the backend does.
  */
-type ReceptionistSession = {
+type VoiceAgentSession = {
   call: CallState
   /** When the call connected, for the timer. */
   startedAt?: number
-  /** Drives the orb: speaking while the agent talks, listening while the caller does. */
+  /** Drives the orb: speaking while the agent talks, listening while the user does. */
   orb: VoiceState
   /** Loudness 0 to 1 of whoever is talking. */
   level: number
   transcript: TranscriptSegment[]
-  actions: ReceptionistAction[]
+  actions: AgentAction[]
   /** How the call ended, shown once it's over. */
   outcome?: { title: string; detail: string }
   muted: boolean
   setMuted: (muted: boolean) => void
   /** Cut the agent off mid-sentence. */
   interrupt: () => void
-  /** Hand the caller to a person. */
+  /** Hand the conversation to a person. */
   transfer: () => void
   end: () => void
   restart: () => void
@@ -49,32 +49,32 @@ type Step =
   | { tool: string; input: unknown; output: unknown; ms: number }
   | { outcome: { title: string; detail: string } }
 
-/** A caller moving a dental cleaning. Replace with your own session; this only exists to show the flow. */
+/** A sample conversation to show the UI's states. Replace the whole hook with your own session. */
 const script: Step[] = [
-  { say: "agent", text: "Thanks for calling Harbor Dental, this is Aria. How can I help?" },
-  { say: "user", text: "Hi, I need to move my cleaning on Thursday to next week." },
-  { tool: "patients.lookup", input: { phone: "+1 415 555 0142" }, output: { name: "Sam Rivera", appointment: "Thu 2:00 PM, cleaning" }, ms: 1100 },
-  { tool: "calendar.availability", input: { type: "cleaning", week: "next" }, output: { slots: ["Tue 10:30 AM", "Wed 3:00 PM", "Fri 9:00 AM"] }, ms: 1500 },
-  { say: "agent", text: "Sure, Sam. Next week I have Tuesday at 10:30, Wednesday at 3, or Friday at 9. Which works best?" },
-  { say: "user", text: "Tuesday at 10:30, please." },
-  { tool: "calendar.reschedule", input: { from: "Thu 2:00 PM", to: "Tue 10:30 AM" }, output: { confirmed: true }, ms: 1300 },
-  { tool: "sms.send", input: { to: "+1 415 555 0142", template: "appointment-moved" }, output: { delivered: true }, ms: 700 },
-  { say: "agent", text: "Done. You're booked for Tuesday at 10:30, and I've texted you a confirmation. Anything else?" },
-  { say: "user", text: "No, that's it. Thanks!" },
-  { say: "agent", text: "You're welcome. See you Tuesday." },
-  { outcome: { title: "Appointment moved", detail: "Sam Rivera · cleaning · Tue 10:30 AM · confirmation texted" } },
+  { say: "agent", text: "Hi, I'm Aria. What can I help you with?" },
+  { say: "user", text: "Can you move my two o'clock with Luca to tomorrow?" },
+  { tool: "calendar.find", input: { with: "Luca", day: "today" }, output: { event: "Design review", at: "2:00 PM" }, ms: 1100 },
+  { tool: "calendar.availability", input: { day: "tomorrow", minutes: 30 }, output: { slots: ["10:30 AM", "1:00 PM", "4:00 PM"] }, ms: 1400 },
+  { say: "agent", text: "Sure. Tomorrow you're both free at 10:30, 1, or 4. Which works?" },
+  { say: "user", text: "10:30, please." },
+  { tool: "calendar.move", input: { event: "Design review", to: "Tomorrow 10:30 AM" }, output: { moved: true }, ms: 1200 },
+  { tool: "email.send", input: { to: "Luca", template: "meeting-moved" }, output: { sent: true }, ms: 700 },
+  { say: "agent", text: "Done. It's tomorrow at 10:30, and I let Luca know. Anything else?" },
+  { say: "user", text: "No, that's all. Thanks!" },
+  { say: "agent", text: "Anytime." },
+  { outcome: { title: "Meeting moved", detail: "Design review with Luca · tomorrow 10:30 AM · Luca notified" } },
 ]
 
 const WORD_MS = 170
 const PAUSE_MS = 700
 
 /** A scripted session that plays `script`, for demos and for building the UI before the backend exists. */
-function useSimulatedReceptionist(): ReceptionistSession {
+function useSimulatedVoiceAgent(): VoiceAgentSession {
   const [call, setCall] = React.useState<CallState>("connecting")
   const [startedAt, setStartedAt] = React.useState<number>()
   const [step, setStep] = React.useState(0)
   const [words, setWords] = React.useState(0)
-  const [outcome, setOutcome] = React.useState<ReceptionistSession["outcome"]>()
+  const [outcome, setOutcome] = React.useState<VoiceAgentSession["outcome"]>()
   const [muted, setMuted] = React.useState(false)
   const [level, setLevel] = React.useState(0)
 
@@ -92,7 +92,7 @@ function useSimulatedReceptionist(): ReceptionistSession {
     const text = done ? s.text : s.text.split(" ").slice(0, words).join(" ")
     return text ? [{ id: String(i), speaker: s.say, text, final: done }] : []
   })
-  const actions: ReceptionistAction[] = played.flatMap((s, i) => {
+  const actions: AgentAction[] = played.flatMap((s, i) => {
     if (!("tool" in s)) return []
     const done = i < reached
     // A call ended mid-tool leaves that tool unfinished.
@@ -149,7 +149,7 @@ function useSimulatedReceptionist(): ReceptionistSession {
     return () => clearTimeout(id)
   }, [current, words])
 
-  // A speech-like level while someone talks; the caller's side goes quiet when muted.
+  // A speech-like level while someone talks; the user's side goes quiet when muted.
   React.useEffect(() => {
     const talking = speaking && !(saying?.say === "user" && muted)
     if (!talking) {
@@ -186,7 +186,7 @@ function useSimulatedReceptionist(): ReceptionistSession {
       if (saying?.say === "agent") setWords(saying.text.split(" ").length)
     },
     transfer: () => {
-      setOutcome({ title: "Transferred to the front desk", detail: "The caller was handed to a person with the transcript." })
+      setOutcome({ title: "Handed to a person", detail: "They get the transcript and the actions so far." })
       setCall("ended")
     },
     end: () => setCall("ended"),
@@ -197,4 +197,4 @@ function useSimulatedReceptionist(): ReceptionistSession {
   }
 }
 
-export { useSimulatedReceptionist, type ReceptionistAction, type ReceptionistSession }
+export { useSimulatedVoiceAgent, type AgentAction, type VoiceAgentSession }

@@ -1895,10 +1895,10 @@
       ]
     },
     {
-      "name": "voice-receptionist",
+      "name": "voice-agent",
       "type": "registry:block",
-      "title": "Voice receptionist",
-      "description": "An agent that answers the phone: greets the caller, looks them up, checks the calendar, books or moves an appointment, texts a confirmation, and can hand off to a person.",
+      "title": "Voice agent",
+      "description": "A complete voice agent surface: the orb, live captions and call controls, with the agent's tool calls and transcript beside it. Style it in the Studio, pick a layout, connect your voice session.",
       "dependencies": [
         "cn",
         "motion"
@@ -1913,14 +1913,295 @@
       ],
       "files": [
         {
-          "path": "recipes/voice-receptionist/voice-receptionist.tsx",
+          "path": "recipes/voice-agent/voice-agent.tsx",
           "type": "registry:component",
-          "target": "components/voice-receptionist/voice-receptionist.tsx"
+          "target": "components/voice-agent/voice-agent.tsx"
         },
         {
-          "path": "recipes/voice-receptionist/session.ts",
+          "path": "recipes/voice-agent/session.ts",
           "type": "registry:component",
-          "target": "components/voice-receptionist/session.ts"
+          "target": "components/voice-agent/session.ts"
+        }
+      ]
+    },
+    {
+      "name": "chat-app",
+      "type": "registry:block",
+      "title": "Chat app",
+      "description": "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/context-meter",
+        "@jds/conversation",
+        "@jds/input-group",
+        "@jds/message",
+        "@jds/model-picker",
+        "@jds/prompt-input",
+        "@jds/prompt-input-mentions",
+        "@jds/prompt-input-mic",
+        "@jds/response",
+        "@jds/shimmer",
+        "@jds/suggestions",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/chat-app/chat-app.tsx",
+          "type": "registry:component",
+          "target": "components/chat-app/chat-app.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-inbox",
+      "type": "registry:block",
+      "title": "Agent inbox",
+      "description": "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/agent-steps",
+        "@jds/approval",
+        "@jds/badge",
+        "@jds/empty",
+        "@jds/tabs",
+        "@jds/tool-call",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-inbox/agent-inbox.tsx",
+          "type": "registry:component",
+          "target": "components/agent-inbox/agent-inbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "run-history",
+      "type": "registry:block",
+      "title": "Run history",
+      "description": "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/badge",
+        "@jds/table",
+        "@jds/tabs",
+        "@jds/toggle-group",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/run-history/run-history.tsx",
+          "type": "registry:component",
+          "target": "components/run-history/run-history.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-onboarding",
+      "type": "registry:block",
+      "title": "Agent onboarding",
+      "description": "Set up an agent by answering its questions. Quick replies drive the chat while a live card and progress list fill in beside it.",
+      "dependencies": [
+        "motion",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "@jds/agent-steps",
+        "@jds/badge",
+        "@jds/button",
+        "@jds/conversation",
+        "@jds/message",
+        "@jds/shimmer",
+        "@jds/suggestions",
+        "@jds/toggle",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-onboarding/agent-onboarding.tsx",
+          "type": "registry:component",
+          "target": "components/agent-onboarding/agent-onboarding.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-marketplace",
+      "type": "registry:block",
+      "title": "Agent marketplace",
+      "description": "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/badge",
+        "@jds/button",
+        "@jds/dialog",
+        "@jds/empty",
+        "@jds/input-group",
+        "@jds/toggle-group",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-marketplace/agent-marketplace.tsx",
+          "type": "registry:component",
+          "target": "components/agent-marketplace/agent-marketplace.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-run",
+      "type": "registry:block",
+      "title": "Agent run",
+      "description": "A full support-agent turn: reasoning, a plan, a tool call, approval before a refund, a streamed answer with sources.",
+      "dependencies": [
+        "motion",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "@jds/agent-steps",
+        "@jds/approval",
+        "@jds/conversation",
+        "@jds/message",
+        "@jds/prompt-input",
+        "@jds/reasoning",
+        "@jds/response",
+        "@jds/shimmer",
+        "@jds/sources",
+        "@jds/suggestions",
+        "@jds/tool-call",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-run/agent-run.tsx",
+          "type": "registry:component",
+          "target": "components/agent-run/agent-run.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-panel",
+      "type": "registry:block",
+      "title": "Agent panel",
+      "description": "A side panel agent over an app page. Chat with page context, dictate with the mic, or switch to voice mode; the voice turns land back in the chat.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/conversation",
+        "@jds/kbd",
+        "@jds/live-transcript",
+        "@jds/message",
+        "@jds/prompt-input",
+        "@jds/prompt-input-mic",
+        "@jds/push-to-talk",
+        "@jds/response",
+        "@jds/sheet",
+        "@jds/shimmer",
+        "@jds/skeleton",
+        "@jds/tooltip",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-panel/agent-panel.tsx",
+          "type": "registry:component",
+          "target": "components/agent-panel/agent-panel.tsx"
+        },
+        {
+          "path": "hooks/use-simulated-spectrum.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "voice-session",
+      "type": "registry:block",
+      "title": "Voice session",
+      "description": "Push to talk with live mic level, orb states, and a rolling transcript.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@jds/kbd",
+        "@jds/live-transcript",
+        "@jds/push-to-talk",
+        "@jds/voice-orb",
+        "@jds/waveform"
+      ],
+      "files": [
+        {
+          "path": "recipes/voice-session/voice-session.tsx",
+          "type": "registry:component",
+          "target": "components/voice-session/voice-session.tsx"
+        },
+        {
+          "path": "hooks/use-simulated-spectrum.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "voice-call",
+      "type": "registry:block",
+      "title": "Voice call",
+      "description": "A realtime call screen: connection status and timer, the orb, live captions, and mute, interrupt and end controls.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/voice-call/voice-call.tsx",
+          "type": "registry:component",
+          "target": "components/voice-call/voice-call.tsx"
+        },
+        {
+          "path": "hooks/use-simulated-spectrum.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "agent-settings",
+      "type": "registry:block",
+      "title": "Agent settings",
+      "description": "Configure an agent: instructions, model, temperature, reply length, approval policy, tools, and voice.",
+      "dependencies": [
+        "sonner"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/field",
+        "@jds/form",
+        "@jds/input",
+        "@jds/label",
+        "@jds/number-field",
+        "@jds/radio-group",
+        "@jds/select",
+        "@jds/slider",
+        "@jds/switch",
+        "@jds/tabs",
+        "@jds/textarea",
+        "@jds/voice-picker"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-settings/agent-settings.tsx",
+          "type": "registry:component",
+          "target": "components/agent-settings/agent-settings.tsx"
         }
       ]
     }

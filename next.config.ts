@@ -7,9 +7,13 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   // Add-ons are documented on their parent's page; keep their old URLs working.
   async redirects() {
-    return components
-      .filter((c) => c.parent)
-      .map((c) => ({ source: `/docs/components/${c.slug}`, destination: docHref(c), permanent: true }))
+    return [
+      ...components
+        .filter((c) => c.parent)
+        .map((c) => ({ source: `/docs/components/${c.slug}`, destination: docHref(c), permanent: true })),
+      // Particles were merged into recipes; anchors carry over in the browser.
+      { source: "/particles", destination: "/recipes", permanent: true },
+    ]
   },
 }
 

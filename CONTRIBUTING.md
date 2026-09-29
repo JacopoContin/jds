@@ -24,7 +24,7 @@ Every change passes these before merging:
 ```bash
 npx tsc --noEmit         # types
 pnpm lint                # design-system rules; 0 errors, no eslint-disable
-pnpm test:visual         # screenshots of every component and particle, light and dark
+pnpm test:visual         # screenshots of every component and recipe, light and dark
 ```
 
 - **Tokens, not values.** Colors come from theme tokens; no raw palette classes. Neutral by default.
@@ -40,4 +40,4 @@ Baselines are Linux screenshots produced in CI. If your change is meant to look 
 
 - Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
 - Add a line to the changelog (`app/docs/changelog/page.tsx`) for anything user-facing.
-- New particles ship in weekly drops: one or two complete screens, announced in the changelog.
+- New recipes ship in weekly drops: one or two complete experiences in `recipes/<slug>/`, listed in `lib/recipes.ts`, announced in the changelog.

@@ -23,9 +23,6 @@ export function SiteHeader() {
           <Link href="/docs/components/prompt-input" className="transition-colors hover:text-foreground">
             Components
           </Link>
-          <Link href="/particles" className="transition-colors hover:text-foreground">
-            Particles
-          </Link>
           <Link href="/studio" className="transition-colors hover:text-foreground">
             Studio
           </Link>

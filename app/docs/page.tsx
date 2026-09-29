@@ -45,11 +45,12 @@ export default function IntroductionPage() {
         so parts drop straight in. Nothing imports it.
       </P>
 
-      <H2>Primitives, components and particles</H2>
+      <H2>Primitives, components and recipes</H2>
       <P>
         <strong>Primitives</strong> are Base UI building blocks with the JDS look: button, menu, dialog.{" "}
-        <strong>Components</strong> are the agent and voice pieces built on them. <strong>Particles</strong> are
-        complete compositions, like a full agent turn or a voice session, to copy as a starting point.
+        <strong>Components</strong> are the agent and voice pieces built on them. <strong>Recipes</strong> are
+        complete experiences, like a voice agent or a side panel, that install with one command and take the styles
+        you set in the Studio.
       </P>
 
       <H2>Built for humans and agents</H2>

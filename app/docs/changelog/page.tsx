@@ -8,12 +8,18 @@ const releases = [
   {
     version: "0.2.0",
     date: "Unreleased",
-    summary: "Voice Orb Studio, Prompt Input Studio, and the first recipe.",
+    summary: "Voice Orb Studio, Prompt Input Studio, and recipes.",
     sections: [
+      {
+        title: "Changed",
+        items: [
+          "Particles are now recipes: every one installs with shadcn add as a block, and /particles redirects to /recipes.",
+        ],
+      },
       {
         title: "Added",
         items: [
-          "Recipes: complete agent experiences installed as one block. First up, Voice receptionist: call, tool calls and transcript, with a session interface to connect a realtime voice provider and a simulated session to run it today.",
+          "Voice agent recipe: the orb, live captions and call controls, with tool calls and transcript beside them. Takes the orb style straight from the Voice Orb Studio, a split or focus layout, and a session interface for your realtime provider, with a simulated session to run it today.",
           "Prompt Input Studio: presets, context header, option chips, tools, voice mode and send behaviour, previewed on a new-chat page, under a conversation and in a side panel, with generated code.",
           "Prompt Input submitOn prop: send with Enter or with ⌘/Ctrl+Enter.",
           "Prompt Input Tools menu: web search, deep research and similar tools in one toolbar menu that fits any width. Model Picker and the menu truncate instead of pushing send out of a narrow toolbar.",

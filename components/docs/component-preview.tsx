@@ -15,11 +15,13 @@ export async function ComponentPreview({
   className,
 }: {
   name: string
-  dir?: "examples" | "particles"
+  /** "recipes" shows the recipe's entry file, recipes/<name>/<name>.tsx. */
+  dir?: "examples" | "recipes"
   align?: "center" | "start"
   className?: string
 }) {
-  const code = (await readSource(`${dir}/${name}.tsx`)).trim()
+  const file = dir === "recipes" ? `recipes/${name}/${name}.tsx` : `${dir}/${name}.tsx`
+  const code = (await readSource(file)).trim()
   const html = await highlight(code)
   return <PreviewTabs name={name} code={code} html={html} align={align} className={className} />
 }

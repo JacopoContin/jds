@@ -110,6 +110,6 @@ ${group("components")}
 ## Optional
 
 - [Everything in one file](${site.url}/llms-full.txt): all component docs with source
-- [Particles](${site.url}/particles): full screens composed from the components
+- [Recipes](${site.url}/recipes): complete agent and voice experiences, installable as blocks
 `
 }

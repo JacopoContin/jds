@@ -50,7 +50,8 @@ for (const doc of pages) {
   })
 }
 
-const particles = [
+/** Recipe previews on /recipes. Snapshots keep their particle-* names from before the merge. */
+const recipePreviews = [
   "chat-app",
   "agent-inbox",
   "run-history",
@@ -63,10 +64,10 @@ const particles = [
   "agent-settings",
 ]
 
-for (const name of particles) {
-  test(`particle: ${name}`, async ({ page }, info) => {
+for (const name of recipePreviews) {
+  test(`recipe: ${name}`, async ({ page }, info) => {
     await setup(page, info.project.name)
-    await page.goto("/particles")
+    await page.goto("/recipes")
     await page.waitForLoadState("networkidle")
     const preview = page.locator(`#${name} [data-slot=tabs-content]`).first()
     await settle(page, preview)
