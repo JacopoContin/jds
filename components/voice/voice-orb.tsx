@@ -102,7 +102,7 @@ function ParticleOrb({
     let raf = 0
 
     const draw = (now: number) => {
-      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
+      const dt = reduced ? 0 : Math.max(0, Math.min(0.05, (now - last) / 1000))
       last = now
       const { state, level, speed } = input.current
       const target = targets[state]
@@ -205,7 +205,7 @@ function RingOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
     let raf = 0
 
     const draw = (now: number) => {
-      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
+      const dt = reduced ? 0 : Math.max(0, Math.min(0.05, (now - last) / 1000))
       last = now
       const { state, level, speed } = input.current
       const target = ringTargets[state]
@@ -332,7 +332,7 @@ function WaveOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
     const C = 50
 
     const draw = (now: number) => {
-      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
+      const dt = reduced ? 0 : Math.max(0, Math.min(0.05, (now - last) / 1000))
       last = now
       const { state, level, speed } = input.current
       const target = waveTargets[state]
@@ -459,7 +459,7 @@ function useOrbLoop<T extends Record<string, number>>(
     let last = performance.now()
     let raf = 0
     const frame = (now: number) => {
-      const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
+      const dt = reduced ? 0 : Math.max(0, Math.min(0.05, (now - last) / 1000))
       last = now
       const { state, level, speed } = input.current
       const target = targets[state]
@@ -593,36 +593,24 @@ function resolveColors(el: HTMLElement, colors: string[]): [number, number, numb
 
 const rgba = ([r, g, b]: [number, number, number], a = 1) => `rgba(${r},${g},${b},${a})`
 
+type Palette = OrbPalette | string[]
+
 /**
- * A grainy sphere of drifting color fields with a soft highlight and darker rim.
- * Fields drift slowly when idle, move and swell with `level` while listening or
- * speaking, and swirl while thinking. `palette` picks the colors.
+ * Resolves a palette to four RGB colors (base + three fields), again on theme changes.
+ * "primary" builds shades from the text color. Error swaps any palette for shades of the
+ * destructive color, so the state reads the same on every orb.
  */
-function AuraOrb({
-  state = "idle",
-  level = 0,
-  size = 160,
-  speed = 1,
-  glow = 0,
-  palette = "primary",
-  className,
-  ...props
-}: OrbProps & { palette?: OrbPalette | string[] }) {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+function usePaletteColors(ref: React.RefObject<HTMLElement | null>, palette: Palette, error: boolean) {
   const colorsRef = React.useRef<[number, number, number][]>([])
-  const grainRef = React.useRef<HTMLCanvasElement | null>(null)
-  // Re-resolve when the palette's value changes, not its array identity. Error swaps any
-  // palette for shades of the destructive color, so the state reads the same on every orb.
-  const error = state === "error"
+  // Re-resolve when the palette's value changes, not its array identity.
   const key = Array.isArray(palette) ? palette.join(",") : palette
   const paletteRef = React.useRef(palette)
   React.useEffect(() => {
     paletteRef.current = palette
   })
 
-  // Resolve palette colors once per palette/theme change; "primary" builds shades from --primary.
   React.useEffect(() => {
-    const el = canvasRef.current
+    const el = ref.current
     if (!el) return
     const read = () => {
       const palette = paletteRef.current
@@ -646,7 +634,35 @@ function AuraOrb({
       attributeFilter: ["class", "data-color", "data-base"],
     })
     return () => observer.disconnect()
-  }, [key, error])
+  }, [ref, key, error])
+
+  return colorsRef
+}
+
+/** Named and custom palettes glow in their main field color; primary and error follow the text color. */
+function paletteGlow(palette: Palette, error: boolean) {
+  if (error || palette === "primary") return undefined
+  return Array.isArray(palette) ? palette[2] : auraPalettes[palette][2]
+}
+
+/**
+ * A grainy sphere of drifting color fields with a soft highlight and darker rim.
+ * Fields drift slowly when idle, move and swell with `level` while listening or
+ * speaking, and swirl while thinking. `palette` picks the colors.
+ */
+function AuraOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  speed = 1,
+  glow = 0,
+  palette = "primary",
+  className,
+  ...props
+}: OrbProps & { palette?: Palette }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const grainRef = React.useRef<HTMLCanvasElement | null>(null)
+  const colorsRef = usePaletteColors(canvasRef, palette, state === "error")
 
   useOrbLoop(state, level, speed, auraTargets, (c) => {
     const canvas = canvasRef.current
@@ -716,9 +732,6 @@ function AuraOrb({
     ctx.restore()
   })
 
-  // Named and custom palettes glow in their main field color; primary and error follow the text color.
-  const glowColor =
-    error || palette === "primary" ? undefined : Array.isArray(palette) ? palette[2] : auraPalettes[palette][2]
   return orbFrame(
     "aura",
     state,
@@ -727,7 +740,7 @@ function AuraOrb({
     className,
     props,
     <canvas ref={canvasRef} className="size-full" />,
-    glowColor,
+    paletteGlow(palette, state === "error"),
   )
 }
 
@@ -855,7 +868,272 @@ function HalftoneOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 
   return orbFrame("halftone", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
-type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone"
+/* ---------- Shader orbs: plasma and liquid ---------- */
+
+const VERTEX = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"
+
+/** Shared GLSL: canvas size, palette, level, and value noise with fbm. */
+const GLSL_COMMON = `precision mediump float;
+uniform vec2 u_res;
+uniform float u_level;
+uniform vec3 u_c0;
+uniform vec3 u_c1;
+uniform vec3 u_c2;
+uniform vec3 u_c3;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p);vec2 f=fract(p);vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);
+}
+float fbm(vec2 p){float v=0.;float a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return v;}
+`
+
+type Shader = { gl: WebGLRenderingContext; uniform: (name: string) => WebGLUniformLocation | null }
+
+let webgl: boolean | undefined
+/** Whether this browser can draw shader orbs. Checked once; shader variants fall back to aura without it. */
+function hasWebGL() {
+  if (webgl === undefined) {
+    try {
+      webgl = !!document.createElement("canvas").getContext("webgl")
+    } catch {
+      webgl = false
+    }
+  }
+  return webgl
+}
+const noSubscribe = () => () => {}
+
+/** Compiles a fragment shader onto a quad covering the canvas. The ref stays null if it fails. */
+function useShader(ref: React.RefObject<HTMLCanvasElement | null>, fragment: string) {
+  const shader = React.useRef<Shader | null>(null)
+  React.useEffect(() => {
+    const gl = ref.current?.getContext("webgl", { premultipliedAlpha: true, antialias: false })
+    if (!gl) return
+    const compile = (type: number, source: string) => {
+      const s = gl.createShader(type)!
+      gl.shaderSource(s, source)
+      gl.compileShader(s)
+      return s
+    }
+    const program = gl.createProgram()!
+    const vs = compile(gl.VERTEX_SHADER, VERTEX)
+    const fs = compile(gl.FRAGMENT_SHADER, GLSL_COMMON + fragment)
+    gl.attachShader(program, vs)
+    gl.attachShader(program, fs)
+    gl.linkProgram(program)
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error(gl.getShaderInfoLog(fs) ?? gl.getProgramInfoLog(program))
+      return
+    }
+    gl.useProgram(program)
+    const buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW)
+    const position = gl.getAttribLocation(program, "p")
+    gl.enableVertexAttribArray(position)
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0)
+    const locations = new Map<string, WebGLUniformLocation | null>()
+    shader.current = {
+      gl,
+      uniform: (name) => {
+        if (!locations.has(name)) locations.set(name, gl.getUniformLocation(program, name))
+        return locations.get(name)!
+      },
+    }
+    return () => {
+      shader.current = null
+      gl.deleteBuffer(buffer)
+      gl.deleteProgram(program)
+      gl.deleteShader(vs)
+      gl.deleteShader(fs)
+    }
+  }, [ref, fragment])
+  return shader
+}
+
+/** Sizes the canvas, sets shared and per-orb uniforms (as u_<name>), and draws one frame. */
+function drawShader(
+  shader: Shader,
+  canvas: HTMLCanvasElement,
+  size: number,
+  colors: [number, number, number][],
+  level: number,
+  uniforms: Record<string, number>,
+) {
+  const { gl, uniform } = shader
+  const px = Math.round(size * Math.min(window.devicePixelRatio || 1, 2))
+  if (canvas.width !== px || canvas.height !== px) {
+    canvas.width = px
+    canvas.height = px
+  }
+  gl.viewport(0, 0, px, px)
+  gl.uniform2f(uniform("u_res"), px, px)
+  gl.uniform1f(uniform("u_level"), level)
+  colors.forEach(([r, g, b], i) => gl.uniform3f(uniform(`u_c${i}`), r / 255, g / 255, b / 255))
+  for (const [name, value] of Object.entries(uniforms)) gl.uniform1f(uniform(`u_${name}`), value)
+  gl.clearColor(0, 0, 0, 0)
+  gl.clear(gl.COLOR_BUFFER_BIT)
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+}
+
+type ShaderOrbProps = OrbProps & { palette?: Palette }
+
+/**
+ * Wires a shader orb: palette colors, the compiled program, and a loop that advances
+ * `phase` at the state's `pace` so speed changes never jump the pattern.
+ */
+function useShaderOrb<T extends { pace: number } & Record<string, number>>(
+  { state = "idle", level = 0, size = 160, speed = 1, palette = "primary" }: ShaderOrbProps,
+  fragment: string,
+  targets: Record<VoiceState, T>,
+) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const colorsRef = usePaletteColors(canvasRef, palette, state === "error")
+  const shader = useShader(canvasRef, fragment)
+  const phase = React.useRef(0)
+  useOrbLoop(state, level, speed, targets, (c) => {
+    const canvas = canvasRef.current
+    if (!shader.current || !canvas || colorsRef.current.length < 4) return
+    phase.current += c.dt * c.pace
+    const uniforms: Record<string, number> = { phase: phase.current }
+    for (const key of Object.keys(targets.idle)) if (key !== "pace") uniforms[key] = c[key]
+    drawShader(shader.current, canvas, size, colorsRef.current, c.level, uniforms)
+  })
+  return canvasRef
+}
+
+const plasmaTargets: Record<VoiceState, { pace: number; turb: number; swirl: number; bright: number }> = {
+  idle: { pace: 0.6, turb: 0.4, swirl: 0, bright: 0.6 },
+  connecting: { pace: 1.2, turb: 0.3, swirl: 0.6, bright: 0.4 },
+  listening: { pace: 1, turb: 0.8, swirl: 0, bright: 1 },
+  thinking: { pace: 2, turb: 1, swirl: 1, bright: 0.9 },
+  speaking: { pace: 1.4, turb: 1, swirl: 0.2, bright: 1.2 },
+  error: { pace: 0.2, turb: 0.2, swirl: 0, bright: 0.3 },
+}
+
+/** Domain-warped noise inside a shaded sphere, with bright filaments that flare with level. */
+const PLASMA = `uniform float u_phase;
+uniform float u_turb;
+uniform float u_swirl;
+uniform float u_bright;
+void main(){
+  vec2 uv=(gl_FragCoord.xy*2.-u_res)/u_res.y;
+  float R=.9*(1.+u_level*.05);
+  float r=length(uv)/R;
+  float aa=3./u_res.y;
+  float mask=1.-smoothstep(1.-aa,1.+aa,r);
+  if(mask<=0.){gl_FragColor=vec4(0.);return;}
+  float z=sqrt(max(0.,1.-r*r));
+  vec2 p=uv/R/(z*.6+.4);
+  float t=u_phase;
+  float a=u_swirl*((1.-r)*2.5+t*.2);
+  float ca=cos(a);float sa=sin(a);
+  p=mat2(ca,-sa,sa,ca)*p;
+  vec2 q=vec2(fbm(p*1.4+vec2(t*.15,0.)),fbm(p*1.4+vec2(3.1,-t*.12)));
+  float n=fbm(p*1.8+q*(1.2+u_turb*1.6+u_level*1.5)+vec2(0.,t*.1));
+  vec3 col=mix(u_c0,u_c1,smoothstep(.25,.65,n));
+  col=mix(col,u_c2,smoothstep(.4,.75,q.x)*.8);
+  col=mix(col,u_c3,smoothstep(.5,.85,q.y)*.6);
+  float fil=pow(1.-abs(sin(n*10.+t*.5)),10.)*(.35+u_level*.8)*u_bright;
+  col+=fil*mix(u_c1,vec3(1.),.5);
+  col*=.7+.4*z;
+  col+=pow(1.-z,2.5)*.4*u_c3;
+  gl_FragColor=vec4(col*mask,mask);
+}`
+
+/**
+ * Glowing plasma: warped noise flowing inside a shaded sphere. Bright filaments flare
+ * with `level`; it churns faster and twists while thinking. `palette` picks the colors.
+ */
+function PlasmaOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+  const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, PLASMA, plasmaTargets)
+  return orbFrame(
+    "plasma",
+    state,
+    size,
+    glow,
+    className,
+    rest,
+    <canvas ref={canvasRef} className="size-full" />,
+    paletteGlow(palette, state === "error"),
+  )
+}
+
+const liquidTargets: Record<VoiceState, { pace: number; spread: number; gloss: number }> = {
+  idle: { pace: 0.5, spread: 0.8, gloss: 0.8 },
+  connecting: { pace: 1.3, spread: 0.45, gloss: 0.6 },
+  listening: { pace: 0.9, spread: 1, gloss: 0.9 },
+  thinking: { pace: 1.8, spread: 0.7, gloss: 0.9 },
+  speaking: { pace: 1.2, spread: 1.1, gloss: 1 },
+  error: { pace: 0.2, spread: 0.55, gloss: 0.4 },
+}
+
+/** Five metaballs, lit as a glossy surface from the field's gradient. */
+const LIQUID = `uniform float u_phase;
+uniform float u_spread;
+uniform float u_gloss;
+// Surface height: 0 at the edge, easing smoothly to flat inside, so rims curve and centres stay calm.
+float height(float f){return sqrt(1.-exp(-max(f-1.,0.)*1.5));}
+float field(vec2 uv,out vec3 tint){
+  float f=0.;vec3 acc=vec3(0.);
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    vec2 c=vec2(sin(u_phase*(.7+fi*.17)+fi*1.7),cos(u_phase*(.6+fi*.13)+fi*2.3))*u_spread*(.26+.045*fi)*(1.+u_level*.25);
+    float rad=(.36-.03*fi)*(1.+u_level*.3+.06*sin(u_phase*1.9+fi));
+    vec2 d=uv-c;
+    // Softened so ball centres stay finite; a raw 1/d² spike speckles the lighting.
+    float v=rad*rad/(dot(d,d)+rad*rad*.15);
+    vec3 col=fi<.5?u_c1:fi<1.5?u_c2:fi<2.5?u_c3:fi<3.5?u_c2:u_c1;
+    f+=v;acc+=col*v;
+  }
+  tint=acc/max(f,.0001);
+  return f;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy*2.-u_res)/u_res.y;
+  float e=2./u_res.y;
+  vec3 tint;vec3 unused;
+  float f=field(uv,tint);
+  float fx=field(uv+vec2(e,0.),unused);
+  float fy=field(uv+vec2(0.,e),unused);
+  float g=length(vec2(fx-f,fy-f));
+  float m=clamp((f-1.)/max(g*1.5,.0001)+.5,0.,1.);
+  if(m<=0.){gl_FragColor=vec4(0.);return;}
+  float h=height(f);
+  vec2 dh=vec2(height(fx)-h,height(fy)-h)/e;
+  vec3 n=normalize(vec3(-dh*.18,1.));
+  vec3 L=normalize(vec3(-.5,.6,.8));
+  float diff=clamp(dot(n,L),0.,1.);
+  float spec=pow(clamp(dot(n,normalize(L+vec3(0.,0.,1.))),0.,1.),40.)*u_gloss;
+  vec3 col=tint*(.55+.55*diff);
+  col=mix(col,u_c0,.2*(1.-diff));
+  col+=spec*.9;
+  gl_FragColor=vec4(col*m,m);
+}`
+
+/**
+ * Liquid metal: colored blobs that drift, merge and split, lit like a glossy surface.
+ * They spread and swell with `level`, pull together while connecting, and churn while
+ * thinking. `palette` picks the colors.
+ */
+function LiquidOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+  const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, LIQUID, liquidTargets)
+  return orbFrame(
+    "liquid",
+    state,
+    size,
+    glow,
+    className,
+    rest,
+    <canvas ref={canvasRef} className="size-full" />,
+    paletteGlow(palette, state === "error"),
+  )
+}
+
+type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid"
 
 const VoiceOrbContext = React.createContext<VoiceOrbVariant>("particles")
 
@@ -869,6 +1147,8 @@ function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; chi
  * `particles`: a rotating particle mesh. `ring`: a soft glowing ring.
  * `wave`: twisting ribbons along a line, twice as wide as `size`.
  * `aura`: soft blurred blobs. `bars`: a circular equalizer. `halftone`: a rippling dot matrix.
+ * `plasma`: glowing warped noise in a sphere. `liquid`: glossy merging metaballs. Both are
+ * WebGL shaders and fall back to `aura` where WebGL is unavailable.
  * Every variant takes the same states, `speed`, `glow` and `sensitivity`.
  */
 function VoiceOrb({
@@ -885,15 +1165,18 @@ function VoiceOrb({
   variant?: VoiceOrbVariant
   /** Particle count for the particles variant. */
   particles?: number
-  /** Aura colors: a named palette, custom colors (base + 3), or "primary" (default). */
-  palette?: OrbPalette | string[]
+  /** Aura, plasma and liquid colors: a named palette, custom colors (base + 3), or "primary" (default). */
+  palette?: Palette
 }) {
   const fallback = React.useContext(VoiceOrbContext)
+  const webgl = React.useSyncExternalStore(noSubscribe, hasWebGL, () => true)
   const resolved = variant ?? fallback
   const props = { ...rest, level: Math.min(1, level * sensitivity) }
   if (resolved === "ring") return <RingOrb {...props} />
   if (resolved === "wave") return <WaveOrb {...props} />
   if (resolved === "aura") return <AuraOrb palette={palette} {...props} />
+  if (resolved === "plasma") return webgl ? <PlasmaOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
+  if (resolved === "liquid") return webgl ? <LiquidOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
   if (resolved === "bars") return <BarsOrb {...props} />
   if (resolved === "halftone") return <HalftoneOrb {...props} />
   return <ParticleOrb particles={particles} {...props} />

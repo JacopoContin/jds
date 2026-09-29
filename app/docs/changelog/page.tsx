@@ -15,6 +15,7 @@ const releases = [
         items: [
           "Voice Orb Studio: presets, style, palette, size, glow, speed and sensitivity, previewed in every state, with generated code.",
           "Voice Orb connecting and error states, plus speed, glow and sensitivity props, on every variant.",
+          "Voice Orb plasma and liquid variants: WebGL shaders that take the same palettes as aura, and fall back to aura without WebGL.",
         ],
       },
     ],

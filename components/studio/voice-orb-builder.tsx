@@ -42,6 +42,9 @@ const presets: { name: string; config: Partial<Config> }[] = [
   { name: "Iris", config: { variant: "aura", palette: "iris", glow: 0.35 } },
   { name: "Ember", config: { variant: "aura", palette: "ember", speed: 0.8 } },
   { name: "Mist", config: { variant: "aura", palette: "mist", speed: 0.7 } },
+  { name: "Plasma", config: { variant: "plasma", palette: "iris", glow: 0.4 } },
+  { name: "Lava", config: { variant: "liquid", palette: "ember", glow: 0.25 } },
+  { name: "Mercury", config: { variant: "liquid", palette: "mist", speed: 0.8 } },
   { name: "Equalizer", config: { variant: "bars", sensitivity: 1.4 } },
   { name: "Print", config: { variant: "halftone", color: "foreground" } },
   { name: "Pulse", config: { variant: "ring", color: "foreground", speed: 1.4, sensitivity: 1.6 } },
@@ -57,12 +60,13 @@ const states: { value: VoiceState; label: string; body: string }[] = [
 ]
 
 const voiced = (s: VoiceState) => s === "listening" || s === "speaking"
-const usesColor = (c: Config) => c.variant !== "aura" || c.palette === "primary"
+const paletted = (v: VoiceOrbVariant) => v === "aura" || v === "plasma" || v === "liquid"
+const usesColor = (c: Config) => !paletted(c.variant) || c.palette === "primary"
 
 /** Props that differ from the component's defaults, one per line. */
 function generateCode(c: Config) {
   const p = [`variant="${c.variant}"`]
-  if (c.variant === "aura" && c.palette !== "primary") p.push(`palette="${c.palette}"`)
+  if (paletted(c.variant) && c.palette !== "primary") p.push(`palette="${c.palette}"`)
   p.push("state={state}", "level={level}")
   if (c.size !== 160) p.push(`size={${c.size}}`)
   if (c.glow > 0) p.push(`glow={${c.glow}}`)
@@ -171,9 +175,11 @@ export function VoiceOrbBuilder() {
               { value: "aura", label: "Aura" },
               { value: "bars", label: "Bars" },
               { value: "halftone", label: "Halftone" },
+              { value: "plasma", label: "Plasma" },
+              { value: "liquid", label: "Liquid" },
             ]}
           />
-          {c.variant === "aura" && (
+          {paletted(c.variant) && (
             <Segmented
               label="Palette"
               value={c.palette}
