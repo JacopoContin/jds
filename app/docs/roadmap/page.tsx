@@ -9,81 +9,72 @@ type Status = "done" | "next" | "planned"
 
 const phases: { title: string; status: Status; items: readonly string[] }[] = [
   {
-    title: "Foundation",
-    status: "done",
-    items: ["Tokens, light and dark", "Motion presets", "Icon layer", "Registry and CLI install"],
-  },
-  {
-    title: "Agent",
+    title: "Studio: side panel",
     status: "done",
     items: [
-      "Conversation, Message, Prompt Input",
-      "Response, Reasoning, Tool Call",
-      "Approval, Agent Steps, Sources",
-      "Suggestions, Shimmer",
+      "Agent Panel component",
+      "Docked or floating, left or right, card, page or glass",
+      "Slide, fade or spring entrance",
+      "Chat and voice modes, composer options",
+      "Live preview with generated code",
     ],
   },
   {
-    title: "Voice",
-    status: "done",
-    items: ["Voice Orb, Waveform", "Push to Talk, Live Transcript"],
-  },
-  {
-    title: "Agent, part two",
-    status: "done",
+    title: "Studio: prompt input",
+    status: "next",
     items: [
-      "Model Picker",
-      "Branch (regenerated responses)",
-      "Artifact panel",
-      "Context Meter",
-      "Mentions in the composer",
-      "Voice Picker, Call Controls",
+      "Frame, context header and option chips",
+      "Attachments, model picker, dictation, mentions",
+      "Send button and submit styles",
+      "Generated code",
     ],
   },
   {
-    title: "Primitives",
-    status: "done",
+    title: "Studio: orbs",
+    status: "planned",
+    items: ["Size, density, speed and glow per variant", "Per-state behaviour", "New orb designs", "Generated code"],
+  },
+  {
+    title: "Studio: motion and backgrounds",
+    status: "planned",
     items: [
-      "Accordion, Alert, Alert Dialog, Breadcrumb, Checkbox, Combobox, Command",
-      "Context Menu, Drawer, Empty, Field, Hover Card, Input Group, Input OTP",
-      "Label, Menubar, Pagination, Progress, Radio Group, Slider, Spinner",
-      "Switch, Table, Toggle, Toggle Group, Sheet",
+      "Motion presets you can feel",
+      "Ambient backgrounds: gradient mesh, grain, aurora, dot fields",
+      "Generated code",
     ],
   },
   {
-    title: "Primitives, part two",
-    status: "done",
-    items: ["Calendar and Date Picker", "Number Field, Meter", "Toolbar, Form", "Navigation Menu, Resizable, Carousel"],
+    title: "Portable foundations",
+    status: "planned",
+    items: [
+      "Tokens exported as W3C design tokens JSON",
+      "Motion and orb specs written platform-neutral",
+      "Groundwork for native iOS and Android",
+    ],
   },
   {
-    title: "Particles",
+    title: "Foundation, components and particles",
     status: "done",
-    items: ["Chat app", "Agent inbox", "Agent run, Agent panel", "Voice call, Voice session", "Agent settings"],
-  },
-  {
-    title: "Docs for humans and agents",
-    status: "done",
-    items: ["Search with ⌘K", "Copy page as Markdown", "llms.txt for coding agents", "Changelog"],
-  },
-  {
-    title: "More particles",
-    status: "done",
-    items: ["Agent onboarding", "Agent marketplace", "Run history and analytics"],
-  },
-  {
-    title: "Open source",
-    status: "done",
-    items: ["Contribution guide", "Visual regression tests for every component", "Weekly particle drops"],
+    items: [
+      "Tokens, themes and customizer",
+      "21 agent and voice components, 52 primitives",
+      "10 particles",
+      "Docs for humans and agents, visual regression tests",
+    ],
   },
 ]
 
 export default function RoadmapPage() {
   return (
     <>
-      <PageHeader title="Roadmap" description="Agent and voice first, then the full primitive set." />
+      <PageHeader
+        title="Roadmap"
+        description="High-quality AI components and interactions, configurable in the Studio. Web first, native later."
+      />
       <P>
-        Priorities follow what agent products need first. Primitives get added when a component needs them, then filled
-        out to parity with general-purpose libraries.
+        The focus is the surfaces people actually interact with: side panels, prompt inputs, voice orbs, motion and
+        backgrounds. Each gets a Studio page for designers and engineers to configure it and copy the code. Web comes
+        first; tokens and specs are kept platform-neutral so iOS and Android can follow.
       </P>
       {phases.map((phase) => (
         <div key={phase.title}>

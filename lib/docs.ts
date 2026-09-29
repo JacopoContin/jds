@@ -574,6 +574,87 @@ const { status, sendMessage, stop } = useChat()
     ],
     isNew: true,
   },
+  {
+    slug: "agent-panel",
+    title: "Agent Panel",
+    description:
+      "A configurable agent side panel: docked or floating, left or right, card, page or glass surface, three entrance motions, and chat/voice modes.",
+    group: "ai",
+    files: ["components/ai/agent-panel.tsx"],
+    usage: `import { AgentPanel, AgentPanelBody, AgentPanelFooter, AgentPanelHeader } from "@/components/ai/agent-panel"
+
+<AgentPanel open={open} onOpenChange={setOpen} variant="floating" surface="glass">
+  <AgentPanelHeader title="Agent" icon="orb" modes={["chat", "voice"]} />
+  <AgentPanelBody chat={<Conversation>…</Conversation>} voice={<VoiceOrb … />} />
+  <AgentPanelFooter>
+    <PromptInput>…</PromptInput>
+  </AgentPanelFooter>
+</AgentPanel>`,
+    api: [
+      {
+        component: "AgentPanel",
+        props: [
+          { name: "open", type: "boolean", description: "" },
+          { name: "onOpenChange", type: "(open: boolean) => void", description: "Enables the close button." },
+          { name: "side", type: '"left" | "right"', default: '"right"', description: "" },
+          {
+            name: "variant",
+            type: '"docked" | "floating"',
+            default: '"docked"',
+            description: "Docked runs full height on an edge; floating is inset and rounded.",
+          },
+          {
+            name: "surface",
+            type: '"card" | "background" | "glass"',
+            default: '"card"',
+            description: "Glass blurs what is behind it.",
+          },
+          { name: "width", type: "number", default: "400", description: "In px, capped to the available space." },
+          { name: "inset", type: "number", default: "12", description: "Edge gap when floating, in px." },
+          {
+            name: "motion",
+            type: '"slide" | "fade" | "spring"',
+            default: '"spring"',
+            description: "Entrance and exit.",
+          },
+          {
+            name: "contained",
+            type: "boolean",
+            default: "false",
+            description: "Position inside the nearest positioned ancestor instead of the viewport.",
+          },
+          { name: "mode", type: '"chat" | "voice"', description: "Controlled mode. Or defaultMode with onModeChange." },
+        ],
+      },
+      {
+        component: "AgentPanelHeader",
+        props: [
+          { name: "title", type: "string", default: '"Agent"', description: "" },
+          {
+            name: "icon",
+            type: '"sparkle" | "orb" | "none"',
+            default: '"sparkle"',
+            description: '"orb" shows a small live Voice Orb.',
+          },
+          {
+            name: "modes",
+            type: '("chat" | "voice")[]',
+            description: "Shows a chat/voice switch when there is more than one.",
+          },
+          { name: "showClose", type: "boolean", default: "true", description: "" },
+        ],
+      },
+      {
+        component: "AgentPanelBody",
+        props: [
+          { name: "chat", type: "ReactNode", description: "Shown in chat mode." },
+          { name: "voice", type: "ReactNode", description: "Shown in voice mode. The footer hides in voice mode." },
+        ],
+      },
+    ],
+    examples: [],
+    isNew: true,
+  },
   // Voice
   {
     slug: "voice-orb",

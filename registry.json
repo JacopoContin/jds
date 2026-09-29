@@ -776,6 +776,27 @@
       ]
     },
     {
+      "name": "agent-panel",
+      "type": "registry:component",
+      "title": "Agent Panel",
+      "description": "A configurable agent side panel: docked or floating, left or right, card, page or glass surface, three entrance motions, and chat/voice modes.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "components/ai/agent-panel.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "voice-orb",
       "type": "registry:component",
       "title": "Voice Orb",

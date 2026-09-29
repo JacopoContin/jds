@@ -22,7 +22,11 @@ async function setup(page: Page, theme: string) {
  * Voice visuals are random by design. Hide them during capture; visibility (unlike a
  * mask rectangle) also hides glows that spill outside the element's box.
  */
-const HIDE_RANDOM = "[data-slot=voice-orb], [data-slot=waveform], canvas { visibility: hidden !important; }"
+const HIDE_RANDOM = [
+  "[data-slot=voice-orb], [data-slot=waveform], canvas { visibility: hidden !important; }",
+  // The sticky site header can overlap tall previews; keep docs chrome out of component baselines.
+  "[data-site-header] { visibility: hidden !important; }",
+].join("\n")
 
 /** Center the preview (clear of the sticky header), load fonts, then run the paused clock forward. */
 async function settle(page: Page, preview: ReturnType<Page["locator"]>) {

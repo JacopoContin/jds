@@ -10,7 +10,7 @@ import { site } from "@/lib/site"
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
+    <header data-site-header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-screen-2xl items-center gap-6 px-4 md:px-6">
         <MobileNav />
         <Link href="/" className="font-mono text-sm font-medium">
@@ -25,6 +25,9 @@ export function SiteHeader() {
           </Link>
           <Link href="/particles" className="transition-colors hover:text-foreground">
             Particles
+          </Link>
+          <Link href="/studio" className="transition-colors hover:text-foreground">
+            Studio
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-1">

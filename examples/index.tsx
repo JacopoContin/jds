@@ -6,6 +6,7 @@ import type { ComponentType } from "react"
 /** Demo name → lazily loaded component. Source is read from examples/<name>.tsx for the Code tab. */
 export const examples: Record<string, ComponentType> = {
   "accordion-demo": dynamic(() => import("./accordion-demo")),
+  "agent-panel-demo": dynamic(() => import("./agent-panel-demo")),
   "agent-steps-demo": dynamic(() => import("./agent-steps-demo")),
   "alert-demo": dynamic(() => import("./alert-demo")),
   "alert-dialog-demo": dynamic(() => import("./alert-dialog-demo")),
