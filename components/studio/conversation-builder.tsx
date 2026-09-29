@@ -328,7 +328,7 @@ export function ConversationBuilder() {
 
   return (
     <div className="grid min-h-0 flex-1 lg:grid-cols-[20rem_minmax(0,1fr)]">
-      <aside className="flex flex-col gap-5 overflow-y-auto border-b p-5 lg:h-[calc(100svh-3.5rem)] lg:border-r lg:border-b-0">
+      <aside className="flex flex-col gap-5 overflow-y-auto border-b p-5 lg:h-[calc(100svh-3.5rem-1px)] lg:border-r lg:border-b-0">
         <div className="flex items-center justify-between">
           <h1 className="text-sm font-semibold">Conversation</h1>
           <Button variant="ghost" size="xs" onClick={() => setC(defaults)}>
@@ -425,15 +425,15 @@ export function ConversationBuilder() {
         </ControlGroup>
       </aside>
 
-      <Tabs defaultValue="preview" className="min-w-0 gap-0 p-5">
+      <Tabs defaultValue="preview" className="min-w-0 gap-0 p-5 lg:h-[calc(100svh-3.5rem-1px)]">
         <div className="mb-4 flex items-center justify-between gap-3">
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="code">Code</TabsTrigger>
           </TabsList>
         </div>
-        <TabsContent value="preview">
-          <div className="flex h-160 flex-col overflow-hidden rounded-2xl border bg-background">
+        <TabsContent value="preview" className="flex min-h-0 flex-col">
+          <div className="flex h-160 flex-col overflow-hidden rounded-2xl border bg-background lg:h-auto lg:min-h-0 lg:flex-1">
             <div className="flex justify-center border-b p-3">
               <ToggleGroup
                 value={[surface]}
@@ -475,7 +475,7 @@ export function ConversationBuilder() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="code">
+        <TabsContent value="code" className="min-h-0 overflow-y-auto">
           <CodePanel
             code={code}
             note={

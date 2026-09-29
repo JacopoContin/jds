@@ -244,7 +244,7 @@ export function SidePanelBuilder() {
 
   return (
     <div className="grid min-h-0 flex-1 lg:grid-cols-[20rem_minmax(0,1fr)]">
-      <aside className="flex flex-col gap-5 overflow-y-auto border-b p-5 lg:h-[calc(100svh-3.5rem)] lg:border-r lg:border-b-0">
+      <aside className="flex flex-col gap-5 overflow-y-auto border-b p-5 lg:h-[calc(100svh-3.5rem-1px)] lg:border-r lg:border-b-0">
         <div className="flex items-center justify-between">
           <h1 className="text-sm font-semibold">Side panel</h1>
           <Button variant="ghost" size="xs" onClick={() => setC(defaults)}>
@@ -338,7 +338,7 @@ export function SidePanelBuilder() {
         </ControlGroup>
       </aside>
 
-      <Tabs defaultValue="preview" className="min-w-0 gap-0 p-5">
+      <Tabs defaultValue="preview" className="min-w-0 gap-0 p-5 lg:h-[calc(100svh-3.5rem-1px)]">
         <div className="mb-4 flex items-center justify-between gap-3">
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -355,8 +355,8 @@ export function SidePanelBuilder() {
             </Button>
           </div>
         </div>
-        <TabsContent value="preview">
-          <div className="relative h-160 overflow-hidden rounded-2xl border bg-background">
+        <TabsContent value="preview" className="flex min-h-0 flex-col">
+          <div className="relative h-160 overflow-hidden rounded-2xl border bg-background lg:h-auto lg:min-h-0 lg:flex-1">
             <div className="flex flex-col gap-4 p-6">
               <Skeleton className="h-6 w-40" />
               <div className="grid grid-cols-3 gap-3">
@@ -393,7 +393,7 @@ export function SidePanelBuilder() {
             </AgentPanel>
           </div>
         </TabsContent>
-        <TabsContent value="code">
+        <TabsContent value="code" className="min-h-0 overflow-y-auto">
           <div className="relative overflow-hidden rounded-2xl border bg-card">
             <CopyButton value={generateCode(c)} className="absolute top-3 right-3" />
             <pre className="max-h-160 overflow-auto p-5 font-mono text-xs leading-relaxed">{generateCode(c)}</pre>
