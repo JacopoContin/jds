@@ -18,7 +18,7 @@ const tools = [
   {
     href: "/studio/voice-orb",
     title: "Voice orb",
-    body: "Presets, style, palette, size, glow, speed and sensitivity, previewed in every state.",
+    body: "Ten styles with presets, palettes, shape and material, previewed in every state and inside real surfaces.",
     ready: true,
   },
   {

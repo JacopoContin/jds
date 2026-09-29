@@ -30,7 +30,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: voice orb, round two",
-    status: "next",
+    status: "done",
     items: [
       "Custom palettes",
       "Preview the orb inside real surfaces",
@@ -41,7 +41,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: prompt input",
-    status: "planned",
+    status: "next",
     items: [
       "Frame, context header and option chips",
       "Attachments, model picker, tools, suggestions, dictation, mentions",

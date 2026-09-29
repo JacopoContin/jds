@@ -17,6 +17,7 @@ const releases = [
           "Voice Orb connecting and error states, plus speed, glow and sensitivity props, on every variant.",
           "Voice Orb plasma and liquid variants: WebGL shaders that take the same palettes as aura, and fall back to aura without WebGL.",
           "Voice Orb glass variant (shader) and dot variant, a minimal presence for composer buttons, headers and call pills.",
+          "Voice Orb shape and material props: thickness, gloss, blobs, turbulence, filaments, grain, bars and density, each for the variants it fits, with controls in the Studio.",
           "Voice Orb Studio: custom palettes, and previews inside a side panel, a call and compact placements.",
         ],
       },

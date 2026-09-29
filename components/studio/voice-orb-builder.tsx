@@ -31,6 +31,15 @@ type Config = {
   sensitivity: number
   /** Particles variant only. Null follows the size. */
   particles: number | null
+  /** Shape and material; each applies only to the styles listed in `materials`. */
+  thickness: number
+  grain: number
+  bars: number
+  density: number
+  turbulence: number
+  filaments: number
+  blobs: number
+  gloss: number
 }
 
 type Surface = "stage" | "panel" | "call" | "compact"
@@ -45,6 +54,38 @@ const defaults: Config = {
   speed: 1,
   sensitivity: 1,
   particles: null,
+  thickness: 1,
+  grain: 1,
+  bars: 56,
+  density: 1,
+  turbulence: 1,
+  filaments: 1,
+  blobs: 5,
+  gloss: 1,
+}
+
+type MaterialKey = "thickness" | "grain" | "bars" | "density" | "turbulence" | "filaments" | "blobs" | "gloss"
+
+/** Shape and material controls per style, with slider ranges. Defaults match the component's. */
+const materials: Partial<
+  Record<VoiceOrbVariant, { key: MaterialKey; label: string; min: number; max: number; step: number; unit?: string }[]>
+> = {
+  ring: [{ key: "thickness", label: "Thickness", min: 0.4, max: 3, step: 0.1, unit: "×" }],
+  aura: [{ key: "grain", label: "Grain", min: 0, max: 2, step: 0.1, unit: "×" }],
+  bars: [{ key: "bars", label: "Bars", min: 16, max: 96, step: 4 }],
+  halftone: [{ key: "density", label: "Density", min: 0.5, max: 2, step: 0.1, unit: "×" }],
+  plasma: [
+    { key: "turbulence", label: "Turbulence", min: 0, max: 2, step: 0.1, unit: "×" },
+    { key: "filaments", label: "Filaments", min: 0, max: 2, step: 0.1, unit: "×" },
+  ],
+  liquid: [
+    { key: "blobs", label: "Blobs", min: 1, max: 8, step: 1 },
+    { key: "gloss", label: "Gloss", min: 0, max: 2, step: 0.1, unit: "×" },
+  ],
+  glass: [
+    { key: "thickness", label: "Thickness", min: 0, max: 2, step: 0.1, unit: "×" },
+    { key: "gloss", label: "Gloss", min: 0, max: 2, step: 0.1, unit: "×" },
+  ],
 }
 
 /** Starting points: a variant plus the settings that make it read well. */
@@ -90,6 +131,7 @@ function generateCode(c: Config) {
   if (c.speed !== 1) p.push(`speed={${c.speed}}`)
   if (c.sensitivity !== 1) p.push(`sensitivity={${c.sensitivity}}`)
   if (c.variant === "particles" && c.particles !== null) p.push(`particles={${c.particles}}`)
+  for (const m of materials[c.variant] ?? []) if (c[m.key] !== defaults[m.key]) p.push(`${m.key}={${c[m.key]}}`)
   if (usesColor(c) && c.color === "foreground") p.push(`className="text-foreground"`)
   return `import { VoiceOrb } from "@/components/voice/voice-orb"
 
@@ -110,6 +152,14 @@ function Orb({ c, state, level, size }: { c: Config; state: VoiceState; level: n
       speed={c.speed}
       sensitivity={c.sensitivity}
       particles={c.particles ?? undefined}
+      thickness={c.thickness}
+      grain={c.grain}
+      bars={c.bars}
+      density={c.density}
+      turbulence={c.turbulence}
+      filaments={c.filaments}
+      blobs={c.blobs}
+      gloss={c.gloss}
       className={cn(usesColor(c) && c.color === "foreground" && "text-foreground")}
     />
   )
@@ -326,17 +376,33 @@ export function VoiceOrbBuilder() {
           )}
           <Range label="Size" value={c.size} {...range} unit="px" onChange={set("size")} />
           <Range label="Glow" value={c.glow} min={0} max={1} step={0.05} onChange={set("glow")} />
-          {c.variant === "particles" && (
-            <Range
-              label="Particles"
-              value={c.particles ?? Math.round(Math.min(6000, c.size * c.size * 0.07))}
-              min={400}
-              max={6000}
-              step={100}
-              onChange={set("particles")}
-            />
-          )}
         </ControlGroup>
+        {(c.variant === "particles" || materials[c.variant]) && (
+          <ControlGroup title="Shape and material">
+            {c.variant === "particles" && (
+              <Range
+                label="Particles"
+                value={c.particles ?? Math.round(Math.min(6000, c.size * c.size * 0.07))}
+                min={400}
+                max={6000}
+                step={100}
+                onChange={set("particles")}
+              />
+            )}
+            {materials[c.variant]?.map((m) => (
+              <Range
+                key={m.key}
+                label={m.label}
+                value={c[m.key]}
+                min={m.min}
+                max={m.max}
+                step={m.step}
+                unit={m.unit}
+                onChange={set(m.key)}
+              />
+            ))}
+          </ControlGroup>
+        )}
         <ControlGroup title="Motion">
           <Range label="Speed" value={c.speed} min={0.25} max={2} step={0.05} unit="×" onChange={set("speed")} />
           <Range

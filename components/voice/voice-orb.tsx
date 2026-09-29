@@ -184,7 +184,20 @@ const RING_POINTS = 120
  * while listening or speaking; the light sweeps around it faster while thinking.
  * Brightest along the bottom edge. Drawn as SVG, so it stays sharp at any size.
  */
-function RingOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
+function RingOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  speed = 1,
+  glow = 0,
+  thickness = 1,
+  className,
+  ...props
+}: OrbProps & { thickness?: number }) {
+  const thick = React.useRef(thickness)
+  React.useEffect(() => {
+    thick.current = thickness
+  })
   const id = React.useId().replace(/:/g, "")
   const coreRef = React.useRef<SVGPathElement>(null)
   const glowRef = React.useRef<SVGPathElement>(null)
@@ -239,8 +252,8 @@ function RingOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
       coreRef.current?.setAttribute("d", d)
       glowRef.current?.setAttribute("d", d)
       haloRef.current?.setAttribute("d", d)
-      coreRef.current?.setAttribute("stroke-width", (1.8 * cur.width).toFixed(2))
-      glowRef.current?.setAttribute("stroke-width", (5 * cur.width + cur.level * 3).toFixed(2))
+      coreRef.current?.setAttribute("stroke-width", (1.8 * cur.width * thick.current).toFixed(2))
+      glowRef.current?.setAttribute("stroke-width", ((5 * cur.width + cur.level * 3) * thick.current).toFixed(2))
       haloRef.current?.setAttribute("stroke-width", (10 + cur.level * 6).toFixed(2))
       gradientRef.current?.setAttribute(
         "gradientTransform",
@@ -657,9 +670,10 @@ function AuraOrb({
   speed = 1,
   glow = 0,
   palette = "primary",
+  grain = 1,
   className,
   ...props
-}: OrbProps & { palette?: Palette }) {
+}: OrbProps & { palette?: Palette; grain?: number }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const grainRef = React.useRef<HTMLCanvasElement | null>(null)
   const colorsRef = usePaletteColors(canvasRef, palette, state === "error")
@@ -722,9 +736,9 @@ function AuraOrb({
     ctx.fillRect(0, 0, px, px)
 
     // Grain.
-    if (grainRef.current) {
+    if (grainRef.current && grain > 0) {
       ctx.globalCompositeOperation = "overlay"
-      ctx.globalAlpha = 0.22
+      ctx.globalAlpha = 0.22 * grain
       ctx.drawImage(grainRef.current, 0, 0)
       ctx.globalAlpha = 1
       ctx.globalCompositeOperation = "source-over"
@@ -755,23 +769,31 @@ const barsTargets: Record<VoiceState, { base: number; speed: number; sweep: numb
   error: { base: 0.05, speed: 0.3, sweep: 0, spin: 0.02 },
 }
 
-const BAR_COUNT = 56
 
 /**
  * Bars around a ring, like a circular equalizer. Bar length follows `level` while
  * listening or speaking; a bright arc sweeps around it while thinking.
  */
-function BarsOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
+function BarsOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  speed = 1,
+  glow = 0,
+  bars: count = 56,
+  className,
+  ...props
+}: OrbProps & { bars?: number }) {
   const bars = React.useRef<(SVGLineElement | null)[]>([])
   const angle = React.useRef(0)
 
   useOrbLoop(state, level, speed, barsTargets, (c) => {
     angle.current += c.spin * c.dt
     const t = c.time * c.speed
-    for (let i = 0; i < BAR_COUNT; i++) {
+    for (let i = 0; i < count; i++) {
       const el = bars.current[i]
       if (!el) continue
-      const a = (i / BAR_COUNT) * Math.PI * 2 + angle.current
+      const a = (i / count) * Math.PI * 2 + angle.current
       const noise = 0.5 + 0.5 * Math.sin(i * 1.7 + t) * Math.sin(i * 0.6 - t * 1.3)
       const len = 30 * (c.base + (0.15 + c.level * 0.85) * noise * (0.3 + c.level))
       const r0 = 26
@@ -780,8 +802,8 @@ function BarsOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
       el.setAttribute("x2", (50 + Math.cos(a) * (r0 + 1.5 + len)).toFixed(2))
       el.setAttribute("y2", (50 + Math.sin(a) * (r0 + 1.5 + len)).toFixed(2))
       // While thinking, a highlight travels around the ring.
-      const head = ((c.time * 0.9) % 1) * BAR_COUNT
-      const dist = Math.min(Math.abs(i - head), BAR_COUNT - Math.abs(i - head))
+      const head = ((c.time * 0.9) % 1) * count
+      const dist = Math.min(Math.abs(i - head), count - Math.abs(i - head))
       const lit = c.sweep * Math.max(0, 1 - dist / 10)
       el.setAttribute("opacity", Math.min(1, 0.35 + noise * 0.35 + c.level * 0.3 + lit).toFixed(2))
     }
@@ -795,7 +817,7 @@ function BarsOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
     className,
     props,
     <svg viewBox="0 0 100 100" className="size-full overflow-visible">
-      {Array.from({ length: BAR_COUNT }, (_, i) => (
+      {Array.from({ length: count }, (_, i) => (
         <line
           key={i}
           ref={(el) => {
@@ -825,9 +847,18 @@ const halftoneTargets: Record<VoiceState, { speed: number; freq: number; swirl: 
  * A disc of dots whose sizes ripple outward like a printed halftone wave. The
  * ripple speeds up with `level`; while thinking the pattern twists into a spiral.
  */
-function HalftoneOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
+function HalftoneOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  speed = 1,
+  glow = 0,
+  density = 1,
+  className,
+  ...props
+}: OrbProps & { density?: number }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const grid = Math.round(Math.max(14, Math.min(28, size / 7)))
+  const grid = Math.max(6, Math.round(Math.max(14, Math.min(28, size / 7)) * density))
 
   useOrbLoop(state, level, speed, halftoneTargets, (c) => {
     const canvas = canvasRef.current
@@ -1048,6 +1079,8 @@ function useShaderOrb<T extends { pace: number } & Record<string, number>>(
   { state = "idle", level = 0, size = 160, speed = 1, palette = "primary" }: ShaderOrbProps,
   fragment: string,
   targets: Record<VoiceState, T>,
+  /** Fixed shape and material settings, sent as u_<name> alongside the eased state values. */
+  material: Record<string, number>,
 ) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const colorsRef = usePaletteColors(canvasRef, palette, state === "error")
@@ -1057,7 +1090,7 @@ function useShaderOrb<T extends { pace: number } & Record<string, number>>(
     const canvas = canvasRef.current
     if (!shader.current || !canvas || colorsRef.current.length < 4) return
     phase.current += c.dt * c.pace
-    const uniforms: Record<string, number> = { phase: phase.current }
+    const uniforms: Record<string, number> = { ...material, phase: phase.current }
     for (const key of Object.keys(targets.idle)) if (key !== "pace") uniforms[key] = c[key]
     drawShader(shader.current, canvas, size, colorsRef.current, c.level, uniforms)
   })
@@ -1078,6 +1111,8 @@ const PLASMA = `uniform float u_phase;
 uniform float u_turb;
 uniform float u_swirl;
 uniform float u_bright;
+uniform float u_turbulence;
+uniform float u_filaments;
 void main(){
   vec2 uv=(gl_FragCoord.xy*2.-u_res)/u_res.y;
   float R=.9*(1.+u_level*.05);
@@ -1092,11 +1127,11 @@ void main(){
   float ca=cos(a);float sa=sin(a);
   p=mat2(ca,-sa,sa,ca)*p;
   vec2 q=vec2(fbm(p*1.4+vec2(t*.15,0.)),fbm(p*1.4+vec2(3.1,-t*.12)));
-  float n=fbm(p*1.8+q*(1.2+u_turb*1.6+u_level*1.5)+vec2(0.,t*.1));
+  float n=fbm(p*1.8+q*(1.2+u_turb*1.6+u_level*1.5)*u_turbulence+vec2(0.,t*.1));
   vec3 col=mix(u_c0,u_c1,smoothstep(.25,.65,n));
   col=mix(col,u_c2,smoothstep(.4,.75,q.x)*.8);
   col=mix(col,u_c3,smoothstep(.5,.85,q.y)*.6);
-  float fil=pow(1.-abs(sin(n*10.+t*.5)),10.)*(.35+u_level*.8)*u_bright;
+  float fil=pow(1.-abs(sin(n*10.+t*.5)),10.)*(.35+u_level*.8)*u_bright*u_filaments;
   col+=fil*mix(u_c1,vec3(1.),.5);
   col*=.7+.4*z;
   col+=pow(1.-z,2.5)*.4*u_c3;
@@ -1107,9 +1142,18 @@ void main(){
  * Glowing plasma: warped noise flowing inside a shaded sphere. Bright filaments flare
  * with `level`; it churns faster and twists while thinking. `palette` picks the colors.
  */
-function PlasmaOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+function PlasmaOrb({
+  glow = 0,
+  turbulence = 1,
+  filaments = 1,
+  className,
+  ...props
+}: ShaderOrbProps & { turbulence?: number; filaments?: number }) {
   const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
-  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, PLASMA, plasmaTargets)
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, PLASMA, plasmaTargets, {
+    turbulence,
+    filaments,
+  })
   return orbFrame(
     "plasma",
     state,
@@ -1122,31 +1166,40 @@ function PlasmaOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
   )
 }
 
-const liquidTargets: Record<VoiceState, { pace: number; spread: number; gloss: number }> = {
-  idle: { pace: 0.5, spread: 0.8, gloss: 0.8 },
-  connecting: { pace: 1.3, spread: 0.45, gloss: 0.6 },
-  listening: { pace: 0.9, spread: 1, gloss: 0.9 },
-  thinking: { pace: 1.8, spread: 0.7, gloss: 0.9 },
-  speaking: { pace: 1.2, spread: 1.1, gloss: 1 },
-  error: { pace: 0.2, spread: 0.55, gloss: 0.4 },
+const liquidTargets: Record<VoiceState, { pace: number; spread: number; shine: number }> = {
+  idle: { pace: 0.5, spread: 0.8, shine: 0.8 },
+  connecting: { pace: 1.3, spread: 0.45, shine: 0.6 },
+  listening: { pace: 0.9, spread: 1, shine: 0.9 },
+  thinking: { pace: 1.8, spread: 0.7, shine: 0.9 },
+  speaking: { pace: 1.2, spread: 1.1, shine: 1 },
+  error: { pace: 0.2, spread: 0.55, shine: 0.4 },
 }
 
-/** Five metaballs, lit as a glossy surface from the field's gradient. */
+/** Up to eight metaballs, lit as a glossy surface from the field's gradient. */
 const LIQUID = `uniform float u_phase;
 uniform float u_spread;
+uniform float u_shine;
+uniform float u_blobs;
 uniform float u_gloss;
 // Surface height: 0 at the edge, easing smoothly to flat inside, so rims curve and centres stay calm.
 float height(float f){return sqrt(1.-exp(-max(f-1.,0.)*1.5));}
 float field(vec2 uv,out vec3 tint){
   float f=0.;vec3 acc=vec3(0.);
-  for(int i=0;i<5;i++){
+  // More blobs are each smaller, so the total mass stays about the same.
+  float scale=sqrt(5./u_blobs);
+  for(int i=0;i<8;i++){
     float fi=float(i);
-    vec2 c=vec2(sin(u_phase*(.7+fi*.17)+fi*1.7),cos(u_phase*(.6+fi*.13)+fi*2.3))*u_spread*(.26+.045*fi)*(1.+u_level*.25);
-    float rad=(.36-.03*fi)*(1.+u_level*.3+.06*sin(u_phase*1.9+fi));
+    if(fi>=u_blobs)break;
+    float k=mod(fi,5.);
+    vec2 c=vec2(sin(u_phase*(.7+fi*.17)+fi*1.7),cos(u_phase*(.6+fi*.13)+fi*2.3))*u_spread*(.26+.045*k)*(1.+u_level*.25);
+    float rad=(.36-.03*k)*scale*(1.+u_level*.3+.06*sin(u_phase*1.9+fi));
+    // Keep each blob, and its soft edge, inside the canvas.
+    c*=min(1.,(.9-rad*1.15)/max(length(c),.0001));
     vec2 d=uv-c;
     // Softened so ball centres stay finite; a raw 1/d² spike speckles the lighting.
     float v=rad*rad/(dot(d,d)+rad*rad*.15);
-    vec3 col=fi<.5?u_c1:fi<1.5?u_c2:fi<2.5?u_c3:fi<3.5?u_c2:u_c1;
+    float m=mod(fi,3.);
+    vec3 col=m<.5?u_c1:m<1.5?u_c2:u_c3;
     f+=v;acc+=col*v;
   }
   tint=acc/max(f,.0001);
@@ -1167,7 +1220,7 @@ void main(){
   vec3 n=normalize(vec3(-dh*.18,1.));
   vec3 L=normalize(vec3(-.5,.6,.8));
   float diff=clamp(dot(n,L),0.,1.);
-  float spec=pow(clamp(dot(n,normalize(L+vec3(0.,0.,1.))),0.,1.),40.)*u_gloss;
+  float spec=pow(clamp(dot(n,normalize(L+vec3(0.,0.,1.))),0.,1.),40.)*u_shine*u_gloss;
   vec3 col=tint*(.55+.55*diff);
   col=mix(col,u_c0,.2*(1.-diff));
   col+=spec*.9;
@@ -1179,9 +1232,18 @@ void main(){
  * They spread and swell with `level`, pull together while connecting, and churn while
  * thinking. `palette` picks the colors.
  */
-function LiquidOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+function LiquidOrb({
+  glow = 0,
+  blobs = 5,
+  gloss = 1,
+  className,
+  ...props
+}: ShaderOrbProps & { blobs?: number; gloss?: number }) {
   const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
-  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, LIQUID, liquidTargets)
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, LIQUID, liquidTargets, {
+    blobs: Math.max(1, Math.min(8, Math.round(blobs))),
+    gloss,
+  })
   return orbFrame(
     "liquid",
     state,
@@ -1207,6 +1269,8 @@ const glassTargets: Record<VoiceState, { pace: number; core: number; swirl: numb
 const GLASS = `uniform float u_phase;
 uniform float u_core;
 uniform float u_swirl;
+uniform float u_thickness;
+uniform float u_gloss;
 vec3 inner(vec2 p){
   vec3 col=u_c0*.55;
   float size=u_core*(1.+u_level*.4)*.75;
@@ -1231,16 +1295,17 @@ void main(){
   float z=sqrt(max(0.,1.-r*r));
   vec3 n=vec3(q,z);
   // Thick glass magnifies the centre and bends the edges; channels bend slightly apart.
-  vec2 rp=q*(.55+.45*z);
-  float disp=.06*(1.-z);
+  float bend=.45*u_thickness;
+  vec2 rp=q*(1.-bend+bend*z);
+  float disp=.06*u_thickness*(1.-z);
   vec3 col=vec3(inner(rp*(1.+disp)).r,inner(rp).g,inner(rp*(1.-disp)).b);
   // Thicker glass toward the rim absorbs more; the very edge catches a bright fresnel line.
-  col*=.55+.45*z;
+  col*=1.-.45*u_thickness*(1.-z);
   float fres=pow(1.-z,4.);
   col=mix(col,vec3(1.),fres*.65);
   vec3 L=normalize(vec3(-.5,.6,.8));
-  col+=pow(max(dot(reflect(-L,n),vec3(0.,0.,1.)),0.),60.)*.9;
-  col+=pow(max(dot(reflect(-normalize(vec3(.6,-.5,.6)),n),vec3(0.,0.,1.)),0.),12.)*.12;
+  col+=pow(max(dot(reflect(-L,n),vec3(0.,0.,1.)),0.),60.)*.9*u_gloss;
+  col+=pow(max(dot(reflect(-normalize(vec3(.6,-.5,.6)),n),vec3(0.,0.,1.)),0.),12.)*.12*u_gloss;
   gl_FragColor=vec4(col*mask,mask);
 }`
 
@@ -1249,9 +1314,15 @@ void main(){
  * The light swells with `level`, circles faster while thinking, and pulls in while
  * connecting. `palette` picks the colors.
  */
-function GlassOrb({ glow = 0, className, ...props }: ShaderOrbProps) {
+function GlassOrb({
+  glow = 0,
+  thickness = 1,
+  gloss = 1,
+  className,
+  ...props
+}: ShaderOrbProps & { thickness?: number; gloss?: number }) {
   const { state = "idle", level, size = 160, speed, palette = "primary", ...rest } = props
-  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, GLASS, glassTargets)
+  const canvasRef = useShaderOrb({ state, level, size, speed, palette }, GLASS, glassTargets, { thickness, gloss })
   return orbFrame(
     "glass",
     state,
@@ -1283,20 +1354,49 @@ function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; chi
  * where WebGL is unavailable. `dot`: a minimal dot for tight spots, legible down to 16px.
  * Every variant takes the same states, `speed`, `glow` and `sensitivity`.
  */
+/** Shape and material settings. Each applies to the variants named; the rest ignore it. */
+type OrbMaterial = {
+  /** Particles: approximate count. Defaults to scale with size. */
+  particles?: number
+  /** Ring: stroke weight. Glass: how strongly it bends and tints the light. 1 is the default. */
+  thickness?: number
+  /** Aura: film grain strength, 0 to 2. */
+  grain?: number
+  /** Bars: number of bars. */
+  bars?: number
+  /** Halftone: dot grid density multiplier. */
+  density?: number
+  /** Plasma: how strongly the noise warps. */
+  turbulence?: number
+  /** Plasma: brightness of the flaring streaks. */
+  filaments?: number
+  /** Liquid: number of blobs, 1 to 8. */
+  blobs?: number
+  /** Liquid and glass: highlight strength. */
+  gloss?: number
+}
+
 function VoiceOrb({
   variant,
-  particles,
   palette,
   level = 0,
   sensitivity = 1,
+  particles,
+  thickness,
+  grain,
+  bars,
+  density,
+  turbulence,
+  filaments,
+  blobs,
+  gloss,
   ...rest
-}: OrbProps & {
+}: OrbProps &
+  OrbMaterial & {
   /** How strongly `level` moves the orb. 1 is as measured; 2 doubles it, capped at full. */
   sensitivity?: number
   /** Defaults to the nearest VoiceOrbProvider, then "particles". */
   variant?: VoiceOrbVariant
-  /** Particle count for the particles variant. */
-  particles?: number
   /** Aura, plasma, liquid and glass colors: a named palette, custom colors (base + 3), or "primary" (default). */
   palette?: Palette
 }) {
@@ -1304,16 +1404,27 @@ function VoiceOrb({
   const webgl = React.useSyncExternalStore(noSubscribe, hasWebGL, () => true)
   const resolved = variant ?? fallback
   const props = { ...rest, level: Math.min(1, level * sensitivity) }
-  if (resolved === "ring") return <RingOrb {...props} />
+  const aura = <AuraOrb palette={palette} grain={grain} {...props} />
+  if (resolved === "ring") return <RingOrb thickness={thickness} {...props} />
   if (resolved === "wave") return <WaveOrb {...props} />
-  if (resolved === "aura") return <AuraOrb palette={palette} {...props} />
-  if (resolved === "plasma") return webgl ? <PlasmaOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
-  if (resolved === "glass") return webgl ? <GlassOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
+  if (resolved === "aura") return aura
+  if (resolved === "plasma")
+    return webgl ? <PlasmaOrb palette={palette} turbulence={turbulence} filaments={filaments} {...props} /> : aura
+  if (resolved === "glass")
+    return webgl ? <GlassOrb palette={palette} thickness={thickness} gloss={gloss} {...props} /> : aura
+  if (resolved === "liquid") return webgl ? <LiquidOrb palette={palette} blobs={blobs} gloss={gloss} {...props} /> : aura
   if (resolved === "dot") return <DotOrb {...props} />
-  if (resolved === "liquid") return webgl ? <LiquidOrb palette={palette} {...props} /> : <AuraOrb palette={palette} {...props} />
-  if (resolved === "bars") return <BarsOrb {...props} />
-  if (resolved === "halftone") return <HalftoneOrb {...props} />
+  if (resolved === "bars") return <BarsOrb bars={bars} {...props} />
+  if (resolved === "halftone") return <HalftoneOrb density={density} {...props} />
   return <ParticleOrb particles={particles} {...props} />
 }
 
-export { VoiceOrb, VoiceOrbProvider, auraPalettes, type OrbPalette, type VoiceOrbVariant, type VoiceState }
+export {
+  VoiceOrb,
+  VoiceOrbProvider,
+  auraPalettes,
+  type OrbMaterial,
+  type OrbPalette,
+  type VoiceOrbVariant,
+  type VoiceState,
+}
