@@ -46,6 +46,12 @@ const tools = [
     ready: true,
   },
   {
+    href: "/studio/artifact",
+    title: "Artifact",
+    body: "How generated documents, code and previews open: beside the chat, as a sheet, full screen or inline.",
+    ready: true,
+  },
+  {
     href: "",
     title: "Motion and backgrounds",
     body: "Motion presets to feel, and ambient backgrounds for agent surfaces.",

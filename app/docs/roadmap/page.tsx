@@ -73,16 +73,16 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: voice call, command bar and artifact",
-    status: "next",
+    status: "done",
     items: [
       "Voice call: layout, captions, waveform, status, hand-off and backdrop on the voice agent recipe (live)",
       "Command bar: a ⌘K bar that runs commands and asks the agent, with its own Studio (live)",
-      "Artifact: document, code and preview layouts, panel behaviour",
+      "Artifact: document, code or preview, opening beside the chat, as a sheet, full screen or inline (live)",
     ],
   },
   {
     title: "Studio: whole experiences",
-    status: "planned",
+    status: "next",
     items: [
       "Start from what you're building: chat, voice, copilot, coding or research agent",
       "Configure layout, style, components, behaviour and states in one flow",

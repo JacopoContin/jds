@@ -19,6 +19,7 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Artifact Studio: how generated documents, code and previews open next to the chat (beside it and resizable, as a sheet, full screen, or inline in the message), with version switcher and actions.",
           "Command Bar: a ⌘K palette that also asks the agent. The Ask row turns what you typed into a question and the answer replaces the list until Escape. Place the row first so Enter asks, or last so Enter runs the best command. With a Command Bar Studio.",
           "Voice Call Studio: design the voice agent's call screen (layout, captions, waveform, status, hand-off, glow backdrop) with a live sample call. The recipe gains matching props.",
           "Use this theme in your app: the Customize menu exports what you picked as one install command (a registry theme built from your choices), plus the font and orb lines for the root layout, or as a Markdown spec.",
