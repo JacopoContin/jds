@@ -19,6 +19,7 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Voice Call Studio: design the voice agent's call screen (layout, captions, waveform, status, hand-off, glow backdrop) with a live sample call. The recipe gains matching props.",
           "Use this theme in your app: the Customize menu exports what you picked as one install command (a registry theme built from your choices), plus the font and orb lines for the root layout, or as a Markdown spec.",
           "Studio Code tabs: choose whether choices apply to one component or the whole app, and Copy as Markdown for a spec to hand to a teammate or a coding agent.",
           "VoiceOrbProvider takes the full orb style (palette, glow, speed, sensitivity, material), not just the variant, so one provider styles every orb in an app.",

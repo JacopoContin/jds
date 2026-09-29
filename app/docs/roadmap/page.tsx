@@ -75,7 +75,7 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     title: "Studio: voice call, command bar and artifact",
     status: "next",
     items: [
-      "Voice call: orb, transcript, controls, status and waveform together",
+      "Voice call: layout, captions, waveform, status, hand-off and backdrop on the voice agent recipe (live)",
       "Command bar: actions, search, AI commands and shortcuts",
       "Artifact: document, code and preview layouts, panel behaviour",
     ],

@@ -1910,7 +1910,8 @@
         "@jds/live-transcript",
         "@jds/tool-call",
         "@jds/utils",
-        "@jds/voice-orb"
+        "@jds/voice-orb",
+        "@jds/waveform"
       ],
       "files": [
         {

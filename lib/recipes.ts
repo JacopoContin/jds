@@ -44,11 +44,15 @@ const allRecipes: Recipe[] = [
       "A complete voice agent surface: the orb, live captions and call controls, with the agent's tool calls and transcript beside it. Style it in the Studio, pick a layout, connect your voice session.",
     steps: [
       {
-        title: "Style the orb",
-        body: "Design the orb in the Voice Orb Studio and copy its props. Leave it out to use the orb set in your VoiceOrbProvider.",
+        title: "Design the screen",
+        body: "Set layout, captions, waveform, status, hand-off and backdrop in the Voice Call Studio, and the orb in the Voice Orb Studio. Leave orb out to use your VoiceOrbProvider.",
         code: `<VoiceAgent
   session={session}
-  orb={{ variant: "glass", palette: "iris", glow: 0.3, size: 220 }}
+  layout="focus"
+  captions="transcript"
+  waveform
+  backdrop="glow"
+  orb={{ variant: "glass", palette: "iris", glow: 0.3, size: 180 }}
 />`,
       },
       {

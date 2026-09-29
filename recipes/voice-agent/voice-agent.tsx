@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { CallControls, CallEnd, CallInterrupt, CallMute, CallStatus } from "@/components/voice/call-controls"
 import { LiveTranscript } from "@/components/voice/live-transcript"
 import { VoiceOrb } from "@/components/voice/voice-orb"
+import { Waveform } from "@/components/voice/waveform"
 import { SuccessIcon } from "@/lib/icons"
 import { duration, ease } from "@/lib/motion"
 
@@ -28,6 +29,11 @@ function VoiceAgent({
   layout = "split",
   agentName = "Aria",
   subtitle,
+  captions = "line",
+  waveform = false,
+  status = true,
+  handoff = true,
+  backdrop = "none",
   className,
 }: {
   session: VoiceAgentSession
@@ -38,6 +44,16 @@ function VoiceAgent({
   agentName?: string
   /** A line under the agent's name, e.g. what it can help with. */
   subtitle?: string
+  /** Under the orb: the latest line, the last few lines as a rolling transcript, or nothing. */
+  captions?: "line" | "transcript" | "off"
+  /** A live waveform under the orb, driven by the session's level. */
+  waveform?: boolean
+  /** Connection status and call timer under the name. */
+  status?: boolean
+  /** The "Hand to a person" button next to the call controls. */
+  handoff?: boolean
+  /** "glow" puts a soft light in the primary color behind the orb. */
+  backdrop?: "none" | "glow"
   className?: string
 }) {
   const { call, orb, level, transcript, actions, outcome } = session
@@ -45,6 +61,15 @@ function VoiceAgent({
   const latest = transcript.at(-1)
   const ended = call === "ended"
   const log = React.useRef<HTMLDivElement>(null)
+  // A speech-shaped spectrum from the single level: tallest in the middle, rippling with loudness.
+  const spectrum = React.useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, i) => {
+        const center = 1 - Math.abs(i - 13.5) / 14
+        return Math.min(1, level * 1.6 * center * (0.55 + 0.45 * Math.abs(Math.sin(i * 1.9 + level * 9))))
+      }),
+    [level],
+  )
 
   // Keep the newest line in view as the transcript grows.
   React.useEffect(() => {
@@ -62,45 +87,59 @@ function VoiceAgent({
         className,
       )}
     >
-      <section aria-label="Call" className="flex min-h-128 flex-col items-center justify-between gap-6 px-6 py-8">
+      <section
+        aria-label="Call"
+        className={cn(
+          "flex min-h-128 flex-col items-center justify-between gap-6 px-6 py-8",
+          backdrop === "glow" && "bg-radial from-primary/15 to-transparent to-70%",
+        )}
+      >
         <div className="flex flex-col items-center gap-1 text-center">
           <span className="text-sm font-medium">{agentName}</span>
           {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
-          <CallStatus state={call} startedAt={session.startedAt} />
+          {status && <CallStatus state={call} startedAt={session.startedAt} />}
         </div>
 
-        <VoiceOrb size={200} {...orbStyle} state={orb} level={level} />
+        <div className="flex flex-col items-center gap-4">
+          <VoiceOrb size={200} {...orbStyle} state={orb} level={level} />
+          {waveform && <Waveform spectrum={spectrum} active={orb === "speaking" || orb === "listening"} className="w-48" />}
+        </div>
 
         <div className="flex min-h-20 w-full max-w-md flex-col items-center justify-end text-center" aria-hidden>
-          <AnimatePresence mode="popLayout">
-            {ended && outcome ? (
-              <motion.div
-                key="outcome"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: duration.base, ease: ease.out }}
-                className="flex flex-col items-center gap-1"
-              >
-                <span className="flex items-center gap-1.5 text-sm font-medium">
-                  <SuccessIcon className="size-4 text-success" />
-                  {outcome.title}
-                </span>
-                <span className="text-xs text-muted-foreground">{outcome.detail}</span>
-              </motion.div>
-            ) : (
-              latest && (
-                <motion.p
-                  key={latest.id}
+          {captions === "transcript" && !ended ? (
+            <LiveTranscript segments={transcript.slice(-3)} agentName={agentName} className="w-full text-left" />
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {ended && outcome ? (
+                <motion.div
+                  key="outcome"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: duration.base, ease: ease.out }}
-                  className={cn("text-base", latest.speaker === "user" && "text-muted-foreground")}
+                  className="flex flex-col items-center gap-1"
                 >
-                  {latest.text}
-                </motion.p>
-              )
-            )}
-          </AnimatePresence>
+                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                    <SuccessIcon className="size-4 text-success" />
+                    {outcome.title}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{outcome.detail}</span>
+                </motion.div>
+              ) : (
+                captions !== "off" &&
+                latest && (
+                  <motion.p
+                    key={latest.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: duration.base, ease: ease.out }}
+                    className={cn("text-base", latest.speaker === "user" && "text-muted-foreground")}
+                  >
+                    {latest.text}
+                  </motion.p>
+                )
+              )}
+            </AnimatePresence>
+          )}
         </div>
 
         {ended ? (
@@ -114,9 +153,11 @@ function VoiceAgent({
               <CallInterrupt disabled={orb !== "speaking"} onClick={session.interrupt} />
               <CallEnd onClick={session.end} />
             </CallControls>
-            <Button variant="outline" size="sm" onClick={session.transfer} disabled={call !== "connected"}>
-              Hand to a person
-            </Button>
+            {handoff && (
+              <Button variant="outline" size="sm" onClick={session.transfer} disabled={call !== "connected"}>
+                Hand to a person
+              </Button>
+            )}
           </div>
         )}
       </section>

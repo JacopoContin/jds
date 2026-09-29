@@ -34,6 +34,12 @@ const tools = [
     ready: true,
   },
   {
+    href: "/studio/voice-call",
+    title: "Voice call",
+    body: "A call screen from the voice agent recipe: layout, captions, waveform, status, hand-off and backdrop, with a live sample call.",
+    ready: true,
+  },
+  {
     href: "",
     title: "Motion and backgrounds",
     body: "Motion presets to feel, and ambient backgrounds for agent surfaces.",
