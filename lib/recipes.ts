@@ -17,11 +17,13 @@ export type Recipe = {
   steps?: { title: string; body: string; code?: string }[]
   /** File holding the session interface to implement, shown on the recipe page. */
   session?: string
+  /** Kept in the repo but left off the site and the registry while its value is unclear. */
+  hidden?: boolean
 }
 
 const SIMULATED_SPECTRUM = "hooks/use-simulated-spectrum.ts"
 
-export const recipes: Recipe[] = [
+const allRecipes: Recipe[] = [
   {
     slug: "voice-agent",
     title: "Voice agent",
@@ -84,6 +86,7 @@ export const recipes: Recipe[] = [
     description:
       "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",
     files: ["recipes/agent-marketplace/agent-marketplace.tsx"],
+    hidden: true,
   },
   {
     slug: "agent-run",
@@ -120,6 +123,8 @@ export const recipes: Recipe[] = [
     files: ["recipes/agent-settings/agent-settings.tsx"],
   },
 ]
+
+export const recipes = allRecipes.filter((r) => !r.hidden)
 
 export const recipeBySlug = Object.fromEntries(recipes.map((r) => [r.slug, r]))
 

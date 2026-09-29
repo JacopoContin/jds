@@ -2031,31 +2031,6 @@
       ]
     },
     {
-      "name": "agent-marketplace",
-      "type": "registry:block",
-      "title": "Agent marketplace",
-      "description": "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",
-      "dependencies": [
-        "motion"
-      ],
-      "registryDependencies": [
-        "@jds/badge",
-        "@jds/button",
-        "@jds/dialog",
-        "@jds/empty",
-        "@jds/input-group",
-        "@jds/toggle-group",
-        "@jds/utils"
-      ],
-      "files": [
-        {
-          "path": "recipes/agent-marketplace/agent-marketplace.tsx",
-          "type": "registry:component",
-          "target": "components/agent-marketplace/agent-marketplace.tsx"
-        }
-      ]
-    },
-    {
       "name": "agent-run",
       "type": "registry:block",
       "title": "Agent run",
