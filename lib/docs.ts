@@ -699,7 +699,7 @@ const { status, sendMessage, stop } = useChat()
     slug: "voice-orb",
     title: "Voice Orb",
     description:
-      "Presence for a voice agent, drawn in the primary color. Six variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, and halftone dots. All react to state and voice level.",
+      "Presence for a voice agent, drawn in the primary color. Six variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, and halftone dots. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
     group: "voice",
     files: ["components/voice/voice-orb.tsx"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
@@ -723,8 +723,27 @@ const { status, sendMessage, stop } = useChat()
             default: 'provider, else "particles"',
             description: "Visual style. Omit to use the nearest VoiceOrbProvider.",
           },
-          { name: "state", type: '"idle" | "listening" | "thinking" | "speaking"', default: '"idle"', description: "" },
+          {
+            name: "state",
+            type: '"idle" | "connecting" | "listening" | "thinking" | "speaking" | "error"',
+            default: '"idle"',
+            description:
+              "Same meaning on every variant. Connecting breathes; error turns destructive and nearly still.",
+          },
           { name: "level", type: "number", default: "0", description: "Loudness 0 to 1. Smoothed with a spring." },
+          {
+            name: "sensitivity",
+            type: "number",
+            default: "1",
+            description: "Multiplies level before it moves the orb, capped at 1. Raise it for quiet sources.",
+          },
+          { name: "speed", type: "number", default: "1", description: "Animation speed multiplier." },
+          {
+            name: "glow",
+            type: "number",
+            default: "0",
+            description: "Soft light around the orb, 0 to 1. Named aura palettes glow in their own color.",
+          },
           {
             name: "size",
             type: "number",

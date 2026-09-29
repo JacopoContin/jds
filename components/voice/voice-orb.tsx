@@ -3,7 +3,11 @@
 import * as React from "react"
 import { cn } from "cn"
 
-type VoiceState = "idle" | "listening" | "thinking" | "speaking"
+/**
+ * Semantic states every orb supports. Connecting breathes while a session opens;
+ * error turns destructive and nearly still, so it reads without relying on color.
+ */
+type VoiceState = "idle" | "connecting" | "listening" | "thinking" | "speaking" | "error"
 
 /** A point on the sphere in latitude/longitude, so the surface can wave along its lines. */
 type Particle = { lat: number; lon: number; size: number; phase: number }
@@ -11,9 +15,11 @@ type Particle = { lat: number; lon: number; size: number; phase: number }
 /** Per-state motion targets. Values are eased toward, so state changes never jump. */
 const targets: Record<VoiceState, { spin: number; swell: number; wave: number; speed: number; scale: number }> = {
   idle: { spin: 0.1, swell: 0, wave: 0.025, speed: 0.6, scale: 1 },
+  connecting: { spin: 0.35, swell: 0, wave: 0.035, speed: 1.4, scale: 0.9 },
   listening: { spin: 0.16, swell: 1, wave: 0.03, speed: 1.2, scale: 1 },
   thinking: { spin: 0.7, swell: 0, wave: 0.06, speed: 2.4, scale: 0.95 },
   speaking: { spin: 0.2, swell: 0.7, wave: 0.045, speed: 1.6, scale: 1 },
+  error: { spin: 0.02, swell: 0, wave: 0.012, speed: 0.3, scale: 0.94 },
 }
 
 /**
@@ -45,6 +51,10 @@ type OrbProps = React.ComponentProps<"div"> & {
   level?: number
   /** Rendered size in px. */
   size?: number
+  /** Animation speed multiplier. 1 is the designed pace. */
+  speed?: number
+  /** Soft light around the orb in its own color, 0 to 1. */
+  glow?: number
 }
 
 /**
@@ -56,6 +66,8 @@ function ParticleOrb({
   state = "idle",
   level = 0,
   size = 160,
+  speed = 1,
+  glow = 0,
   particles,
   className,
   ...props
@@ -64,14 +76,14 @@ function ParticleOrb({
   particles?: number
 }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
-  const input = React.useRef({ state, level })
+  const input = React.useRef({ state, level, speed })
   const redraw = React.useRef<(() => void) | null>(null)
   const count = particles ?? Math.round(Math.min(6000, size * size * 0.07))
 
   React.useEffect(() => {
-    input.current = { state, level }
+    input.current = { state, level, speed }
     redraw.current?.()
-  }, [state, level])
+  }, [state, level, speed])
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -92,7 +104,7 @@ function ParticleOrb({
     const draw = (now: number) => {
       const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
       last = now
-      const { state, level } = input.current
+      const { state, level, speed } = input.current
       const target = targets[state]
       const k = reduced ? 1 : 1 - Math.exp(-dt * 5)
       cur.spin += (target.spin - cur.spin) * k
@@ -102,8 +114,8 @@ function ParticleOrb({
       cur.scale += (target.scale - cur.scale) * k
       const targetLevel = state === "listening" || state === "speaking" ? level : 0
       cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 12))
-      cur.angle += cur.spin * dt
-      cur.time += cur.speed * dt
+      cur.angle += cur.spin * dt * speed
+      cur.time += cur.speed * dt * speed
       const t = cur.time
 
       const radius = px * 0.4 * cur.scale
@@ -152,28 +164,17 @@ function ParticleOrb({
     }
   }, [size, count])
 
-  return (
-    <div
-      data-slot="voice-orb"
-      data-variant="particles"
-      data-state={state}
-      role="img"
-      aria-label={`Voice assistant ${state}`}
-      className={cn("relative size-(--orb-size) text-primary", className)}
-      style={{ "--orb-size": `${size}px` } as React.CSSProperties}
-      {...props}
-    >
-      <canvas ref={canvasRef} className="size-full" />
-    </div>
-  )
+  return orbFrame("particles", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
 /** Per-state targets for the ring. */
 const ringTargets: Record<VoiceState, { wobble: number; spin: number; scale: number; width: number }> = {
   idle: { wobble: 0.018, spin: 0.15, scale: 1, width: 1 },
+  connecting: { wobble: 0.02, spin: 0.9, scale: 0.9, width: 0.8 },
   listening: { wobble: 0.03, spin: 0.25, scale: 1, width: 1.2 },
   thinking: { wobble: 0.035, spin: 1.6, scale: 0.94, width: 0.9 },
   speaking: { wobble: 0.03, spin: 0.35, scale: 1, width: 1.3 },
+  error: { wobble: 0.008, spin: 0.05, scale: 0.95, width: 0.9 },
 }
 
 const RING_POINTS = 120
@@ -183,19 +184,19 @@ const RING_POINTS = 120
  * while listening or speaking; the light sweeps around it faster while thinking.
  * Brightest along the bottom edge. Drawn as SVG, so it stays sharp at any size.
  */
-function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
+function RingOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
   const id = React.useId().replace(/:/g, "")
   const coreRef = React.useRef<SVGPathElement>(null)
   const glowRef = React.useRef<SVGPathElement>(null)
   const haloRef = React.useRef<SVGPathElement>(null)
   const gradientRef = React.useRef<SVGLinearGradientElement>(null)
-  const input = React.useRef({ state, level })
+  const input = React.useRef({ state, level, speed })
   const redraw = React.useRef<(() => void) | null>(null)
 
   React.useEffect(() => {
-    input.current = { state, level }
+    input.current = { state, level, speed }
     redraw.current?.()
-  }, [state, level])
+  }, [state, level, speed])
 
   React.useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -206,7 +207,7 @@ function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }:
     const draw = (now: number) => {
       const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
       last = now
-      const { state, level } = input.current
+      const { state, level, speed } = input.current
       const target = ringTargets[state]
       const k = reduced ? 1 : 1 - Math.exp(-dt * 5)
       cur.wobble += (target.wobble - cur.wobble) * k
@@ -215,8 +216,8 @@ function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }:
       cur.width += (target.width - cur.width) * k
       const targetLevel = state === "listening" || state === "speaking" ? level : 0
       cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 12))
-      cur.time += dt
-      cur.angle += cur.spin * dt
+      cur.time += dt * speed
+      cur.angle += cur.spin * dt * speed
       const t = cur.time
 
       const amp = cur.wobble + cur.level * 0.045
@@ -256,18 +257,14 @@ function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }:
     }
   }, [])
 
-  return (
-    <div
-      data-slot="voice-orb"
-      data-variant="ring"
-      data-state={state}
-      role="img"
-      aria-label={`Voice assistant ${state}`}
-      className={cn("relative size-(--orb-size) text-primary", className)}
-      style={{ "--orb-size": `${size}px` } as React.CSSProperties}
-      {...props}
-    >
-      <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+  return orbFrame(
+    "ring",
+    state,
+    size,
+    glow,
+    className,
+    props,
+    <svg viewBox="0 0 100 100" className="size-full overflow-visible">
         <defs>
           {/* Dim at the top, full strength at the bottom; rotated to sweep the light around. */}
           <linearGradient ref={gradientRef} id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
@@ -285,17 +282,18 @@ function RingOrb({ state = "idle", level = 0, size = 160, className, ...props }:
         <path ref={haloRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-halo)`} opacity="0.35" />
         <path ref={glowRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-blur)`} opacity="0.85" />
         <path ref={coreRef} fill="none" stroke={`url(#${id}-g)`} strokeLinejoin="round" />
-      </svg>
-    </div>
+    </svg>,
   )
 }
 
 /** Per-state targets for the wave. `amp` is ribbon height; `speed` is how fast they travel. */
 const waveTargets: Record<VoiceState, { amp: number; speed: number; twist: number }> = {
   idle: { amp: 0.14, speed: 0.6, twist: 0.8 },
+  connecting: { amp: 0.08, speed: 2, twist: 1.2 },
   listening: { amp: 0.22, speed: 1.2, twist: 1 },
   thinking: { amp: 0.1, speed: 3.2, twist: 1.6 },
   speaking: { amp: 0.26, speed: 1.8, twist: 1.1 },
+  error: { amp: 0.04, speed: 0.3, twist: 0.4 },
 }
 
 /** Each ribbon: frequency, phase offset, travel direction, and fill strength. */
@@ -313,17 +311,17 @@ const WAVE_SAMPLES = 90
  * ends. They rise with `level` while listening or speaking and race while thinking.
  * Wider than it is tall: 2x `size` wide and 0.6x tall, capped to its container's width.
  */
-function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
+function WaveOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
   const id = React.useId().replace(/:/g, "")
   const fillRefs = React.useRef<(SVGPathElement | null)[]>([])
   const edgeRefs = React.useRef<(SVGPathElement | null)[]>([])
-  const input = React.useRef({ state, level })
+  const input = React.useRef({ state, level, speed })
   const redraw = React.useRef<(() => void) | null>(null)
 
   React.useEffect(() => {
-    input.current = { state, level }
+    input.current = { state, level, speed }
     redraw.current?.()
-  }, [state, level])
+  }, [state, level, speed])
 
   React.useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -336,7 +334,7 @@ function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }:
     const draw = (now: number) => {
       const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
       last = now
-      const { state, level } = input.current
+      const { state, level, speed } = input.current
       const target = waveTargets[state]
       const k = reduced ? 1 : 1 - Math.exp(-dt * 4)
       cur.amp += (target.amp - cur.amp) * k
@@ -344,7 +342,7 @@ function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }:
       cur.twist += (target.twist - cur.twist) * k
       const targetLevel = state === "listening" || state === "speaking" ? level : 0
       cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 10))
-      cur.time += cur.speed * dt
+      cur.time += cur.speed * dt * speed
       const t = cur.time
       const height = Math.min(44, (cur.amp + cur.level * 0.3) * 100)
 
@@ -378,21 +376,14 @@ function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }:
     }
   }, [])
 
-  return (
-    <div
-      data-slot="voice-orb"
-      data-variant="wave"
-      data-state={state}
-      role="img"
-      aria-label={`Voice assistant ${state}`}
-      className={cn(
-        "relative h-[calc(var(--orb-size)*0.6)] w-[calc(var(--orb-size)*2)] max-w-full text-primary",
-        className,
-      )}
-      style={{ "--orb-size": `${size}px` } as React.CSSProperties}
-      {...props}
-    >
-      <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="size-full overflow-visible">
+  return orbFrame(
+    "wave",
+    state,
+    size,
+    glow,
+    cn("h-[calc(var(--orb-size)*0.6)] w-[calc(var(--orb-size)*2)] max-w-full", className),
+    props,
+    <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="size-full overflow-visible">
         <defs>
           {/* Fade the ends into the flat centre line. */}
           <linearGradient id={`${id}-fade`} x1="0" y1="0" x2="1" y2="0">
@@ -433,8 +424,7 @@ function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }:
             </g>
           ))}
         </g>
-      </svg>
-    </div>
+    </svg>,
   )
 }
 
@@ -446,10 +436,11 @@ function WaveOrb({ state = "idle", level = 0, size = 160, className, ...props }:
 function useOrbLoop<T extends Record<string, number>>(
   state: VoiceState,
   level: number,
+  speed: number,
   targets: Record<VoiceState, T>,
-  draw: (cur: T & { level: number; time: number }, reduced: boolean) => void,
+  draw: (cur: T & { level: number; time: number; dt: number }, reduced: boolean) => void,
 ) {
-  const input = React.useRef({ state, level })
+  const input = React.useRef({ state, level, speed })
   const drawRef = React.useRef(draw)
   const redraw = React.useRef<(() => void) | null>(null)
 
@@ -458,19 +449,19 @@ function useOrbLoop<T extends Record<string, number>>(
   })
 
   React.useEffect(() => {
-    input.current = { state, level }
+    input.current = { state, level, speed }
     redraw.current?.()
-  }, [state, level])
+  }, [state, level, speed])
 
   React.useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const cur = { ...targets.idle, level: 0, time: 0 } as T & { level: number; time: number }
+    const cur = { ...targets.idle, level: 0, time: 0, dt: 0 } as T & { level: number; time: number; dt: number }
     let last = performance.now()
     let raf = 0
     const frame = (now: number) => {
       const dt = reduced ? 0 : Math.min(0.05, (now - last) / 1000)
       last = now
-      const { state, level } = input.current
+      const { state, level, speed } = input.current
       const target = targets[state]
       const k = reduced ? 1 : 1 - Math.exp(-dt * 5)
       for (const key of Object.keys(target) as (keyof T)[]) {
@@ -478,7 +469,9 @@ function useOrbLoop<T extends Record<string, number>>(
       }
       const targetLevel = state === "listening" || state === "speaking" ? level : 0
       cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 12))
-      cur.time += dt
+      // Time runs at `speed`; easing between states keeps its own pace.
+      cur.dt = dt * speed
+      cur.time += cur.dt
       drawRef.current(cur, reduced)
       if (!reduced) raf = requestAnimationFrame(frame)
     }
@@ -491,13 +484,20 @@ function useOrbLoop<T extends Record<string, number>>(
   }, [targets])
 }
 
+/**
+ * Shared wrapper: sizing, state attributes, glow, and the cross-variant state cues
+ * (connecting breathes, error turns destructive).
+ */
 function orbFrame(
   variant: string,
   state: VoiceState,
   size: number,
+  glow: number,
   className: string | undefined,
-  props: React.ComponentProps<"div">,
+  { style, ...props }: React.ComponentProps<"div">,
   children: React.ReactNode,
+  /** Glow color when it shouldn't follow the text color, e.g. a named aura palette. */
+  glowColor = "currentColor",
 ) {
   return (
     <div
@@ -506,8 +506,18 @@ function orbFrame(
       data-state={state}
       role="img"
       aria-label={`Voice assistant ${state}`}
-      className={cn("relative size-(--orb-size) text-primary", className)}
-      style={{ "--orb-size": `${size}px` } as React.CSSProperties}
+      className={cn(
+        "relative size-(--orb-size) text-primary data-[state=connecting]:animate-pulse data-[state=error]:text-destructive motion-reduce:animate-none",
+        glow > 0 && "drop-shadow-(--orb-glow)",
+        className,
+      )}
+      style={
+        {
+          "--orb-size": `${size}px`,
+          "--orb-glow": `0 0 ${Math.round(size * 0.12 * glow)}px ${glowColor}`,
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {children}
@@ -529,9 +539,11 @@ type OrbPalette = keyof typeof auraPalettes | "primary"
 
 const auraTargets: Record<VoiceState, { speed: number; spread: number; swirl: number; swell: number }> = {
   idle: { speed: 0.25, spread: 0.5, swirl: 0, swell: 0 },
+  connecting: { speed: 0.5, spread: 0.4, swirl: 0.5, swell: 0 },
   listening: { speed: 0.6, spread: 0.58, swirl: 0, swell: 1 },
   thinking: { speed: 0.9, spread: 0.46, swirl: 1, swell: 0 },
   speaking: { speed: 0.8, spread: 0.55, swirl: 0.2, swell: 0.8 },
+  error: { speed: 0.1, spread: 0.45, swirl: 0, swell: 0 },
 }
 
 const AURA_FIELDS = [
@@ -556,7 +568,6 @@ function makeGrain(px: number) {
   return grain
 }
 
-/** Resolves CSS colors (including color-mix) to values canvas understands. */
 /**
  * Resolves CSS colors (including color-mix and oklch) to [r, g, b] by painting each
  * into a 1×1 canvas. Gradients need explicit channels: fading to "transparent" means
@@ -591,6 +602,8 @@ function AuraOrb({
   state = "idle",
   level = 0,
   size = 160,
+  speed = 1,
+  glow = 0,
   palette = "primary",
   className,
   ...props
@@ -598,7 +611,9 @@ function AuraOrb({
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const colorsRef = React.useRef<[number, number, number][]>([])
   const grainRef = React.useRef<HTMLCanvasElement | null>(null)
-  // Re-resolve when the palette's value changes, not its array identity.
+  // Re-resolve when the palette's value changes, not its array identity. Error swaps any
+  // palette for shades of the destructive color, so the state reads the same on every orb.
+  const error = state === "error"
   const key = Array.isArray(palette) ? palette.join(",") : palette
   const paletteRef = React.useRef(palette)
   React.useEffect(() => {
@@ -611,16 +626,17 @@ function AuraOrb({
     if (!el) return
     const read = () => {
       const palette = paletteRef.current
-      const list = Array.isArray(palette)
-        ? palette
-        : palette === "primary"
+      const list =
+        palette === "primary" || error
           ? [
               "color-mix(in oklch, currentColor 90%, black)",
               "color-mix(in oklch, currentColor 55%, white)",
               "currentColor",
               "color-mix(in oklch, currentColor 80%, white)",
             ]
-          : [...auraPalettes[palette]]
+          : Array.isArray(palette)
+            ? palette
+            : [...auraPalettes[palette]]
       colorsRef.current = resolveColors(el, list)
     }
     read()
@@ -630,9 +646,9 @@ function AuraOrb({
       attributeFilter: ["class", "data-color", "data-base"],
     })
     return () => observer.disconnect()
-  }, [key])
+  }, [key, error])
 
-  useOrbLoop(state, level, auraTargets, (c) => {
+  useOrbLoop(state, level, speed, auraTargets, (c) => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext("2d")
     const colors = colorsRef.current
@@ -700,16 +716,30 @@ function AuraOrb({
     ctx.restore()
   })
 
-  return orbFrame("aura", state, size, className, props, <canvas ref={canvasRef} className="size-full" />)
+  // Named and custom palettes glow in their main field color; primary and error follow the text color.
+  const glowColor =
+    error || palette === "primary" ? undefined : Array.isArray(palette) ? palette[2] : auraPalettes[palette][2]
+  return orbFrame(
+    "aura",
+    state,
+    size,
+    glow,
+    className,
+    props,
+    <canvas ref={canvasRef} className="size-full" />,
+    glowColor,
+  )
 }
 
 /* ---------- Bars: circular equalizer ---------- */
 
 const barsTargets: Record<VoiceState, { base: number; speed: number; sweep: number; spin: number }> = {
   idle: { base: 0.08, speed: 1, sweep: 0, spin: 0.1 },
+  connecting: { base: 0.06, speed: 0.8, sweep: 0.6, spin: 0.6 },
   listening: { base: 0.1, speed: 2.4, sweep: 0, spin: 0.15 },
   thinking: { base: 0.12, speed: 1.5, sweep: 1, spin: 1.4 },
   speaking: { base: 0.12, speed: 3, sweep: 0, spin: 0.2 },
+  error: { base: 0.05, speed: 0.3, sweep: 0, spin: 0.02 },
 }
 
 const BAR_COUNT = 56
@@ -718,12 +748,12 @@ const BAR_COUNT = 56
  * Bars around a ring, like a circular equalizer. Bar length follows `level` while
  * listening or speaking; a bright arc sweeps around it while thinking.
  */
-function BarsOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
+function BarsOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
   const bars = React.useRef<(SVGLineElement | null)[]>([])
   const angle = React.useRef(0)
 
-  useOrbLoop(state, level, barsTargets, (c) => {
-    angle.current += c.spin * 0.016
+  useOrbLoop(state, level, speed, barsTargets, (c) => {
+    angle.current += c.spin * c.dt
     const t = c.time * c.speed
     for (let i = 0; i < BAR_COUNT; i++) {
       const el = bars.current[i]
@@ -748,6 +778,7 @@ function BarsOrb({ state = "idle", level = 0, size = 160, className, ...props }:
     "bars",
     state,
     size,
+    glow,
     className,
     props,
     <svg viewBox="0 0 100 100" className="size-full overflow-visible">
@@ -770,20 +801,22 @@ function BarsOrb({ state = "idle", level = 0, size = 160, className, ...props }:
 
 const halftoneTargets: Record<VoiceState, { speed: number; freq: number; swirl: number; amp: number }> = {
   idle: { speed: 0.8, freq: 0.35, swirl: 0, amp: 0.35 },
+  connecting: { speed: 1, freq: 0.3, swirl: 0.5, amp: 0.25 },
   listening: { speed: 2.2, freq: 0.45, swirl: 0, amp: 0.55 },
   thinking: { speed: 1.4, freq: 0.3, swirl: 1, amp: 0.5 },
   speaking: { speed: 2.8, freq: 0.5, swirl: 0, amp: 0.6 },
+  error: { speed: 0.2, freq: 0.3, swirl: 0, amp: 0.2 },
 }
 
 /**
  * A disc of dots whose sizes ripple outward like a printed halftone wave. The
  * ripple speeds up with `level`; while thinking the pattern twists into a spiral.
  */
-function HalftoneOrb({ state = "idle", level = 0, size = 160, className, ...props }: OrbProps) {
+function HalftoneOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, className, ...props }: OrbProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const grid = Math.round(Math.max(14, Math.min(28, size / 7)))
 
-  useOrbLoop(state, level, halftoneTargets, (c) => {
+  useOrbLoop(state, level, speed, halftoneTargets, (c) => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext("2d")
     if (!canvas || !ctx) return
@@ -819,7 +852,7 @@ function HalftoneOrb({ state = "idle", level = 0, size = 160, className, ...prop
     ctx.globalAlpha = 1
   })
 
-  return orbFrame("halftone", state, size, className, props, <canvas ref={canvasRef} className="size-full" />)
+  return orbFrame("halftone", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
 type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone"
@@ -836,13 +869,18 @@ function VoiceOrbProvider({ variant, children }: { variant: VoiceOrbVariant; chi
  * `particles`: a rotating particle mesh. `ring`: a soft glowing ring.
  * `wave`: twisting ribbons along a line, twice as wide as `size`.
  * `aura`: soft blurred blobs. `bars`: a circular equalizer. `halftone`: a rippling dot matrix.
+ * Every variant takes the same states, `speed`, `glow` and `sensitivity`.
  */
 function VoiceOrb({
   variant,
   particles,
   palette,
-  ...props
+  level = 0,
+  sensitivity = 1,
+  ...rest
 }: OrbProps & {
+  /** How strongly `level` moves the orb. 1 is as measured; 2 doubles it, capped at full. */
+  sensitivity?: number
   /** Defaults to the nearest VoiceOrbProvider, then "particles". */
   variant?: VoiceOrbVariant
   /** Particle count for the particles variant. */
@@ -852,6 +890,7 @@ function VoiceOrb({
 }) {
   const fallback = React.useContext(VoiceOrbContext)
   const resolved = variant ?? fallback
+  const props = { ...rest, level: Math.min(1, level * sensitivity) }
   if (resolved === "ring") return <RingOrb {...props} />
   if (resolved === "wave") return <WaveOrb {...props} />
   if (resolved === "aura") return <AuraOrb palette={palette} {...props} />

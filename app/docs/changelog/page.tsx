@@ -6,6 +6,20 @@ export const metadata: Metadata = { title: "Changelog" }
 
 const releases = [
   {
+    version: "0.2.0",
+    date: "Unreleased",
+    summary: "Voice Orb Studio.",
+    sections: [
+      {
+        title: "Added",
+        items: [
+          "Voice Orb Studio: presets, style, palette, size, glow, speed and sensitivity, previewed in every state, with generated code.",
+          "Voice Orb connecting and error states, plus speed, glow and sensitivity props, on every variant.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.0",
     date: "28 September 2026",
     summary: "First public preview.",

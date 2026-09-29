@@ -16,15 +16,15 @@ const tools = [
     ready: true,
   },
   {
-    href: "",
-    title: "Prompt input",
-    body: "Frame, context, option chips, attachments, model picker, mic, mentions, send button.",
-    ready: false,
+    href: "/studio/voice-orb",
+    title: "Voice orb",
+    body: "Presets, style, palette, size, glow, speed and sensitivity, previewed in every state.",
+    ready: true,
   },
   {
     href: "",
-    title: "Orb studio",
-    body: "Every orb with size, density, speed, glow and per-state behaviour.",
+    title: "Prompt input",
+    body: "Frame, context, option chips, attachments, model picker, mic, mentions, send button.",
     ready: false,
   },
   {

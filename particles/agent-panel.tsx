@@ -251,9 +251,11 @@ function ChatView({
 
 const stateLabel: Record<VoiceState, string> = {
   idle: "Hold to talk",
+  connecting: "Connecting…",
   listening: "Listening…",
   thinking: "Thinking…",
   speaking: "Speaking…",
+  error: "Couldn't connect",
 }
 
 function VoiceView({ onEnd }: { onEnd: (turns: ChatMessage[]) => void }) {

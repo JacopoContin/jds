@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { cn } from "cn"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -38,8 +39,13 @@ export function Segmented<T extends string>({
         onValueChange={(v) => v[0] && onChange(v[0] as T)}
         variant="outline"
         size="sm"
-        // Four options wrap to a 2×2 grid so labels keep their room; fewer stay in one row.
-        className={options.length === 4 ? "grid w-full grid-cols-2" : "w-full *:flex-1"}
+        // Four options wrap to a 2×2 grid, five or more to rows of three, so labels keep their room.
+        className={cn(
+          "w-full",
+          options.length === 4 && "grid grid-cols-2",
+          options.length > 4 && "grid grid-cols-3",
+          options.length < 4 && "*:flex-1",
+        )}
       >
         {options.map((o) => (
           <ToggleGroupItem key={o.value} value={o.value}>
