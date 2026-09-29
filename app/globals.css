@@ -414,6 +414,11 @@
   html {
     @apply font-sans;
   }
+  /* Thin, theme-aware scrollbars: a soft thumb on a clear track, in light and dark. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
+  }
 }
 
 /* Docs code blocks: Shiki dual theme. */
