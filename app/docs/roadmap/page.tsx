@@ -9,7 +9,7 @@ type Status = "done" | "next" | "planned"
 
 const phases: { title: string; status: Status; items: readonly string[] }[] = [
   {
-    title: "Studio: side panel",
+    title: "Studio: agent panel",
     status: "done",
     items: [
       "Agent Panel component",
@@ -20,19 +20,65 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
-    title: "Studio: prompt input",
+    title: "Studio: voice orb",
     status: "next",
     items: [
+      "One state API for every orb: idle, connecting, listening, thinking, speaking, error",
+      "Distinct orb families: liquid, plasma, glass, mesh gradient, aurora, sonic rings, metaball, halo, minimal dot",
+      "Visualizers: circular waveform, radial bars, spectrogram, audio ribbon, pulsing rings",
+      "Start from a preset, then tune shape, material, particles, glow and motion",
+      "Preview every state, copy the code",
+    ],
+  },
+  {
+    title: "Recipes",
+    status: "planned",
+    items: [
+      "Research agent: prompt, reasoning, sources, artifact",
+      "Coding agent: plan, file edits, terminal, approval, result",
+      "Support agent: conversation, tool call, customer data, approval, response",
+      "Voice receptionist: orb, live transcript, actions, call controls",
+      "Copilot side panel: context, conversation, actions, artifact",
+      "Built on particles: each one a working composition, installed with one command",
+    ],
+  },
+  {
+    title: "Studio: prompt input",
+    status: "planned",
+    items: [
       "Frame, context header and option chips",
-      "Attachments, model picker, dictation, mentions",
+      "Attachments, model picker, tools, suggestions, dictation, mentions",
       "Send button and submit styles",
       "Generated code",
     ],
   },
   {
-    title: "Studio: orbs",
+    title: "Studio: conversation and agent activity",
     status: "planned",
-    items: ["Size, density, speed and glow per variant", "Per-state behaviour", "New orb designs", "Generated code"],
+    items: [
+      "Bubbles, citations, artifacts, thinking and streaming",
+      "Steps, progress, tool calls, approvals and background work",
+      "Generated code",
+    ],
+  },
+  {
+    title: "Studio: voice call, command bar and artifact",
+    status: "planned",
+    items: [
+      "Voice call: orb, transcript, controls, status and waveform together",
+      "Command bar: actions, search, AI commands and shortcuts",
+      "Artifact: document, code and preview layouts, panel behaviour",
+    ],
+  },
+  {
+    title: "Studio: whole experiences",
+    status: "planned",
+    items: [
+      "Start from what you're building: chat, voice, copilot, coding or research agent",
+      "Configure layout, style, components, behaviour and states in one flow",
+      "Live app preview alongside the controls",
+      "Copy as React, Tailwind or JDS",
+    ],
   },
   {
     title: "Studio: motion and backgrounds",
@@ -69,12 +115,13 @@ export default function RoadmapPage() {
     <>
       <PageHeader
         title="Roadmap"
-        description="High-quality AI components and interactions, configurable in the Studio. Web first, native later."
+        description="Components, recipes and visual tools for agent and voice interfaces. Web first, native later."
       />
       <P>
-        The focus is the surfaces people actually interact with: side panels, prompt inputs, voice orbs, motion and
-        backgrounds. Each gets a Studio page for designers and engineers to configure it and copy the code. Web comes
-        first; tokens and specs are kept platform-neutral so iOS and Android can follow.
+        Component libraries are plentiful; tools for designing AI interfaces are not. The Studio is where JDS earns its
+        place: pick a preset, tune it visually, preview every state, copy the code. It grows in small steps, one surface
+        at a time (orbs, then recipes, then prompt, conversation and activity), until it can configure a whole agent
+        experience. Tokens and specs stay platform-neutral so iOS and Android can follow.
       </P>
       {phases.map((phase) => (
         <div key={phase.title}>
