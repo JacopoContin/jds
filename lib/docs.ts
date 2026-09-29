@@ -543,6 +543,33 @@ const { status, sendMessage, stop } = useChat()
     isNew: true,
   },
   {
+    slug: "prompt-input-option-menu",
+    title: "Tools menu",
+    description:
+      "Tools like web search or deep research folded into one toolbar menu, so they fit at any width. The trigger shows the active tool, or how many are on.",
+    group: "ai",
+    parent: { slug: "prompt-input", section: "tools-menu" },
+    files: ["components/ai/prompt-input-option-menu.tsx"],
+    usage: `import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"
+
+<PromptInputTools>
+  <PromptInputAttachButton />
+  <PromptInputOptionMenu options={tools} value={enabled} onValueChange={setEnabled} />
+</PromptInputTools>`,
+    api: [
+      {
+        component: "PromptInputOptionMenu",
+        props: [
+          { name: "options", type: "{ id, label, icon?, description? }[]", description: "The tools to offer." },
+          { name: "value", type: "string[]", description: "Enabled ids." },
+          { name: "onValueChange", type: "(ids: string[]) => void", description: "Send it with the message." },
+          { name: "label", type: "string", default: '"Tools"', description: "Trigger text when none are on, and the menu heading." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "prompt-input-scope",
     title: "Scope",
     description:

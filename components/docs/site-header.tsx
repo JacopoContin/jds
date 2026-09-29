@@ -29,6 +29,9 @@ export function SiteHeader() {
           <Link href="/studio" className="transition-colors hover:text-foreground">
             Studio
           </Link>
+          <Link href="/recipes" className="transition-colors hover:text-foreground">
+            Recipes
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-1">
           <Search />

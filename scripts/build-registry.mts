@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync } from "node:fs"
 
 import { baseColorVars, baseColors, colorPresets } from "../lib/colors.ts"
 import { components } from "../lib/docs.ts"
+import { recipes } from "../lib/recipes.ts"
 import { site } from "../lib/site.ts"
 
 const NS = site.namespace
@@ -144,6 +145,15 @@ const items: object[] = [
     description: c.description,
     ...analyze(c.files),
     files: c.files.map((path) => ({ path, type: fileType(path) })),
+  })),
+  // Recipes install as blocks: their files land together so relative imports keep working.
+  ...recipes.map((r) => ({
+    name: r.slug,
+    type: "registry:block",
+    title: r.title,
+    description: r.description,
+    ...analyze(r.files),
+    files: r.files.map((path) => ({ path, type: "registry:component", target: `components/${path.replace(/^recipes\//, "")}` })),
   })),
 ]
 

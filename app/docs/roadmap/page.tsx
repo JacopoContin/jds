@@ -53,12 +53,13 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     title: "Recipes",
     status: "next",
     items: [
+      "Voice receptionist: orb, live transcript, actions, call controls (live)",
       "Research agent: prompt, reasoning, sources, artifact",
       "Coding agent: plan, file edits, terminal, approval, result",
       "Support agent: conversation, tool call, customer data, approval, response",
-      "Voice receptionist: orb, live transcript, actions, call controls",
       "Copilot side panel: context, conversation, actions, artifact",
       "Built on particles: each one a working composition, installed with one command",
+      "A session interface per recipe, with a simulated session so it runs before the backend exists",
     ],
   },
   {

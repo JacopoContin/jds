@@ -8,13 +8,15 @@ const releases = [
   {
     version: "0.2.0",
     date: "Unreleased",
-    summary: "Voice Orb Studio and Prompt Input Studio.",
+    summary: "Voice Orb Studio, Prompt Input Studio, and the first recipe.",
     sections: [
       {
         title: "Added",
         items: [
+          "Recipes: complete agent experiences installed as one block. First up, Voice receptionist: call, tool calls and transcript, with a session interface to connect a realtime voice provider and a simulated session to run it today.",
           "Prompt Input Studio: presets, context header, option chips, tools, voice mode and send behaviour, previewed on a new-chat page, under a conversation and in a side panel, with generated code.",
           "Prompt Input submitOn prop: send with Enter or with ⌘/Ctrl+Enter.",
+          "Prompt Input Tools menu: web search, deep research and similar tools in one toolbar menu that fits any width. Model Picker and the menu truncate instead of pushing send out of a narrow toolbar.",
           "Prompt Input Scope: a module picker in the composer footer that limits what the agent works on.",
           "Voice Orb Studio: presets, style, palette, size, glow, speed and sensitivity, previewed in every state, with generated code.",
           "Voice Orb connecting and error states, plus speed, glow and sensitivity props, on every variant.",

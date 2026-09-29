@@ -756,6 +756,46 @@
       ]
     },
     {
+      "name": "prompt-input-option-menu",
+      "type": "registry:component",
+      "title": "Tools menu",
+      "description": "Tools like web search or deep research folded into one toolbar menu, so they fit at any width. The trigger shows the active tool, or how many are on.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/dropdown-menu",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/prompt-input-option-menu.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input-scope",
+      "type": "registry:component",
+      "title": "Scope",
+      "description": "Tell the agent which parts of the product it may work on. A context label and a multi-select of modules in the composer footer; nothing selected means everything.",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/dropdown-menu",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/prompt-input-scope.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "artifact",
       "type": "registry:component",
       "title": "Artifact",
@@ -1851,6 +1891,36 @@
         {
           "path": "components/ui/tooltip.tsx",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "voice-receptionist",
+      "type": "registry:block",
+      "title": "Voice receptionist",
+      "description": "An agent that answers the phone: greets the caller, looks them up, checks the calendar, books or moves an appointment, texts a confirmation, and can hand off to a person.",
+      "dependencies": [
+        "cn",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/live-transcript",
+        "@jds/tool-call",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/voice-receptionist/voice-receptionist.tsx",
+          "type": "registry:component",
+          "target": "components/voice-receptionist/voice-receptionist.tsx"
+        },
+        {
+          "path": "recipes/voice-receptionist/session.ts",
+          "type": "registry:component",
+          "target": "components/voice-receptionist/session.ts"
         }
       ]
     }
