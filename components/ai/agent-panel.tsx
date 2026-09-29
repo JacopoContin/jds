@@ -5,6 +5,7 @@ import { AnimatePresence, motion, type TargetAndTransition, type Transition } fr
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { VoiceOrb } from "@/components/voice/voice-orb"
 import { CloseIcon, SparkleIcon, VoiceIcon } from "@/lib/icons"
 import { spring } from "@/lib/motion"
@@ -29,17 +30,18 @@ function useAgentPanel() {
   return ctx
 }
 
-const motionPresets: Record<PanelMotion, { offset: (side: PanelSide) => TargetAndTransition; transition: Transition }> = {
-  slide: {
-    offset: (side) => ({ x: side === "right" ? "100%" : "-100%" }),
-    transition: { type: "tween", duration: 0.32, ease: [0.22, 1, 0.36, 1] },
-  },
-  fade: { offset: () => ({ opacity: 0 }), transition: { duration: 0.2 } },
-  spring: {
-    offset: (side) => ({ x: side === "right" ? 48 : -48, opacity: 0, scale: 0.97 }),
-    transition: spring.gentle,
-  },
-}
+const motionPresets: Record<PanelMotion, { offset: (side: PanelSide) => TargetAndTransition; transition: Transition }> =
+  {
+    slide: {
+      offset: (side) => ({ x: side === "right" ? "100%" : "-100%" }),
+      transition: { type: "tween", duration: 0.32, ease: [0.22, 1, 0.36, 1] },
+    },
+    fade: { offset: () => ({ opacity: 0 }), transition: { duration: 0.2 } },
+    spring: {
+      offset: (side) => ({ x: side === "right" ? 48 : -48, opacity: 0, scale: 0.97 }),
+      transition: spring.gentle,
+    },
+  }
 
 const surfaces: Record<PanelSurface, string> = {
   card: "bg-card",
@@ -93,7 +95,7 @@ function AgentPanel({
       if (controlledMode === undefined) setUncontrolledMode(m)
       onModeChange?.(m)
     },
-    [controlledMode, onModeChange]
+    [controlledMode, onModeChange],
   )
   const preset = motionPresets[motionPreset]
   const floating = variant === "floating"
@@ -119,8 +121,14 @@ function AgentPanel({
               floating
                 ? "inset-y-(--panel-inset) rounded-2xl border shadow-2xl"
                 : "inset-y-0 data-[side=left]:border-r data-[side=right]:border-l",
-              side === "right" ? (floating ? "right-(--panel-inset)" : "right-0") : floating ? "left-(--panel-inset)" : "left-0",
-              className
+              side === "right"
+                ? floating
+                  ? "right-(--panel-inset)"
+                  : "right-0"
+                : floating
+                  ? "left-(--panel-inset)"
+                  : "left-0",
+              className,
             )}
             style={{ "--panel-w": `${width}px`, "--panel-inset": `${floating ? inset : 0}px` } as React.CSSProperties}
           >
@@ -153,7 +161,10 @@ function AgentPanelHeader({
 }) {
   const { mode, setMode, onClose } = useAgentPanel()
   return (
-    <div data-slot="agent-panel-header" className={cn("flex h-12 shrink-0 items-center gap-2 border-b px-3", className)}>
+    <div
+      data-slot="agent-panel-header"
+      className={cn("flex h-12 shrink-0 items-center gap-2 border-b px-3", className)}
+    >
       {icon === "sparkle" && <SparkleIcon className="size-4 shrink-0" />}
       {icon === "orb" && <VoiceOrb variant="aura" size={22} state={mode === "voice" ? "listening" : "idle"} />}
       <span className="truncate font-medium">{title}</span>
@@ -225,6 +236,54 @@ function AgentPanelBody({
   )
 }
 
+/**
+ * Enters voice mode from the composer, next to send. The usual place for it:
+ * people choose voice at the moment they would otherwise type.
+ */
+function AgentPanelVoiceButton({ className, ...props }: React.ComponentProps<typeof Button>) {
+  const { setMode } = useAgentPanel()
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Voice mode"
+            data-slot="agent-panel-voice-button"
+            className={cn("text-muted-foreground", className)}
+            onClick={() => setMode("voice")}
+            {...props}
+          />
+        }
+      >
+        <VoiceIcon />
+      </TooltipTrigger>
+      <TooltipContent>Voice mode</TooltipContent>
+    </Tooltip>
+  )
+}
+
+/** Leaves voice mode and returns to chat. Place it in the voice view. */
+function AgentPanelVoiceExit({ className, children = "End voice", ...props }: React.ComponentProps<typeof Button>) {
+  const { setMode } = useAgentPanel()
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      data-slot="agent-panel-voice-exit"
+      className={className}
+      onClick={() => setMode("chat")}
+      {...props}
+    >
+      <CloseIcon />
+      {children}
+    </Button>
+  )
+}
+
 function AgentPanelFooter({ className, ...props }: React.ComponentProps<"div">) {
   const { mode } = useAgentPanel()
   if (mode === "voice") return null
@@ -236,6 +295,8 @@ export {
   AgentPanelHeader,
   AgentPanelBody,
   AgentPanelFooter,
+  AgentPanelVoiceButton,
+  AgentPanelVoiceExit,
   useAgentPanel,
   type PanelSide,
   type PanelVariant,

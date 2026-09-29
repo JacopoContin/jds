@@ -2,7 +2,14 @@
 
 import * as React from "react"
 
-import { AgentPanel, AgentPanelBody, AgentPanelFooter, AgentPanelHeader } from "@/components/ai/agent-panel"
+import {
+  AgentPanel,
+  AgentPanelBody,
+  AgentPanelFooter,
+  AgentPanelHeader,
+  AgentPanelVoiceButton,
+  AgentPanelVoiceExit,
+} from "@/components/ai/agent-panel"
 import { ConversationEmpty } from "@/components/ai/conversation"
 import {
   PromptInput,
@@ -24,12 +31,13 @@ export default function AgentPanelDemo() {
         </Button>
       )}
       <AgentPanel open={open} onOpenChange={setOpen} variant="floating" width={340} contained>
-        <AgentPanelHeader title="Agent" modes={["chat", "voice"]} />
+        <AgentPanelHeader title="Agent" />
         <AgentPanelBody
           chat={<ConversationEmpty title="Ask about this page" />}
           voice={
-            <div className="flex flex-1 items-center justify-center">
+            <div className="flex flex-1 flex-col items-center justify-center gap-6">
               <VoiceOrb state="idle" size={160} />
+              <AgentPanelVoiceExit />
             </div>
           }
         />
@@ -38,7 +46,10 @@ export default function AgentPanelDemo() {
             <PromptInputTextarea />
             <PromptInputToolbar>
               <PromptInputTools />
-              <PromptInputSubmit />
+              <div className="flex items-center gap-1">
+                <AgentPanelVoiceButton />
+                <PromptInputSubmit />
+              </div>
             </PromptInputToolbar>
           </PromptInput>
         </AgentPanelFooter>

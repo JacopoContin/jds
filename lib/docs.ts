@@ -581,13 +581,30 @@ const { status, sendMessage, stop } = useChat()
       "A configurable agent side panel: docked or floating, left or right, card, page or glass surface, three entrance motions, and chat/voice modes.",
     group: "ai",
     files: ["components/ai/agent-panel.tsx"],
-    usage: `import { AgentPanel, AgentPanelBody, AgentPanelFooter, AgentPanelHeader } from "@/components/ai/agent-panel"
+    usage: `import {
+  AgentPanel,
+  AgentPanelBody,
+  AgentPanelFooter,
+  AgentPanelHeader,
+  AgentPanelVoiceButton,
+  AgentPanelVoiceExit,
+} from "@/components/ai/agent-panel"
 
 <AgentPanel open={open} onOpenChange={setOpen} variant="floating" surface="glass">
-  <AgentPanelHeader title="Agent" icon="orb" modes={["chat", "voice"]} />
-  <AgentPanelBody chat={<Conversation>…</Conversation>} voice={<VoiceOrb … />} />
+  <AgentPanelHeader title="Agent" icon="orb" />
+  <AgentPanelBody
+    chat={<Conversation>…</Conversation>}
+    voice={<><VoiceOrb … /><AgentPanelVoiceExit /></>}
+  />
   <AgentPanelFooter>
-    <PromptInput>…</PromptInput>
+    <PromptInput>
+      <PromptInputTextarea />
+      <PromptInputToolbar>
+        <PromptInputTools />
+        <AgentPanelVoiceButton />
+        <PromptInputSubmit />
+      </PromptInputToolbar>
+    </PromptInput>
   </AgentPanelFooter>
 </AgentPanel>`,
     api: [
@@ -642,6 +659,28 @@ const { status, sendMessage, stop } = useChat()
             description: "Shows a chat/voice switch when there is more than one.",
           },
           { name: "showClose", type: "boolean", default: "true", description: "" },
+        ],
+      },
+      {
+        component: "AgentPanelVoiceButton",
+        props: [
+          {
+            name: "…Button props",
+            type: "ButtonProps",
+            description:
+              "Enters voice mode. Put it in the composer toolbar, next to send: the usual place, since people choose voice when they'd otherwise type.",
+          },
+        ],
+      },
+      {
+        component: "AgentPanelVoiceExit",
+        props: [
+          {
+            name: "children",
+            type: "ReactNode",
+            default: '"End voice"',
+            description: "Returns to chat. Put it in the voice view.",
+          },
         ],
       },
       {

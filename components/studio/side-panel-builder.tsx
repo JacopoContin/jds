@@ -7,6 +7,8 @@ import {
   AgentPanelBody,
   AgentPanelFooter,
   AgentPanelHeader,
+  AgentPanelVoiceButton,
+  AgentPanelVoiceExit,
   type PanelMode,
   type PanelMotion,
   type PanelSide,
@@ -46,7 +48,8 @@ type Config = {
   motion: PanelMotion
   title: string
   icon: "sparkle" | "orb" | "none"
-  voice: boolean
+  /** Where people enter voice mode. The composer is the usual place. */
+  voiceEntry: "composer" | "header" | "both" | "off"
   context: boolean
   mic: boolean
   attach: boolean
@@ -63,7 +66,7 @@ const defaults: Config = {
   motion: "spring",
   title: "Agent",
   icon: "sparkle",
-  voice: true,
+  voiceEntry: "composer",
   context: true,
   mic: true,
   attach: true,
@@ -84,24 +87,30 @@ function panelProps(c: Config) {
 }
 
 function generateCode(c: Config) {
+  const voice = c.voiceEntry !== "off"
+  const inComposer = c.voiceEntry === "composer" || c.voiceEntry === "both"
+  const inHeader = c.voiceEntry === "header" || c.voiceEntry === "both"
+  const panelParts = ["AgentPanel", "AgentPanelBody", "AgentPanelFooter", "AgentPanelHeader"]
+  if (inComposer) panelParts.push("AgentPanelVoiceButton")
+  if (voice) panelParts.push("AgentPanelVoiceExit")
   const imports = [
-    `import { AgentPanel, AgentPanelBody, AgentPanelFooter, AgentPanelHeader } from "@/components/ai/agent-panel"`,
+    `import { ${panelParts.join(", ")} } from "@/components/ai/agent-panel"`,
     `import { Conversation, ConversationContent } from "@/components/ai/conversation"`,
     `import {\n  PromptInput,${c.context ? "\n  PromptInputFrame,\n  PromptInputHeader," : ""}\n  PromptInputSubmit,\n  PromptInputTextarea,\n  PromptInputToolbar,\n  PromptInputTools,${c.attach ? "\n  PromptInputAttachButton," : ""}\n} from "@/components/ai/prompt-input"`,
   ]
   if (c.mic) imports.push(`import { PromptInputMic } from "@/components/ai/prompt-input-mic"`)
-  if (c.voice) imports.push(`import { VoiceOrb } from "@/components/voice/voice-orb"`)
+  if (voice) imports.push(`import { VoiceOrb } from "@/components/voice/voice-orb"`)
 
   const header = [`title="${c.title}"`]
   if (c.icon !== "sparkle") header.push(`icon="${c.icon}"`)
-  if (c.voice) header.push(`modes={["chat", "voice"]}`)
+  if (inHeader) header.push(`modes={["chat", "voice"]}`)
 
   const input = `<PromptInput onSubmit={send}>
           <PromptInputTextarea />
           <PromptInputToolbar>
             <PromptInputTools>${c.attach ? "\n              <PromptInputAttachButton />" : ""}
             </PromptInputTools>
-            ${c.mic ? "<PromptInputMic />\n            " : ""}<PromptInputSubmit />
+            ${c.mic ? "<PromptInputMic />\n            " : ""}${inComposer ? "<AgentPanelVoiceButton />\n            " : ""}<PromptInputSubmit />
           </PromptInputToolbar>
         </PromptInput>`
 
@@ -121,7 +130,11 @@ function generateCode(c: Config) {
       <Conversation>
         <ConversationContent>{/* messages */}</ConversationContent>
       </Conversation>
-    }${c.voice ? `\n    voice={<VoiceOrb state={voiceState} level={level} size={180} />}` : ""}
+    }${
+      voice
+        ? `\n    voice={\n      <>\n        <VoiceOrb state={voiceState} level={level} size={180} />\n        <AgentPanelVoiceExit />\n      </>\n    }`
+        : ""
+    }
   />
   <AgentPanelFooter>
     ${composer}
@@ -144,6 +157,7 @@ function VoiceMode() {
         />
         <span className="text-xs text-muted-foreground">Hold to talk</span>
       </div>
+      <AgentPanelVoiceExit />
     </div>
   )
 }
@@ -182,6 +196,7 @@ function Composer({ c }: { c: Config }) {
         <PromptInputTools>{c.attach && <PromptInputAttachButton />}</PromptInputTools>
         <div className="flex items-center gap-1">
           {c.mic && <PromptInputMic />}
+          {(c.voiceEntry === "composer" || c.voiceEntry === "both") && <AgentPanelVoiceButton />}
           <PromptInputSubmit />
         </div>
       </PromptInputToolbar>
@@ -268,7 +283,7 @@ export function SidePanelBuilder() {
             ]}
           />
         </ControlGroup>
-        <ControlGroup title="Header">
+        <ControlGroup title="Header and voice">
           <Text label="Title" value={c.title} onChange={set("title")} />
           <Segmented
             label="Icon"
@@ -280,13 +295,19 @@ export function SidePanelBuilder() {
               { value: "none", label: "None" },
             ]}
           />
-          <Toggle
-            label="Voice mode"
-            checked={c.voice}
+          <Segmented
+            label="Voice entry"
+            value={c.voiceEntry}
             onChange={(v) => {
-              set("voice")(v)
-              if (!v) setMode("chat")
+              set("voiceEntry")(v)
+              if (v === "off") setMode("chat")
             }}
+            options={[
+              { value: "composer", label: "Composer" },
+              { value: "header", label: "Header" },
+              { value: "both", label: "Both" },
+              { value: "off", label: "Off" },
+            ]}
           />
         </ControlGroup>
         <ControlGroup title="Composer">
@@ -343,8 +364,12 @@ export function SidePanelBuilder() {
               mode={mode}
               onModeChange={setMode}
             >
-              <AgentPanelHeader title={c.title} icon={c.icon} modes={c.voice ? ["chat", "voice"] : undefined} />
-              <AgentPanelBody chat={<Chat c={c} />} voice={c.voice ? <VoiceMode /> : undefined} />
+              <AgentPanelHeader
+                title={c.title}
+                icon={c.icon}
+                modes={c.voiceEntry === "header" || c.voiceEntry === "both" ? ["chat", "voice"] : undefined}
+              />
+              <AgentPanelBody chat={<Chat c={c} />} voice={c.voiceEntry !== "off" ? <VoiceMode /> : undefined} />
               <AgentPanelFooter>
                 <Composer c={c} />
               </AgentPanelFooter>

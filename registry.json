@@ -786,6 +786,7 @@
       ],
       "registryDependencies": [
         "@jds/button",
+        "@jds/tooltip",
         "@jds/utils",
         "@jds/voice-orb"
       ],
