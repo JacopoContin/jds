@@ -7,8 +7,19 @@
  * backend replaces the simulated one without touching the UI. The rest keep their scripted
  * behaviour inside the component and get a session as they grow.
  */
+export type RecipeTag = "voice" | "panel" | "chat" | "operations"
+
+/** Quick filters on /recipes, in display order. */
+export const recipeTags: { value: RecipeTag; label: string }[] = [
+  { value: "voice", label: "Voice" },
+  { value: "panel", label: "Side panel" },
+  { value: "chat", label: "Chat" },
+  { value: "operations", label: "Operations" },
+]
+
 export type Recipe = {
   slug: string
+  tags: RecipeTag[]
   title: string
   description: string
   /** Installed together; the first is the entry component. Shared hooks are listed here too. */
@@ -27,6 +38,7 @@ const allRecipes: Recipe[] = [
   // Ordered by how useful each is to someone shipping a voice agent or an agent side panel.
   {
     slug: "voice-agent",
+    tags: ["voice"],
     title: "Voice agent",
     description:
       "A complete voice agent surface: the orb, live captions and call controls, with the agent's tool calls and transcript beside it. Style it in the Studio, pick a layout, connect your voice session.",
@@ -55,6 +67,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-run",
+    tags: ["chat"],
     title: "Agent run",
     description:
       "A full support-agent turn: reasoning, a plan, a tool call, approval before a refund, a streamed answer with sources.",
@@ -62,6 +75,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-panel",
+    tags: ["panel", "chat", "voice"],
     title: "Agent panel",
     description:
       "A side panel agent over an app page. Chat with page context, dictate with the mic, or switch to voice mode; the voice turns land back in the chat.",
@@ -69,6 +83,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "voice-call",
+    tags: ["voice"],
     title: "Voice call",
     description:
       "A realtime call screen: connection status and timer, the orb, live captions, and mute, interrupt and end controls.",
@@ -76,12 +91,14 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "voice-session",
+    tags: ["voice"],
     title: "Voice session",
     description: "Push to talk with live mic level, orb states, and a rolling transcript.",
     files: ["recipes/voice-session/voice-session.tsx", SIMULATED_SPECTRUM],
   },
   {
     slug: "chat-app",
+    tags: ["chat"],
     title: "Chat app",
     description:
       "A full chat screen: searchable conversation list, model picker and context meter in the header, a composer with @-mentions and dictation.",
@@ -89,6 +106,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-inbox",
+    tags: ["operations"],
     title: "Agent inbox",
     description:
       "Runs that need a human. Pick one to see its steps and tool calls, then approve or deny; decided runs leave the queue.",
@@ -96,6 +114,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-settings",
+    tags: ["operations"],
     title: "Agent settings",
     description:
       "Configure an agent: instructions, model, temperature, reply length, approval policy, tools, and voice.",
@@ -103,6 +122,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-onboarding",
+    tags: ["chat", "operations"],
     title: "Agent onboarding",
     description:
       "Set up an agent by answering its questions. Quick replies drive the chat while a live card and progress list fill in beside it.",
@@ -110,6 +130,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "run-history",
+    tags: ["operations"],
     title: "Run history",
     description:
       "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
@@ -117,6 +138,7 @@ const allRecipes: Recipe[] = [
   },
   {
     slug: "agent-marketplace",
+    tags: ["operations"],
     title: "Agent marketplace",
     description:
       "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",

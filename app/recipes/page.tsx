@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { ComponentPreview } from "@/components/docs/component-preview"
-import { recipes } from "@/lib/recipes"
+import { RecipeList } from "@/components/docs/recipe-list"
+import { recipes, recipeTags } from "@/lib/recipes"
 
 export const metadata: Metadata = {
   title: "Recipes",
@@ -19,23 +20,30 @@ export default function RecipesPage() {
           command. Recipes with a session interface connect to your backend without touching the UI.
         </p>
       </div>
-      {recipes.map((r) => (
-        <section key={r.slug} id={r.slug} className="flex scroll-mt-20 flex-col gap-4">
-          <div className="flex items-end justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold">{r.title}</h2>
-              <p className="text-sm text-muted-foreground">{r.description}</p>
-            </div>
-            <Link
-              href={`/recipes/${r.slug}`}
-              className="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-            >
-              Install and source
-            </Link>
-          </div>
-          <ComponentPreview name={r.slug} dir="recipes" align="start" />
-        </section>
-      ))}
+      <RecipeList
+        tags={recipeTags}
+        items={recipes.map((r) => ({
+          slug: r.slug,
+          tags: r.tags,
+          content: (
+            <section id={r.slug} className="flex scroll-mt-20 flex-col gap-4">
+              <div className="flex items-end justify-between gap-4">
+                <div className="space-y-1">
+                  <h2 className="text-lg font-semibold">{r.title}</h2>
+                  <p className="text-sm text-muted-foreground">{r.description}</p>
+                </div>
+                <Link
+                  href={`/recipes/${r.slug}`}
+                  className="shrink-0 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                >
+                  Install and source
+                </Link>
+              </div>
+              <ComponentPreview name={r.slug} dir="recipes" align="start" />
+            </section>
+          ),
+        }))}
+      />
     </main>
   )
 }
