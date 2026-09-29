@@ -535,9 +535,9 @@ const auraTargets: Record<VoiceState, { speed: number; spread: number; swirl: nu
 }
 
 const AURA_FIELDS = [
-  { w: 0.7, phase: 0, r: 1.05 },
-  { w: -0.9, phase: 2.1, r: 0.95 },
-  { w: 1.2, phase: 4.2, r: 0.8 },
+  { w: 0.7, phase: 0, r: 1.15 },
+  { w: -0.9, phase: 2.1, r: 1.05 },
+  { w: 1.2, phase: 4.2, r: 0.9 },
 ]
 
 /** Film grain, generated once per size: gray noise with transparent gaps, blended over the sphere. */
@@ -603,7 +603,7 @@ function AuraOrb({
         ? palette
         : palette === "primary"
           ? [
-              "color-mix(in oklch, currentColor 70%, black)",
+              "color-mix(in oklch, currentColor 90%, black)",
               "color-mix(in oklch, currentColor 55%, white)",
               "currentColor",
               "color-mix(in oklch, currentColor 80%, var(--background))",
@@ -670,9 +670,10 @@ function AuraOrb({
     hl.addColorStop(1, "rgba(255,255,255,0)")
     ctx.fillStyle = hl
     ctx.fillRect(0, 0, px, px)
-    const rim = ctx.createRadialGradient(r, r, r * 0.55, r, r, r)
+    // A light touch: the rim only deepens the last third, so edges stay blended.
+    const rim = ctx.createRadialGradient(r, r, r * 0.7, r, r, r)
     rim.addColorStop(0, "rgba(0,0,0,0)")
-    rim.addColorStop(1, "rgba(0,0,0,0.28)")
+    rim.addColorStop(1, "rgba(0,0,0,0.12)")
     ctx.fillStyle = rim
     ctx.fillRect(0, 0, px, px)
 
