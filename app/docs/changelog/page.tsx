@@ -19,6 +19,8 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Conversation Studio: bubbles, shape, density, avatars and actions, plus how reasoning, plans, tool calls, approvals, sources and artifacts show in a turn, working or done, on a page or in a side panel.",
+          "Conversation bubbles, shape and density props, applied to every Message inside (or via MessageStyleProvider).",
           "Agent side panel recipe, rebuilt on Agent Panel: panel, orb and composer come from their Studios, chat plus hold-to-talk voice whose turns land in the chat, and a session shaped like the AI SDK's useChat.",
           "Chat app recipe takes a composer from the Prompt Input Studio. Each Studio's Code tab now includes the matching recipe snippet.",
           "Recipe quick filters: voice, side panel, chat, operations.",

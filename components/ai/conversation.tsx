@@ -4,6 +4,7 @@ import * as React from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { cn } from "cn"
 
+import { MessageStyleProvider, useMessageStyle, type MessageStyle } from "@/components/ai/message"
 import { Button } from "@/components/ui/button"
 import { useStickToBottom } from "@/hooks/use-stick-to-bottom"
 import { ScrollDownIcon } from "@/lib/icons"
@@ -23,7 +24,18 @@ function useConversation() {
   return ctx
 }
 
-function Conversation({ className, children, ...props }: React.ComponentProps<"div">) {
+/**
+ * A scrolling message log that sticks to the bottom while content streams in. `bubbles`,
+ * `shape` and `density` style every Message inside.
+ */
+function Conversation({
+  bubbles,
+  shape,
+  density,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & MessageStyle) {
   const { scrollRef, contentRef, isAtBottom, scrollToBottom } = useStickToBottom()
   const value = React.useMemo(
     () => ({ contentRef, isAtBottom, scrollToBottom }),
@@ -38,7 +50,9 @@ function Conversation({ className, children, ...props }: React.ComponentProps<"d
           aria-live="polite"
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]"
         >
-          {children}
+          <MessageStyleProvider bubbles={bubbles} shape={shape} density={density}>
+            {children}
+          </MessageStyleProvider>
         </div>
       </div>
     </ConversationContext.Provider>
@@ -47,11 +61,16 @@ function Conversation({ className, children, ...props }: React.ComponentProps<"d
 
 function ConversationContent({ className, ...props }: React.ComponentProps<"div">) {
   const { contentRef } = useConversation()
+  const { density } = useMessageStyle()
   return (
     <div
       ref={contentRef}
       data-slot="conversation-content"
-      className={cn("mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6", className)}
+      className={cn(
+        "mx-auto flex w-full max-w-3xl flex-col px-4",
+        density === "compact" ? "gap-3 py-4" : "gap-6 py-6",
+        className
+      )}
       {...props}
     />
   )

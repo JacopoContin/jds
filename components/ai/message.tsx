@@ -11,7 +11,41 @@ import { rise } from "@/lib/motion"
 
 type MessageRole = "user" | "assistant" | "system"
 
+/**
+ * How messages look across a conversation. Set it once on <Conversation> (or with
+ * <MessageStyleProvider>); every Message inside follows. Defaults are the classic chat look:
+ * the user in a bubble with a tail corner, the assistant as plain text.
+ */
+type MessageStyle = {
+  /** Who gets a bubble. */
+  bubbles?: "user" | "all" | "none"
+  /** Bubble corners: a tail toward the speaker, fully round, or squarer. */
+  shape?: "tail" | "round" | "square"
+  density?: "comfortable" | "compact"
+}
+
+const MessageStyleContext = React.createContext<Required<MessageStyle>>({
+  bubbles: "user",
+  shape: "tail",
+  density: "comfortable",
+})
+
+function MessageStyleProvider({ children, ...style }: MessageStyle & { children: React.ReactNode }) {
+  const parent = React.useContext(MessageStyleContext)
+  const { bubbles = parent.bubbles, shape = parent.shape, density = parent.density } = style
+  const value = React.useMemo(() => ({ bubbles, shape, density }), [bubbles, shape, density])
+  return <MessageStyleContext.Provider value={value}>{children}</MessageStyleContext.Provider>
+}
+
+const useMessageStyle = () => React.useContext(MessageStyleContext)
+
 const MessageContext = React.createContext<{ from: MessageRole }>({ from: "assistant" })
+
+const corners = {
+  tail: { user: "rounded-2xl rounded-tr-md", assistant: "rounded-2xl rounded-tl-md" },
+  round: { user: "rounded-2xl", assistant: "rounded-2xl" },
+  square: { user: "rounded-lg", assistant: "rounded-lg" },
+}
 
 function Message({
   from,
@@ -39,14 +73,19 @@ function Message({
 
 function MessageContent({ className, ...props }: React.ComponentProps<"div">) {
   const { from } = React.useContext(MessageContext)
+  const { bubbles, shape, density } = useMessageStyle()
+  const user = from === "user"
+  const bubble = bubbles === "all" || (bubbles === "user" && user)
   return (
     <div
       data-slot="message-content"
+      data-bubble={bubble || undefined}
       className={cn(
         "flex min-w-0 flex-col gap-3 text-sm leading-relaxed *:shrink-0",
-        from === "user"
-          ? "max-w-[80%] rounded-2xl rounded-tr-md bg-secondary px-4 py-2.5 text-secondary-foreground"
-          : "flex-1 text-foreground",
+        user ? "max-w-[80%]" : bubble ? "max-w-[85%]" : "flex-1",
+        bubble && corners[shape][user ? "user" : "assistant"],
+        bubble && (density === "compact" ? "px-3 py-2" : "px-4 py-2.5"),
+        bubble ? (user ? "bg-secondary text-secondary-foreground" : "bg-muted text-foreground") : "text-foreground",
         className
       )}
       {...props}
@@ -105,4 +144,14 @@ function MessageAction({
   )
 }
 
-export { Message, MessageContent, MessageAvatar, MessageActions, MessageAction, type MessageRole }
+export {
+  Message,
+  MessageContent,
+  MessageAvatar,
+  MessageActions,
+  MessageAction,
+  MessageStyleProvider,
+  useMessageStyle,
+  type MessageRole,
+  type MessageStyle,
+}

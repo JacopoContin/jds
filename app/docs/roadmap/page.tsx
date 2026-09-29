@@ -63,16 +63,17 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: conversation and agent activity",
-    status: "next",
+    status: "done",
     items: [
-      "Bubbles, citations, artifacts, thinking and streaming",
-      "Steps, progress, tool calls, approvals and background work",
+      "Bubbles, shape, density, avatars and message actions",
+      "Reasoning, plan, tool calls, approvals, citations, sources and artifacts in one turn",
+      "Working and done states, on a page or in a side panel",
       "Generated code",
     ],
   },
   {
     title: "Studio: voice call, command bar and artifact",
-    status: "planned",
+    status: "next",
     items: [
       "Voice call: orb, transcript, controls, status and waveform together",
       "Command bar: actions, search, AI commands and shortcuts",

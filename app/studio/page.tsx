@@ -28,6 +28,12 @@ const tools = [
     ready: true,
   },
   {
+    href: "/studio/conversation",
+    title: "Conversation",
+    body: "Bubbles, density, avatars, and how reasoning, plans, tool calls, approvals and sources show in a turn.",
+    ready: true,
+  },
+  {
     href: "",
     title: "Motion and backgrounds",
     body: "Motion presets to feel, and ambient backgrounds for agent surfaces.",

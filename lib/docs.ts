@@ -40,6 +40,29 @@ export const components: ComponentDoc[] = [
     examples: [{ name: "conversation-empty", title: "Empty state" }],
     api: [
       {
+        component: "Conversation",
+        props: [
+          {
+            name: "bubbles",
+            type: '"user" | "all" | "none"',
+            default: '"user"',
+            description: "Who gets a bubble. Applies to every Message inside.",
+          },
+          {
+            name: "shape",
+            type: '"tail" | "round" | "square"',
+            default: '"tail"',
+            description: "Bubble corners: a tail toward the speaker, fully round, or squarer.",
+          },
+          {
+            name: "density",
+            type: '"comfortable" | "compact"',
+            default: '"comfortable"',
+            description: "Spacing between and inside messages. Compact suits side panels.",
+          },
+        ],
+      },
+      {
         component: "ConversationEmpty",
         props: [
           {
@@ -71,6 +94,29 @@ export const components: ComponentDoc[] = [
         component: "Message",
         props: [
           { name: "from", type: '"user" | "assistant" | "system"', description: "Sets alignment and bubble style." },
+        ],
+      },
+      {
+        component: "MessageStyleProvider",
+        props: [
+          {
+            name: "bubbles",
+            type: '"user" | "all" | "none"',
+            default: '"user"',
+            description: "Who gets a bubble. For messages outside a Conversation.",
+          },
+          {
+            name: "shape",
+            type: '"tail" | "round" | "square"',
+            default: '"tail"',
+            description: "Bubble corners: a tail toward the speaker, fully round, or squarer.",
+          },
+          {
+            name: "density",
+            type: '"comfortable" | "compact"',
+            default: '"comfortable"',
+            description: "Spacing between and inside messages. Compact suits side panels.",
+          },
         ],
       },
       {
