@@ -38,7 +38,8 @@ export function Segmented<T extends string>({
         onValueChange={(v) => v[0] && onChange(v[0] as T)}
         variant="outline"
         size="sm"
-        className="w-full *:flex-1"
+        // Four options wrap to a 2×2 grid so labels keep their room; fewer stay in one row.
+        className={options.length === 4 ? "grid w-full grid-cols-2" : "w-full *:flex-1"}
       >
         {options.map((o) => (
           <ToggleGroupItem key={o.value} value={o.value}>
