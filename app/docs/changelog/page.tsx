@@ -19,6 +19,7 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Build an experience: pick a chat app, a side panel copilot or a voice agent, set the look, parts and behaviour, try the whole app live, and export one install, the root layout, the page and a spec.",
           "Studio page: every tool as a card with a live preview of what it makes, and a New badge on Studio in the header.",
           "Command Bar no longer scrolls the page when it mounts below the fold (cmdk scrolls its first item into view on mount).",
           "Artifact Studio: how generated documents, code and previews open next to the chat (beside it and resizable, as a sheet, full screen, or inline in the message), with version switcher and actions.",

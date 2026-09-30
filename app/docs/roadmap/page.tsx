@@ -82,17 +82,17 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
   },
   {
     title: "Studio: whole experiences",
-    status: "next",
+    status: "done",
     items: [
-      "Start from what you're building: chat, voice, copilot, coding or research agent",
-      "Configure layout, style, components, behaviour and states in one flow",
-      "Live app preview alongside the controls",
-      "Copy as React, Tailwind or JDS",
+      "Start from what you're building: a chat app, a side panel copilot or a voice agent",
+      "Look, parts and behaviour in one flow, sharing the site theme",
+      "The whole app live alongside the controls: chat, voice mode and ⌘K all work",
+      "Export one install, the root layout, the page and a Markdown spec",
     ],
   },
   {
     title: "Studio: motion and backgrounds",
-    status: "planned",
+    status: "next",
     items: [
       "Motion presets you can feel",
       "Ambient backgrounds: gradient mesh, grain, aurora, dot fields",

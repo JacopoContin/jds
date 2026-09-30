@@ -177,6 +177,33 @@ function ArtifactPreview() {
   )
 }
 
+function ExperiencePreview() {
+  const { level } = useSimulatedSpectrum(true)
+  return (
+    <div className="flex items-center gap-4">
+      <div className="flex h-44 w-64 overflow-hidden rounded-xl border bg-background shadow-lg">
+        <div className="flex w-16 flex-col gap-1.5 border-r p-2">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Skeleton key={i} className="h-2" />
+          ))}
+        </div>
+        <div className="flex flex-1 flex-col justify-end gap-2 p-2">
+          <span className="self-end rounded-lg bg-secondary px-2 py-1 text-xs">Summarize this</span>
+          <span className="text-xs text-muted-foreground">Here are the three key points.</span>
+          <div className="h-6 rounded-lg border" />
+        </div>
+      </div>
+      <div className="flex h-44 w-36 flex-col items-center justify-center gap-3 rounded-xl border bg-background shadow-lg">
+        <VoiceOrb state="speaking" level={level} size={64} />
+        <CallControls>
+          <CallMute />
+          <CallEnd />
+        </CallControls>
+      </div>
+    </div>
+  )
+}
+
 function SoonPreview() {
   return (
     <div className="grid size-full place-items-center bg-radial from-primary/15 to-transparent to-60%">
@@ -198,11 +225,17 @@ type Tool = {
 
 const tools: Tool[] = [
   {
+    href: "/studio/experience",
+    title: "Build an experience",
+    body: "Pick chat, a side panel copilot or a voice agent, then set the look, parts and behaviour in one flow and export the whole app.",
+    preview: <ExperiencePreview />,
+    featured: true,
+  },
+  {
     href: "/studio/voice-orb",
     title: "Voice orb",
     body: "Ten styles from particles to glass, palettes, shape and material, previewed in every state and inside real surfaces.",
     preview: <OrbPreview />,
-    featured: true,
   },
   {
     href: "/studio/voice-call",

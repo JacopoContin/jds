@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 
-import { settingsInitScript } from "@/components/docs/color-picker"
+import { settingsInitScript } from "@/components/docs/theme-state"
 import { SiteHeader } from "@/components/docs/site-header"
 import { SiteSettingsProvider } from "@/components/docs/site-settings"
 import { ThemeProvider } from "@/components/theme-provider"
