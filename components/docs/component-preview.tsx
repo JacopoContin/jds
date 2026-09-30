@@ -13,15 +13,18 @@ export async function ComponentPreview({
   dir = "examples",
   align,
   className,
+  install,
 }: {
   name: string
   /** "recipes" shows the recipe's entry file, recipes/<name>/<name>.tsx. */
   dir?: "examples" | "recipes"
   align?: "center" | "start"
   className?: string
+  /** Registry item the snippet needs. Labels the tab "Usage" and says to install it first. */
+  install?: string
 }) {
   const file = dir === "recipes" ? `recipes/${name}/${name}.tsx` : `${dir}/${name}.tsx`
   const code = (await readSource(file)).trim()
   const html = await highlight(code)
-  return <PreviewTabs name={name} code={code} html={html} align={align} className={className} />
+  return <PreviewTabs name={name} code={code} html={html} align={align} className={className} install={install} />
 }

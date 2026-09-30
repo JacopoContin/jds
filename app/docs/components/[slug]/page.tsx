@@ -39,7 +39,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
     <>
       <PageHeader title={doc.title} description={doc.description} />
 
-      <ComponentPreview name={`${slug}-demo`} />
+      <ComponentPreview name={`${slug}-demo`} install={slug} />
 
       <H2>Installation</H2>
       <InstallTabs
@@ -85,7 +85,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
           {doc.examples.map((ex) => (
             <div key={ex.name} className="flex flex-col gap-4">
               <H3>{ex.title}</H3>
-              <ComponentPreview name={ex.name} />
+              <ComponentPreview name={ex.name} install={slug} />
             </div>
           ))}
         </>
@@ -95,7 +95,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
         <div key={addon.slug} className="flex flex-col gap-6">
           <H2 id={addon.parent!.section}>{addon.title}</H2>
           <P>{addon.description}</P>
-          <ComponentPreview name={`${addon.slug}-demo`} />
+          <ComponentPreview name={`${addon.slug}-demo`} install={addon.slug} />
           <P>Installed separately, so the base component stays lean:</P>
           <Command command={`shadcn@latest add ${site.namespace}/${addon.slug}`} />
           <CodeBlock code={addon.usage} />
