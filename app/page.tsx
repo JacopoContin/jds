@@ -4,15 +4,21 @@ import { cn } from "cn"
 import { buttonVariants } from "@/components/ui/button"
 import { Example } from "@/components/docs/example"
 import { componentBySlug, docHref } from "@/lib/docs"
+import { ArrowRightIcon } from "@/lib/icons"
 
 type Card = { slug: string; demo?: string; span?: string }
+
+/** The two signature pieces, first and larger, each with a way into its Studio. */
+const featured: (Card & { studio: string })[] = [
+  { slug: "voice-orb", studio: "/studio/voice-orb" },
+  { slug: "prompt-input", demo: "prompt-input-frame", studio: "/studio/prompt-input" },
+]
 
 /** Related components sit next to each other: the agent turn first, then voice. */
 const groups: { title: string; cards: Card[] }[] = [
   {
     title: "Agent",
     cards: [
-      { slug: "prompt-input", demo: "prompt-input-frame", span: "lg:col-span-2" },
       { slug: "suggestions" },
       { slug: "prompt-input-mentions", span: "lg:col-span-2" },
       { slug: "context-meter" },
@@ -24,19 +30,18 @@ const groups: { title: string; cards: Card[] }[] = [
       { slug: "sources" },
       { slug: "approval", span: "lg:col-span-2" },
       { slug: "shimmer" },
-      { slug: "artifact", span: "md:col-span-2 lg:col-span-3" },
+      { slug: "artifact", span: "lg:col-span-2" },
     ],
   },
   {
     title: "Voice",
     cards: [
-      { slug: "voice-orb", span: "lg:col-span-2" },
       { slug: "push-to-talk" },
       { slug: "call-controls", span: "lg:col-span-2" },
       { slug: "voice-picker" },
       { slug: "prompt-input-mic", span: "lg:col-span-2" },
       { slug: "waveform" },
-      { slug: "live-transcript", span: "md:col-span-2 lg:col-span-3" },
+      { slug: "live-transcript", span: "lg:col-span-2" },
     ],
   },
 ]
@@ -61,6 +66,31 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        {featured.map(({ slug, demo, studio }) => {
+          const doc = componentBySlug[slug]
+          return (
+            <div key={slug} className="flex flex-col overflow-hidden rounded-xl border bg-card">
+              <div className="flex min-h-96 flex-1 items-center justify-center p-6">
+                <Example name={demo ?? `${slug}-demo`} />
+              </div>
+              <div className="flex items-center justify-between gap-3 border-t px-4 py-3 text-sm">
+                <Link href={docHref(doc)} className="font-medium hover:underline">
+                  {doc.title}
+                </Link>
+                <Link
+                  href={studio}
+                  className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Open in Studio
+                  <ArrowRightIcon className="size-3.5" />
+                </Link>
+              </div>
+            </div>
+          )
+        })}
+      </section>
 
       {groups.map((group) => (
         <section key={group.title} className="flex flex-col gap-4">
