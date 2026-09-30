@@ -53,6 +53,25 @@ function CommandBar({
 }) {
   const [query, setQuery] = React.useState("")
   const [question, setQuestion] = React.useState<string | null>(null)
+
+  // cmdk scrolls its first item into view when it mounts, which yanks the page down when an
+  // inline bar sits below the fold. The ref callback records the page's scroll before cmdk
+  // runs; cmdk's scroll lands in a follow-up render, so the next frames (still before paint)
+  // put the page back.
+  const mountScroll = React.useRef<{ x: number; y: number } | null>(null)
+  const recordScroll = React.useCallback((el: HTMLDivElement | null) => {
+    if (el && !mountScroll.current) mountScroll.current = { x: window.scrollX, y: window.scrollY }
+  }, [])
+  React.useLayoutEffect(() => {
+    const before = mountScroll.current
+    if (!before) return
+    let frames = 0
+    let id = requestAnimationFrame(function restore() {
+      if (window.scrollX !== before.x || window.scrollY !== before.y) window.scrollTo(before.x, before.y)
+      if (++frames < 2) id = requestAnimationFrame(restore)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [])
   const value = React.useMemo<CommandBarContextValue>(
     () => ({
       query,
@@ -74,6 +93,7 @@ function CommandBar({
   return (
     <CommandBarContext.Provider value={value}>
       <Command
+        ref={recordScroll}
         data-slot="command-bar"
         data-asking={question !== null || undefined}
         onKeyDown={(e) => {

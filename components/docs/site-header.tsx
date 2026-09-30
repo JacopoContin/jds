@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { ColorPicker } from "@/components/docs/color-picker"
 import { GithubIcon } from "@/components/docs/github-icon"
@@ -23,8 +24,10 @@ export function SiteHeader() {
           <Link href="/docs/components/prompt-input" className="transition-colors hover:text-foreground">
             Components
           </Link>
-          <Link href="/studio" className="transition-colors hover:text-foreground">
+          <Link href="/studio" className="flex items-center gap-1.5 transition-colors hover:text-foreground">
             Studio
+            {/* Draws people to the Studio, the part of JDS you play with rather than read. */}
+            <Badge>New</Badge>
           </Link>
           <Link href="/recipes" className="transition-colors hover:text-foreground">
             Recipes

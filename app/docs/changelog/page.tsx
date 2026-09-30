@@ -19,6 +19,8 @@ const releases = [
       {
         title: "Added",
         items: [
+          "Studio page: every tool as a card with a live preview of what it makes, and a New badge on Studio in the header.",
+          "Command Bar no longer scrolls the page when it mounts below the fold (cmdk scrolls its first item into view on mount).",
           "Artifact Studio: how generated documents, code and previews open next to the chat (beside it and resizable, as a sheet, full screen, or inline in the message), with version switcher and actions.",
           "Command Bar: a ⌘K palette that also asks the agent. The Ask row turns what you typed into a question and the answer replaces the list until Escape. Place the row first so Enter asks, or last so Enter runs the best command. With a Command Bar Studio.",
           "Voice Call Studio: design the voice agent's call screen (layout, captions, waveform, status, hand-off, glow backdrop) with a live sample call. The recipe gains matching props.",

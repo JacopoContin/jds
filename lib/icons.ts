@@ -4,6 +4,7 @@
  */
 export {
   ArrowUp as SendIcon,
+  ArrowRight as ArrowRightIcon,
   Square as StopIcon,
   Paperclip as AttachIcon,
   X as CloseIcon,
