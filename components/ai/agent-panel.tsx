@@ -5,6 +5,7 @@ import { AnimatePresence, motion, type TargetAndTransition, type Transition } fr
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { VoiceOrb } from "@/components/voice/voice-orb"
 import { CloseIcon, SparkleIcon, VoiceIcon } from "@/lib/icons"
@@ -43,6 +44,22 @@ const motionPresets: Record<PanelMotion, { offset: (side: PanelSide) => TargetAn
     },
   }
 
+const smallScreen = "(max-width: 639px)"
+const subscribe = (onChange: () => void) => {
+  const query = window.matchMedia(smallScreen)
+  query.addEventListener("change", onChange)
+  return () => query.removeEventListener("change", onChange)
+}
+
+/** True on phone-sized viewports. Always false on the server, so the first render matches. */
+function useSmallScreen() {
+  return React.useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(smallScreen).matches,
+    () => false,
+  )
+}
+
 const surfaces: Record<PanelSurface, string> = {
   card: "bg-card",
   background: "bg-background",
@@ -52,7 +69,8 @@ const surfaces: Record<PanelSurface, string> = {
 /**
  * An agent side panel. Docked panels run full height against an edge; floating panels
  * sit inset with rounded corners and a shadow. `contained` positions it inside the
- * nearest positioned ancestor instead of the viewport.
+ * nearest positioned ancestor instead of the viewport. On phone-sized screens a panel that
+ * isn't contained becomes a bottom drawer you can swipe away; set `mobile="panel"` to opt out.
  */
 function AgentPanel({
   open,
@@ -64,6 +82,7 @@ function AgentPanel({
   inset = 12,
   motion: motionPreset = "spring",
   contained = false,
+  mobile = "drawer",
   mode: controlledMode,
   defaultMode = "chat",
   onModeChange,
@@ -82,6 +101,8 @@ function AgentPanel({
   motion?: PanelMotion
   /** Position inside the nearest positioned ancestor instead of the viewport. */
   contained?: boolean
+  /** How it shows on phone-sized screens when not contained. */
+  mobile?: "drawer" | "panel"
   mode?: PanelMode
   defaultMode?: PanelMode
   onModeChange?: (mode: PanelMode) => void
@@ -99,9 +120,23 @@ function AgentPanel({
   )
   const preset = motionPresets[motionPreset]
   const floating = variant === "floating"
+  const drawer = useSmallScreen() && !contained && mobile === "drawer"
+  const context = { mode, setMode, onClose: onOpenChange && (() => onOpenChange(false)) }
+
+  if (drawer) {
+    return (
+      <AgentPanelContext.Provider value={context}>
+        <Drawer open={open} onOpenChange={(o) => onOpenChange?.(o)} showSwipeHandle>
+          <DrawerContent data-slot="agent-panel" data-variant="drawer" aria-label="Agent" className="h-dvh">
+            <div className={cn("flex min-h-0 flex-1 flex-col pb-(--safe-bottom) text-sm", className)}>{children}</div>
+          </DrawerContent>
+        </Drawer>
+      </AgentPanelContext.Provider>
+    )
+  }
 
   return (
-    <AgentPanelContext.Provider value={{ mode, setMode, onClose: onOpenChange && (() => onOpenChange(false)) }}>
+    <AgentPanelContext.Provider value={context}>
       <AnimatePresence>
         {open && (
           <motion.aside
@@ -121,6 +156,7 @@ function AgentPanel({
               floating
                 ? "inset-y-(--panel-inset) rounded-2xl border shadow-2xl"
                 : "inset-y-0 data-[side=left]:border-r data-[side=right]:border-l",
+              !floating && !contained && "pt-(--safe-top) pb-(--safe-bottom)",
               side === "right"
                 ? floating
                   ? "right-(--panel-inset)"

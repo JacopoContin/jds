@@ -86,7 +86,7 @@ function CallMute({ className, pressed: controlled, defaultPressed, onPressedCha
           onPressedChange?.(p, e)
         }}
         className={cn(
-          "grid size-10 place-items-center rounded-full bg-secondary text-secondary-foreground transition-colors outline-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4.5",
+          "grid size-10 place-items-center rounded-full pointer-coarse:size-12 bg-secondary text-secondary-foreground transition-colors outline-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-4.5",
           "data-pressed:bg-foreground data-pressed:text-background",
           className
         )}
@@ -106,7 +106,7 @@ function CallInterrupt({ className, ...props }: React.ComponentProps<typeof Butt
         data-slot="call-interrupt"
         variant="secondary"
         aria-label="Interrupt"
-        className={cn("size-10 rounded-full [&_svg:not([class*='size-'])]:size-4.5", className)}
+        className={cn("size-10 rounded-full pointer-coarse:size-12 [&_svg:not([class*='size-'])]:size-4.5", className)}
         {...props}
       >
         <InterruptIcon />
@@ -122,7 +122,7 @@ function CallEnd({ className, ...props }: React.ComponentProps<typeof Button>) {
         data-slot="call-end"
         aria-label="End call"
         className={cn(
-          "h-10 rounded-full bg-destructive px-4 text-white hover:bg-destructive/90 [&_svg:not([class*='size-'])]:size-4.5",
+          "h-10 rounded-full bg-destructive px-4 pointer-coarse:h-12 pointer-coarse:px-5 text-white hover:bg-destructive/90 [&_svg:not([class*='size-'])]:size-4.5",
           className
         )}
         {...props}
