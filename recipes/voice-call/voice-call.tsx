@@ -101,8 +101,8 @@ export default function VoiceCall() {
   const previous = line > 0 ? script[line - 1] : undefined
 
   return (
-    <div className="relative flex h-160 w-full flex-col items-center justify-between overflow-hidden rounded-2xl border bg-background px-6 py-8">
-      <div className="flex flex-col items-center gap-1 text-center">
+    <div className="relative flex h-160 max-h-dvh w-full flex-col items-center justify-between overflow-hidden rounded-2xl border bg-background px-6 py-8">
+      <div className="mt-(--safe-top) flex flex-col items-center gap-1 text-center">
         <span className="text-sm font-medium">Assistant</span>
         <CallStatus state={call} startedAt={startedAt} />
       </div>
@@ -133,11 +133,11 @@ export default function VoiceCall() {
       </div>
 
       {call === "ended" ? (
-        <Button variant="outline" onClick={restart}>
+        <Button variant="outline" className="mb-(--safe-bottom)" onClick={restart}>
           Call again
         </Button>
       ) : (
-        <CallControls>
+        <CallControls className="mb-(--safe-bottom)">
           <CallMute pressed={muted} onPressedChange={setMuted} />
           <CallInterrupt disabled={current?.speaker !== "agent" || !speaking} onClick={interrupt} />
           <CallEnd
