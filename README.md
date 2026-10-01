@@ -20,6 +20,15 @@ Then install the style and any component:
 pnpm dlx shadcn@latest add @jds/style @jds/prompt-input
 ```
 
+### Mobile
+
+Controls grow to 44px touch targets on coarse pointers, and text fields stay at 16px so iOS doesn't zoom on focus. Sheets, drawers and the recipes keep clear of the notch and home indicator through the `--safe-top`, `--safe-right`, `--safe-bottom` and `--safe-left` variables. These are zero until the page opts in to the full screen:
+
+```ts
+// app/layout.tsx
+export const viewport: Viewport = { viewportFit: "cover" }
+```
+
 ## Develop
 
 ```bash
