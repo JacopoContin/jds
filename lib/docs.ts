@@ -1234,6 +1234,7 @@ export const nav: NavGroup[] = [
       { title: "Styling", href: "/docs/styling" },
       { title: "Motion", href: "/docs/motion" },
       { title: "Icons", href: "/docs/icons" },
+      { title: "React Native", href: "/docs/native" },
       { title: "Roadmap", href: "/docs/roadmap" },
       { title: "Changelog", href: "/docs/changelog" },
       { title: "Contributing", href: "/docs/contributing" },
