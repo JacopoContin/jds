@@ -21,7 +21,7 @@ function NumberFieldGroup({ className, ...props }: NumberFieldPrimitive.Group.Pr
     <NumberFieldPrimitive.Group
       data-slot="number-field-group"
       className={cn(
-        "flex h-8 w-full items-center overflow-hidden rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 data-disabled:opacity-50 dark:bg-input/30",
+        "flex h-8 w-full items-center overflow-hidden pointer-coarse:h-11 rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 data-disabled:opacity-50 dark:bg-input/30",
         className
       )}
       {...props}
@@ -34,7 +34,7 @@ function NumberFieldInput({ className, ...props }: NumberFieldPrimitive.Input.Pr
     <NumberFieldPrimitive.Input
       data-slot="number-field-input"
       className={cn(
-        "h-full min-w-0 flex-1 bg-transparent px-2 text-center text-sm tabular-nums outline-none",
+        "h-full min-w-0 flex-1 bg-transparent px-2 text-center text-sm tabular-nums pointer-coarse:text-base outline-none",
         className
       )}
       {...props}
@@ -43,7 +43,7 @@ function NumberFieldInput({ className, ...props }: NumberFieldPrimitive.Input.Pr
 }
 
 const stepper =
-  "grid h-full w-8 shrink-0 place-items-center text-muted-foreground transition-colors outline-none select-none hover:bg-accent hover:text-foreground data-disabled:pointer-events-none data-disabled:opacity-40 [&_svg]:size-3.5"
+  "grid h-full w-8 shrink-0 place-items-center pointer-coarse:w-11 text-muted-foreground transition-colors outline-none select-none hover:bg-accent hover:text-foreground data-disabled:pointer-events-none data-disabled:opacity-40 [&_svg]:size-3.5"
 
 function NumberFieldDecrement({ className, ...props }: NumberFieldPrimitive.Decrement.Props) {
   return (
