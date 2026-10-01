@@ -201,13 +201,14 @@ function RunsChart() {
           ))}
         </div>
 
-        {/* Columns: each slot is the hover target; the bar is capped at 24px */}
+        {/* Columns: each slot is the hover and tap target; the bar is capped at 24px */}
         <div className="relative flex h-40 items-end gap-0.5" onMouseLeave={() => setHover(null)}>
           {days.map((d, i) => (
             <div
               key={d.date}
               className="group relative flex h-full flex-1 items-end justify-center"
               onMouseEnter={() => setHover(i)}
+              onPointerDown={() => setHover(i)}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               tabIndex={0}

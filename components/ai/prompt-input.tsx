@@ -201,7 +201,7 @@ function PromptInputTextarea({
         }
       }}
       className={cn(
-        "field-sizing-content max-h-60 min-h-12 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-sm outline-none placeholder:text-muted-foreground",
+        "field-sizing-content max-h-60 min-h-12 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-sm outline-none pointer-coarse:text-base placeholder:text-muted-foreground",
         className
       )}
       {...props}
@@ -231,7 +231,7 @@ function PromptInputAttachments({ className, ...props }: React.ComponentProps<"d
               type="button"
               aria-label={`Remove ${file.name}`}
               onClick={() => removeFile(i)}
-              className="grid size-5 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="relative grid size-5 place-items-center rounded-md text-muted-foreground pointer-coarse:after:absolute pointer-coarse:after:top-1/2 pointer-coarse:after:left-1/2 pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 pointer-coarse:after:-translate-1/2 transition-colors hover:bg-accent hover:text-foreground"
             >
               <CloseIcon className="size-3" />
             </button>
@@ -264,7 +264,7 @@ function PromptInputAttachButton(props: React.ComponentProps<typeof Button>) {
       variant="ghost"
       size="icon-sm"
       aria-label="Attach files"
-      className="text-muted-foreground"
+      className="text-muted-foreground pointer-coarse:size-9"
       onClick={openFilePicker}
       {...props}
     >
@@ -297,7 +297,7 @@ function PromptInputSubmit({
       aria-label={busy ? "Stop generating" : "Send message"}
       disabled={!busy && empty}
       onClick={busy ? onStop : undefined}
-      className={cn("rounded-full", className)}
+      className={cn("rounded-full pointer-coarse:size-9", className)}
       {...props}
     >
       <AnimatePresence mode="popLayout" initial={false}>
@@ -386,7 +386,7 @@ function PromptInputOption({ icon, className, children, ...props }: Toggle.Props
     <Toggle
       data-slot="prompt-input-option"
       className={cn(
-        "inline-flex h-7 items-center gap-1.5 rounded-full border border-transparent px-2.5 text-xs text-muted-foreground transition-colors outline-none select-none",
+        "relative inline-flex h-7 items-center gap-1.5 rounded-full pointer-coarse:h-9 pointer-coarse:px-3 border border-transparent px-2.5 text-xs text-muted-foreground transition-colors outline-none select-none",
         "hover:bg-background/60 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
         "data-pressed:border-border data-pressed:bg-background data-pressed:text-foreground data-pressed:shadow-xs",
         "[&_svg]:size-3.5 [&_svg]:shrink-0",

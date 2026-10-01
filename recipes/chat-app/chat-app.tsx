@@ -27,7 +27,8 @@ import { TypingIndicator } from "@/components/ai/shimmer"
 import { Suggestion, Suggestions } from "@/components/ai/suggestions"
 import { Button } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-import { CopyIcon, RegenerateIcon, SearchIcon, SparkleIcon } from "@/lib/icons"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { CopyIcon, MenuIcon, RegenerateIcon, SearchIcon, SparkleIcon } from "@/lib/icons"
 
 type Thread = { id: string; title: string; group: "Today" | "Yesterday" | "Last week" }
 type Turn = { id: string; from: "user" | "assistant"; text: string }
@@ -79,6 +80,7 @@ function ComposerSlot({ render, ...api }: ComposerApi & { render: (api: Composer
  */
 export default function ChatApp({ composer }: { composer?: (api: ComposerApi) => React.ReactNode }) {
   const [active, setActive] = React.useState("t1")
+  const [threadsOpen, setThreadsOpen] = React.useState(false)
   const [query, setQuery] = React.useState("")
   const [turns, setTurns] = React.useState<Turn[]>([])
   const [status, setStatus] = React.useState<ChatStatus>("ready")
@@ -116,62 +118,73 @@ export default function ChatApp({ composer }: { composer?: (api: ComposerApi) =>
   const groups = ["Today", "Yesterday", "Last week"] as const
   const title = threads.find((t) => t.id === active)?.title ?? "New conversation"
 
+  /** Opens a thread, or a new conversation for "". On small screens it also closes the thread sheet. */
+  const open = (id: string) => {
+    run.current++
+    setActive(id)
+    setTurns([])
+    setStatus("ready")
+    setThreadsOpen(false)
+  }
+
+  const threadList = (
+    <>
+      <div className="flex flex-col gap-2 p-3">
+        <Button variant="outline" size="sm" className="justify-start" onClick={() => open("")}>
+          <SparkleIcon />
+          New conversation
+        </Button>
+        <InputGroup>
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+          <InputGroupInput placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </InputGroup>
+      </div>
+      <nav className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2 pb-3">
+        {groups.map((g) => {
+          const items = visible.filter((t) => t.group === g)
+          if (items.length === 0) return null
+          return (
+            <div key={g} className="flex flex-col gap-0.5">
+              <span className="px-2 pb-1 text-xs text-muted-foreground">{g}</span>
+              {items.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  aria-current={active === t.id ? "page" : undefined}
+                  onClick={() => open(t.id)}
+                  className="truncate rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground aria-[current=page]:bg-sidebar-accent aria-[current=page]:text-foreground pointer-coarse:py-2.5"
+                >
+                  {t.title}
+                </button>
+              ))}
+            </div>
+          )
+        })}
+      </nav>
+    </>
+  )
+
   return (
-    <div className="flex h-160 w-full overflow-hidden rounded-2xl border bg-background">
-      <aside className="hidden w-64 shrink-0 flex-col border-r bg-sidebar md:flex">
-        <div className="flex flex-col gap-2 p-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="justify-start"
-            onClick={() => {
-              run.current++
-              setTurns([])
-              setStatus("ready")
-              setActive("")
-            }}
-          >
-            <SparkleIcon />
-            New conversation
-          </Button>
-          <InputGroup>
-            <InputGroupAddon>
-              <SearchIcon />
-            </InputGroupAddon>
-            <InputGroupInput placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
-          </InputGroup>
-        </div>
-        <nav className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2 pb-3">
-          {groups.map((g) => {
-            const items = visible.filter((t) => t.group === g)
-            if (items.length === 0) return null
-            return (
-              <div key={g} className="flex flex-col gap-0.5">
-                <span className="px-2 pb-1 text-xs text-muted-foreground">{g}</span>
-                {items.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    aria-current={active === t.id ? "page" : undefined}
-                    onClick={() => {
-                      run.current++
-                      setActive(t.id)
-                      setTurns([])
-                      setStatus("ready")
-                    }}
-                    className="truncate rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground aria-[current=page]:bg-sidebar-accent aria-[current=page]:text-foreground"
-                  >
-                    {t.title}
-                  </button>
-                ))}
-              </div>
-            )
-          })}
-        </nav>
-      </aside>
+    <div className="flex h-160 max-h-dvh w-full overflow-hidden rounded-2xl border bg-background">
+      <aside className="hidden w-64 shrink-0 flex-col border-r bg-sidebar md:flex">{threadList}</aside>
 
       <section className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 max-md:pl-2">
+          <Sheet open={threadsOpen} onOpenChange={setThreadsOpen}>
+            <SheetTrigger
+              render={<Button variant="ghost" size="icon-sm" aria-label="Conversations" className="md:hidden" />}
+            >
+              <MenuIcon />
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>Conversations</SheetTitle>
+              </SheetHeader>
+              <div className="flex min-h-0 flex-1 flex-col">{threadList}</div>
+            </SheetContent>
+          </Sheet>
           <h3 className="truncate text-sm font-medium">{title}</h3>
           <div className="ml-auto flex items-center gap-1">
             <ContextMeter
@@ -233,9 +246,14 @@ export default function ChatApp({ composer }: { composer?: (api: ComposerApi) =>
           <ConversationScrollButton />
         </Conversation>
 
-        <div className="mx-auto w-full max-w-3xl p-3 pt-0">
+        <div className="mx-auto mb-(--safe-bottom) w-full max-w-3xl p-3 pt-0">
           {composer ? (
-            <ComposerSlot render={composer} status={status} sendMessage={({ text }) => text && send(text)} stop={stop} />
+            <ComposerSlot
+              render={composer}
+              status={status}
+              sendMessage={({ text }) => text && send(text)}
+              stop={stop}
+            />
           ) : (
             <PromptInput status={status} onSubmit={({ text }) => text && send(text)}>
               <PromptInputMentions items={mentionables} />

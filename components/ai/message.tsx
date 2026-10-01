@@ -107,13 +107,13 @@ function MessageAvatar({
   )
 }
 
-/** Hover-revealed row of actions under a message (copy, regenerate, feedback). */
+/** Row of actions under a message (copy, regenerate, feedback). Revealed on hover; always shown on touch. */
 function MessageActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="message-actions"
       className={cn(
-        "-ml-1.5 flex items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover/message:opacity-100 focus-within:opacity-100",
+        "-ml-1.5 flex items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover/message:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100",
         className
       )}
       {...props}

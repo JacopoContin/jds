@@ -186,7 +186,7 @@ function PromptInputMentions({
                   type="button"
                   aria-label={`Remove ${m.label}`}
                   onClick={() => remove(m)}
-                  className="grid size-4 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  className="relative grid size-4 place-items-center rounded-sm text-muted-foreground pointer-coarse:after:absolute pointer-coarse:after:top-1/2 pointer-coarse:after:left-1/2 pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 pointer-coarse:after:-translate-1/2 transition-colors hover:bg-accent hover:text-foreground"
                 >
                   <CloseIcon className="size-2.5" />
                 </button>
@@ -221,7 +221,7 @@ function PromptInputMentions({
                       e.preventDefault()
                       pick(item)
                     }}
-                    className="flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm aria-selected:bg-accent [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground"
+                    className="flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm pointer-coarse:py-2.5 aria-selected:bg-accent [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted-foreground"
                   >
                     {typeIcon[item.type]}
                     <span className="truncate">{item.label}</span>
