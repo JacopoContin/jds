@@ -10,6 +10,14 @@ import { installedPath, recipes } from "../lib/recipes.ts"
 import { site } from "../lib/site.ts"
 
 const NS = site.namespace
+
+/**
+ * Dependencies pinned to the range JDS builds with, so a future breaking release can't reach
+ * new installs. cn is the one every component imports.
+ */
+const pkg = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> }
+const pinned = new Set(["cn"])
+const withVersion = (name: string) => (pinned.has(name) ? `${name}@${pkg.dependencies[name]}` : name)
 const importRe = /from\s+["']([^"']+)["']/g
 
 function fileType(path: string) {
@@ -42,7 +50,7 @@ function analyze(paths: string[]) {
       }
     }
   }
-  return { dependencies: [...deps].sort(), registryDependencies: [...regDeps].sort() }
+  return { dependencies: [...deps].sort().map(withVersion), registryDependencies: [...regDeps].sort() }
 }
 
 // A token set for light but not dark leaks into dark mode, because :root[data-*] outranks .dark.
