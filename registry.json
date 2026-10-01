@@ -433,7 +433,7 @@
       "title": "Conversation",
       "description": "Scroll container for a chat thread. Stays pinned to the bottom while tokens stream and lets go when the user scrolls up.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -458,7 +458,7 @@
       "title": "Message",
       "description": "A single turn from the user or the assistant, with hover-revealed actions.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -480,7 +480,7 @@
       "title": "Command Bar",
       "description": "A ⌘K palette that also asks the agent. Typing filters commands; the Ask row turns the same text into a question, and the answer replaces the list until Escape. Choose whether Enter asks or runs a command.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/command",
@@ -502,7 +502,7 @@
       "description": "Composer for chat and agent apps. Enter to send, Shift+Enter for a new line, paste or drop files, stop while streaming.",
       "dependencies": [
         "@base-ui/react",
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -522,7 +522,7 @@
       "title": "Dictation",
       "description": "Dictation for the prompt input. Speech is transcribed into the textarea as you talk, so it can be reviewed before sending.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -550,7 +550,7 @@
       "description": "Markdown renderer that is safe to stream. Closes unterminated syntax as it arrives and highlights code with Shiki.",
       "dependencies": [
         "@streamdown/code",
-        "cn",
+        "cn@^0.4.0",
         "streamdown"
       ],
       "registryDependencies": [],
@@ -567,7 +567,7 @@
       "title": "Reasoning",
       "description": "Model thinking, open while it streams, then collapsed to a one-line summary with the time it took.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -588,7 +588,7 @@
       "title": "Tool Call",
       "description": "What the agent called, with what input, and what came back. States match AI SDK tool parts.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/badge",
@@ -608,7 +608,7 @@
       "title": "Approval",
       "description": "Human-in-the-loop gate. The agent pauses on an irreversible action until the user approves or denies it.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -628,7 +628,7 @@
       "title": "Agent Steps",
       "description": "Plan and progress for a multi-step run: what's done, what's running, what's next.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -648,7 +648,7 @@
       "title": "Sources",
       "description": "Inline numbered citations with hover previews, and a strip of source cards.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/popover",
@@ -667,7 +667,7 @@
       "title": "Suggestions",
       "description": "Follow-up prompts as a row of chips.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -687,7 +687,7 @@
       "title": "Shimmer",
       "description": "In-progress text and a typing indicator for the gap before the first token.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -703,7 +703,7 @@
       "title": "Model Picker",
       "description": "Choose the model for the next message. A quiet trigger for the prompt toolbar; the menu says what each model is for.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -723,7 +723,7 @@
       "title": "Branch",
       "description": "Step through versions of a response after regenerating. New versions are selected as they arrive.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -743,7 +743,7 @@
       "title": "Context Meter",
       "description": "How full the context window is. A small ring for the toolbar that shifts to warning at 80% and destructive at 95%, with a breakdown on hover.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -763,7 +763,7 @@
       "title": "Mentions",
       "description": "Type @ in the composer to mention files, tools or agents. Keyboard first; picks show as chips and are reported for sending.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -783,7 +783,7 @@
       "title": "Tools menu",
       "description": "Tools like web search or deep research folded into one toolbar menu, so they fit at any width. The trigger shows the active tool, or how many are on.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -803,7 +803,7 @@
       "title": "Scope",
       "description": "Tell the agent which parts of the product it may work on. A context label and a multi-select of modules in the composer footer; nothing selected means everything.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -823,7 +823,7 @@
       "title": "Artifact",
       "description": "A generated document or file in its own panel beside the chat, opened from a card in the message.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -843,7 +843,7 @@
       "title": "Agent Panel",
       "description": "A configurable agent side panel: docked or floating, left or right, card, page or glass surface, three entrance motions, and chat/voice modes.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -865,7 +865,7 @@
       "title": "Voice Orb",
       "description": "Presence for a voice agent, drawn in the primary color. Ten variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, three WebGL shaders (plasma, liquid and glass), and a minimal dot for small spots. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -881,7 +881,7 @@
       "title": "Waveform",
       "description": "Live spectrum bars for microphone input or agent speech.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [],
@@ -902,7 +902,7 @@
       "title": "Push to Talk",
       "description": "Hold to speak with pointer or the Space key. The ring grows with input level so users know they're heard.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -921,7 +921,7 @@
       "title": "Live Transcript",
       "description": "Rolling speech transcript per speaker. Interim text is dimmed until recognition commits it.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [],
@@ -939,7 +939,7 @@
       "description": "Choose a synthetic voice, with a spoken preview for each option.",
       "dependencies": [
         "@base-ui/react",
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -960,7 +960,7 @@
       "description": "Controls for a realtime voice session: status and timer, mute, interrupt the agent, end the call.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -981,7 +981,7 @@
       "description": "An image with a text fallback for users and agents.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -999,7 +999,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1017,7 +1017,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1033,7 +1033,7 @@
       "title": "Card",
       "description": "A container for grouped content.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1066,7 +1066,7 @@
       "description": "A modal window over the page.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -1086,7 +1086,7 @@
       "description": "A single-line text field.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1102,7 +1102,7 @@
       "title": "Kbd",
       "description": "A keyboard key or shortcut.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1119,7 +1119,7 @@
       "description": "A list of actions in a dropdown.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1138,7 +1138,7 @@
       "description": "A floating panel anchored to a trigger.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1155,7 +1155,7 @@
       "description": "A scroll container with styled scrollbars.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1172,7 +1172,7 @@
       "description": "Pick one value from a list.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1191,7 +1191,7 @@
       "description": "A visual divider.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1208,7 +1208,7 @@
       "description": "A panel that slides in from an edge. Can render inside a container, non-modal.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -1227,7 +1227,7 @@
       "title": "Skeleton",
       "description": "A placeholder while content loads.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1245,7 +1245,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1261,7 +1261,7 @@
       "title": "Textarea",
       "description": "A multi-line text field that grows with content.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1297,7 +1297,7 @@
       "description": "Stacked sections that expand one or several at a time.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1316,7 +1316,7 @@
       "description": "A callout for status or warnings, inline with content.",
       "dependencies": [
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1333,7 +1333,7 @@
       "description": "A modal that interrupts to confirm a destructive action.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button"
@@ -1352,7 +1352,7 @@
       "description": "Where you are in a hierarchy, with links back up.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1371,7 +1371,7 @@
       "description": "An on/off choice, usually in a list of settings.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1390,7 +1390,7 @@
       "description": "A text input that filters a list of options as you type.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -1411,7 +1411,7 @@
       "description": "A searchable command palette with groups and shortcuts.",
       "dependencies": [
         "cmdk",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/dialog",
@@ -1432,7 +1432,7 @@
       "description": "Actions on right-click or long press.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1451,7 +1451,7 @@
       "description": "A panel that slides up from the bottom and can be swiped away.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1468,7 +1468,7 @@
       "description": "A placeholder for empty states, with a next step.",
       "dependencies": [
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1485,7 +1485,7 @@
       "description": "Label, control, description and error, laid out consistently.",
       "dependencies": [
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/label",
@@ -1505,7 +1505,7 @@
       "description": "A rich preview when hovering a link or mention.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1522,7 +1522,7 @@
       "description": "An input with icons, text or buttons attached.",
       "dependencies": [
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -1542,7 +1542,7 @@
       "title": "Input OTP",
       "description": "One-time code entry, one character per slot.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "input-otp"
       ],
       "registryDependencies": [
@@ -1561,7 +1561,7 @@
       "title": "Label",
       "description": "Accessible text for a form control.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1578,7 +1578,7 @@
       "description": "A desktop-style bar of menus.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/dropdown-menu",
@@ -1597,7 +1597,7 @@
       "title": "Pagination",
       "description": "Move between pages of results.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button",
@@ -1617,7 +1617,7 @@
       "description": "Completion of a known-length task.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1634,7 +1634,7 @@
       "description": "Pick exactly one of a few options.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1651,7 +1651,7 @@
       "description": "Choose a value within a range.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1667,7 +1667,7 @@
       "title": "Spinner",
       "description": "Indeterminate loading indicator.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1686,7 +1686,7 @@
       "description": "Turn a setting on or off, taking effect immediately.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1702,7 +1702,7 @@
       "title": "Table",
       "description": "Rows and columns of structured data.",
       "dependencies": [
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1720,7 +1720,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1738,7 +1738,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/toggle"
@@ -1756,7 +1756,7 @@
       "title": "Calendar",
       "description": "A month grid for picking a date or range.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "react-day-picker"
       ],
       "registryDependencies": [
@@ -1776,7 +1776,7 @@
       "title": "Carousel",
       "description": "Swipe or step through a row of cards.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "embla-carousel-react"
       ],
       "registryDependencies": [
@@ -1797,7 +1797,7 @@
       "description": "Consistent form layout with native validation, built on Base UI Form.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1814,7 +1814,7 @@
       "description": "A measurement within a known range, like quota used.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1832,7 +1832,7 @@
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1851,7 +1851,7 @@
       "description": "A numeric input with steppers, arrow keys and drag-to-scrub.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/utils"
@@ -1869,7 +1869,7 @@
       "title": "Resizable",
       "description": "Panels the user can resize by dragging the divider.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "react-resizable-panels"
       ],
       "registryDependencies": [],
@@ -1887,7 +1887,7 @@
       "description": "A row of controls with arrow-key navigation between them.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [
         "@jds/button"
@@ -1906,7 +1906,7 @@
       "description": "A label on hover or focus.",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn@^0.4.0"
       ],
       "registryDependencies": [],
       "files": [
@@ -1922,7 +1922,7 @@
       "title": "Voice agent",
       "description": "A complete voice agent surface: the orb, live captions and call controls, with the agent's tool calls and transcript beside it. Style it in the Studio, pick a layout, connect your voice session.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
@@ -2185,7 +2185,7 @@
       "title": "Run history",
       "description": "How agents are doing: headline stats with week-over-week change, runs per day (with a table view), and recent runs by status.",
       "dependencies": [
-        "cn",
+        "cn@^0.4.0",
         "motion"
       ],
       "registryDependencies": [
