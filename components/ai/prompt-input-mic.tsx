@@ -86,7 +86,7 @@ function PromptInputMic({ lang, className }: { lang?: string; className?: string
               aria-pressed={speech.listening}
               disabled={!speech.supported}
               onClick={toggle}
-              className={cn(!speech.listening && "text-muted-foreground")}
+              className={cn("pointer-coarse:size-9", !speech.listening && "text-muted-foreground")}
             />
           }
         >
