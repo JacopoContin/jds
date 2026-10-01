@@ -7,7 +7,8 @@
     "build": "pnpm registry:build && next build",
     "start": "next start",
     "lint": "eslint",
-    "registry:build": "node scripts/build-registry.mts && shadcn build",
+    "registry:build": "node scripts/build-registry.mts && node scripts/build-native.mts && shadcn build && shadcn build registry-native.json -o public/r/native",
+    "native:check": "pnpm --dir native install --ignore-workspace && pnpm --dir native typecheck",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots"
   },

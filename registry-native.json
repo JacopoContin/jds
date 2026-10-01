@@ -1,0 +1,95 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "jds-native",
+  "homepage": "https://jds-ruddy.vercel.app/docs/native",
+  "items": [
+    {
+      "name": "tokens",
+      "type": "registry:lib",
+      "title": "Tokens",
+      "description": "Colors for light and dark, radii, spacing, durations, easing and springs. Replace it with a themed file from /tokens/react-native to restyle every component.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "native/lib/tokens.ts",
+          "type": "registry:lib",
+          "target": "lib/tokens.ts"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Pressable with the web's variants and sizes, 44pt touch targets and a snappy press spring.",
+      "dependencies": [
+        "lucide-react-native@^1.49.0"
+      ],
+      "registryDependencies": [
+        "@jds-native/tokens"
+      ],
+      "files": [
+        {
+          "path": "native/components/ui/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Text field at 16pt with a focus ring and an invalid state.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@jds-native/tokens"
+      ],
+      "files": [
+        {
+          "path": "native/components/ui/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Bottom sheet that springs in, swipes down to dismiss and keeps clear of the home indicator.",
+      "dependencies": [],
+      "registryDependencies": [
+        "@jds-native/tokens"
+      ],
+      "files": [
+        {
+          "path": "native/components/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "registry:component",
+      "title": "Prompt Input",
+      "description": "The chat composer: a growing text field, a toolbar for tools, and a send button that becomes stop while the agent works.",
+      "dependencies": [
+        "lucide-react-native@^1.49.0"
+      ],
+      "registryDependencies": [
+        "@jds-native/button",
+        "@jds-native/tokens"
+      ],
+      "files": [
+        {
+          "path": "native/components/ai/prompt-input.tsx",
+          "type": "registry:component",
+          "target": "components/ai/prompt-input.tsx"
+        }
+      ]
+    }
+  ]
+}

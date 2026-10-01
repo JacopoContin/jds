@@ -1,4 +1,4 @@
-import registry from "../registry.json"
+import registry from "../registry.json" with { type: "json" }
 import { duration, ease, spring } from "./motion.ts"
 import { oklchToP3, oklchToSrgb, parseOklch, toHex, type Oklch, type Rgb } from "./oklch.ts"
 import { themeItem, type ThemeChoice } from "./theme.ts"
@@ -306,6 +306,13 @@ export type ColorName = keyof typeof colors.light
 /** The palette for the current system appearance. */
 export function useColors() {
   return colors[useColorScheme() === "dark" ? "dark" : "light"]
+}
+
+/** A color at a fraction of its opacity, like bg-primary/80 on the web. */
+export function alpha(color: string, amount: number) {
+  const base = color.length === 9 ? parseInt(color.slice(7), 16) / 255 : 1
+  const a = Math.round(Math.min(1, Math.max(0, base * amount)) * 255)
+  return color.slice(0, 7) + a.toString(16).padStart(2, "0")
 }
 
 /** Corner radii in points. */

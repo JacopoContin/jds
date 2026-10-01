@@ -4,4 +4,6 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://jds-ruddy.vercel.app",
   github: "https://github.com/JacopoContin/jds",
   namespace: "@jds",
+  /** The React Native registry, served from /r/native. */
+  nativeNamespace: "@jds-native",
 }

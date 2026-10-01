@@ -35,7 +35,18 @@ const eslintConfig = defineConfig([
       "shadcn/require-static-classes": "off",
     },
   },
-  globalIgnores([".next/**", ".next-test/**", "test-results/**", "playwright-report/**", "out/**", "build/**", "public/r/**", "next-env.d.ts"]),
+  globalIgnores([
+    ".next/**",
+    ".next-test/**",
+    "test-results/**",
+    "playwright-report/**",
+    "out/**",
+    "build/**",
+    "public/r/**",
+    "next-env.d.ts",
+    // React Native styles with StyleSheet, not Tailwind; it type-checks on its own (pnpm native:check).
+    "native/**",
+  ]),
 ]);
 
 export default eslintConfig;
