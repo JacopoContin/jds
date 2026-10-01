@@ -7,9 +7,10 @@ import { CodePanel } from "@/components/studio/code-panel"
 import { studioMarkdown } from "@/components/studio/markdown"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { CheckIcon, FileIcon } from "@/lib/icons"
+import { CheckIcon, DownloadIcon, FileIcon } from "@/lib/icons"
 import { site } from "@/lib/site"
-import { fontSnippet, isDefaultTheme, orbSnippet, themeUrl, type ThemeChoice } from "@/lib/theme"
+import { fontSnippet, isDefaultTheme, orbSnippet, themeQuery, themeUrl, type ThemeChoice } from "@/lib/theme"
+import { tokenFiles, tokenFormats, tokensUrl } from "@/lib/token-formats"
 
 const installCommand = (t: ThemeChoice) =>
   isDefaultTheme(t) ? `shadcn@latest add ${site.namespace}/style` : `shadcn@latest add "${themeUrl(t)}"`
@@ -38,6 +39,7 @@ function markdown(t: ThemeChoice) {
     notes: [
       "Components use token classes like bg-primary and rounded-lg, so they follow the theme with no changes.",
       "Change the theme later by running the install again with new choices, or edit the variables in globals.css.",
+      `Native apps get the same colors, radii and motion from ${tokenFormats.map((f) => `${tokenFiles[f].label}: ${tokensUrl(t, f)}`).join("; ")}.`,
     ],
   })
 }
@@ -90,6 +92,30 @@ export function ThemeExport({
             <CodePanel code={orbSnippet(theme)} note="Tune palette, glow and material in the Voice Orb Studio." />
           </li>
         </ol>
+        <div className="flex flex-col gap-2 border-t pt-5 text-sm">
+          <span className="font-medium">Native apps</span>
+          <span className="text-xs text-muted-foreground">
+            The same colors, radii, springs and touch sizes for SwiftUI, Jetpack Compose and React Native, with light and
+            dark built in.
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {tokenFormats.map((f) => {
+              const query = themeQuery(theme)
+              return (
+                <Button
+                  key={f}
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<a href={`/tokens/${f}${query ? `?${query}` : ""}`} download={tokenFiles[f].file} />}
+                >
+                  <DownloadIcon />
+                  {tokenFiles[f].file}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
         <Button
           variant="outline"
           className="justify-self-start"

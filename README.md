@@ -29,6 +29,10 @@ Controls grow to 44px touch targets on coarse pointers, and text fields stay at 
 export const viewport: Viewport = { viewportFit: "cover" }
 ```
 
+### Native apps
+
+The same tokens (colors for light and dark, radii, spacing, durations, easing and springs) are generated for native apps at `/tokens/swift`, `/tokens/kotlin`, `/tokens/react-native` and `/tokens/json` (DTCG). They take the same theme query as `/r/theme`, e.g. `/tokens/swift?color=blue&radius=0.5`.
+
 ## Develop
 
 ```bash
