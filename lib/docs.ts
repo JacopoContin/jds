@@ -826,6 +826,12 @@ const { status, sendMessage, stop } = useChat()
             default: "false",
             description: "Position inside the nearest positioned ancestor instead of the viewport.",
           },
+          {
+            name: "mobile",
+            type: '"drawer" | "panel"',
+            default: '"drawer"',
+            description: "On phone-sized screens, a panel that isn't contained opens as a swipeable bottom drawer.",
+          },
           { name: "mode", type: '"chat" | "voice"', description: "Controlled mode. Or defaultMode with onModeChange." },
         ],
       },
