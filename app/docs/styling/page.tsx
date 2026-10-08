@@ -95,6 +95,55 @@ export default function StylingPage() {
         soft (<Code>1rem</Code>) in Customize.
       </P>
 
+      <H2>Mobile</H2>
+      <P>
+        On touch screens controls grow to 44px targets and text fields stay at 16px, so iOS doesn&apos;t zoom on focus.
+        Sheets, drawers and recipes keep clear of the notch and home indicator through <Code>--safe-top</Code>,{" "}
+        <Code>--safe-right</Code>, <Code>--safe-bottom</Code> and <Code>--safe-left</Code>. They read zero until the page
+        opts in to the full screen:
+      </P>
+      <CodeBlock lang="tsx" code={`// app/layout.tsx\nexport const viewport: Viewport = { viewportFit: "cover" }`} />
+
+      <H2>Native apps</H2>
+      <P>
+        The same tokens are generated for native apps from these variables: colors for light and dark (Display P3 on
+        Apple platforms, sRGB elsewhere), the radius scale, spacing, touch target size, durations, easing curves and
+        the three springs. Add the theme query from Customize to get your theme, e.g.{" "}
+        <Code>?color=blue&amp;radius=0.5</Code>.
+      </P>
+      <List>
+        <li>
+          <a href={`${site.url}/tokens/swift`} className="text-foreground underline underline-offset-4">
+            /tokens/swift
+          </a>{" "}
+          for SwiftUI: <Code>JDS.Colors.primary</Code>, <Code>JDS.Radius.lg</Code>, <Code>JDS.Spring.snappy</Code>.
+        </li>
+        <li>
+          <a href={`${site.url}/tokens/kotlin`} className="text-foreground underline underline-offset-4">
+            /tokens/kotlin
+          </a>{" "}
+          for Jetpack Compose: <Code>jdsColors().primary</Code>, <Code>JdsRadius.lg</Code>,{" "}
+          <Code>JdsSpring.snappy()</Code>.
+        </li>
+        <li>
+          <a href={`${site.url}/tokens/react-native`} className="text-foreground underline underline-offset-4">
+            /tokens/react-native
+          </a>{" "}
+          for React Native: <Code>useColors().primary</Code>, <Code>radius.lg</Code>, and{" "}
+          <Code>withSpring(value, spring.snappy)</Code> in Reanimated.
+        </li>
+        <li>
+          <a href={`${site.url}/tokens/json`} className="text-foreground underline underline-offset-4">
+            /tokens/json
+          </a>{" "}
+          in the Design Tokens (DTCG) format, for Style Dictionary or Tokens Studio.
+        </li>
+      </List>
+      <P>
+        Springs keep the web&apos;s mass, stiffness and damping, so motion feels the same everywhere. Re-download after
+        changing the theme; the files say which theme they hold.
+      </P>
+
       <H2>Customizing</H2>
       <P>
         Change the variables, not the components. To brand it, set <Code>--primary</Code> and <Code>--ring</Code>, or
