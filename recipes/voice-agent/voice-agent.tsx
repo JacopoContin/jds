@@ -81,12 +81,10 @@ function VoiceAgent({
     <div
       data-slot="voice-agent"
       data-layout={layout}
-      className={cn(
-        "grid w-full overflow-hidden rounded-2xl border bg-background md:h-160",
-        split && "md:grid-cols-[minmax(0,1fr)_22rem]",
-        className,
-      )}
+      className={cn("@container flex w-full flex-col overflow-hidden rounded-2xl border bg-background md:h-160", className)}
     >
+      {/* Split by the component's own width, so it stacks in a dialog or side panel on a wide screen. */}
+      <div className={cn("grid min-h-0 flex-1 overflow-y-auto", split && "@3xl:grid-cols-[minmax(0,1fr)_22rem] @3xl:overflow-hidden")}>
       <section
         aria-label="Call"
         className={cn(
@@ -163,7 +161,7 @@ function VoiceAgent({
       </section>
 
       {split && (
-      <aside aria-label="Agent activity" className="flex min-h-0 flex-col border-t md:border-t-0 md:border-l">
+      <aside aria-label="Agent activity" className="flex min-h-0 flex-col border-t @3xl:border-t-0 @3xl:border-l">
         <div className="flex flex-col gap-2 border-b p-4">
           <h3 className="text-xs font-medium text-muted-foreground">Actions</h3>
           {actions.length === 0 ? (
@@ -188,6 +186,7 @@ function VoiceAgent({
         </div>
       </aside>
       )}
+      </div>
     </div>
   )
 }
