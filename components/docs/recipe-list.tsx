@@ -2,55 +2,88 @@
 
 import * as React from "react"
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import type { RecipeTag } from "@/lib/recipes"
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { RecipePlatform, RecipeTag } from "@/lib/recipes"
+
+type Item = { slug: string; tags: RecipeTag[]; platform: RecipePlatform; content: React.ReactNode }
 
 /**
- * Recipe sections with quick filters. Sections are rendered on the server and passed in;
- * this only decides which show. The filter lives in the query string (?tag=voice)
- * so a filtered view can be shared.
+ * Recipe sections with a Web / Mobile switch and quick filters by kind. Sections are rendered
+ * on the server and passed in; this only decides which show. Both live in the query string
+ * (?platform=mobile&tag=voice) so a filtered view can be shared.
  */
 export function RecipeList({
   tags,
+  platforms,
   items,
 }: {
   tags: { value: RecipeTag; label: string }[]
-  items: { slug: string; tags: RecipeTag[]; content: React.ReactNode }[]
+  platforms: { value: RecipePlatform; label: string }[]
+  items: Item[]
 }) {
+  const [platform, setPlatform] = React.useState<RecipePlatform>("web")
   const [tag, setTag] = React.useState<RecipeTag | "all">("all")
 
-  // Read ?tag= once on mount; keep the URL in step when it changes.
+  // Read the query once on mount; keep the URL in step when the filters change.
   React.useEffect(() => {
-    const initial = new URLSearchParams(window.location.search).get("tag")
-    if (initial && tags.some((t) => t.value === initial)) queueMicrotask(() => setTag(initial as RecipeTag))
-  }, [tags])
-  const choose = (next: RecipeTag | "all") => {
-    setTag(next)
+    const params = new URLSearchParams(window.location.search)
+    const p = params.get("platform")
+    const t = params.get("tag")
+    queueMicrotask(() => {
+      if (p && platforms.some((x) => x.value === p)) setPlatform(p as RecipePlatform)
+      if (t && tags.some((x) => x.value === t)) setTag(t as RecipeTag)
+    })
+  }, [platforms, tags])
+
+  const sync = (nextPlatform: RecipePlatform, nextTag: RecipeTag | "all") => {
     const url = new URL(window.location.href)
-    if (next === "all") url.searchParams.delete("tag")
-    else url.searchParams.set("tag", next)
+    if (nextPlatform === "web") url.searchParams.delete("platform")
+    else url.searchParams.set("platform", nextPlatform)
+    if (nextTag === "all") url.searchParams.delete("tag")
+    else url.searchParams.set("tag", nextTag)
     window.history.replaceState(null, "", url)
   }
 
-  const shown = tag === "all" ? items : items.filter((i) => i.tags.includes(tag))
+  const onPlatform = items.filter((i) => i.platform === platform)
+  // Only offer kinds this platform has, so a filter never leads to an empty list.
+  const available = tags.filter((t) => onPlatform.some((i) => i.tags.includes(t.value)))
+  const activeTag = tag !== "all" && available.some((t) => t.value === tag) ? tag : "all"
+  const shown = activeTag === "all" ? onPlatform : onPlatform.filter((i) => i.tags.includes(activeTag))
+
+  const choosePlatform = (next: RecipePlatform) => {
+    setPlatform(next)
+    sync(next, activeTag)
+  }
+  const chooseTag = (next: RecipeTag | "all") => {
+    setTag(next)
+    sync(platform, next)
+  }
 
   return (
     <>
-      <ToggleGroup
-        value={[tag]}
-        onValueChange={(v) => v[0] && choose(v[0] as RecipeTag | "all")}
-        variant="outline"
-        size="sm"
-        aria-label="Filter recipes"
-        className="flex-wrap"
-      >
-        <ToggleGroupItem value="all">All</ToggleGroupItem>
-        {tags.map((t) => (
-          <ToggleGroupItem key={t.value} value={t.value}>
-            {t.label}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+      <div className="flex flex-wrap items-center gap-4">
+        <Tabs value={platform} onValueChange={(v) => choosePlatform(v as RecipePlatform)}>
+          <TabsList aria-label="Platform">
+            {platforms.map((p) => (
+              <TabsTrigger key={p.value} value={p.value}>
+                {p.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <Separator orientation="vertical" className="h-5" />
+        <Tabs value={activeTag} onValueChange={(v) => chooseTag(v as RecipeTag | "all")}>
+          <TabsList variant="line" aria-label="Kind of recipe" className="flex-wrap">
+            <TabsTrigger value="all">All</TabsTrigger>
+            {available.map((t) => (
+              <TabsTrigger key={t.value} value={t.value}>
+                {t.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
       {shown.map((i) => (
         <React.Fragment key={i.slug}>{i.content}</React.Fragment>
       ))}

@@ -1953,6 +1953,123 @@
       ]
     },
     {
+      "name": "mobile-voice-agent",
+      "type": "registry:block",
+      "title": "Mobile voice agent",
+      "description": "A portrait, full-screen voice agent for phones: the orb and a live caption, the agent's actions and transcript in a sheet you drag up, and call controls in thumb reach. Same session as the voice agent.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/live-transcript",
+        "@jds/tool-call",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-voice-agent/mobile-voice-agent.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-voice-agent/mobile-voice-agent.tsx"
+        },
+        {
+          "path": "recipes/voice-agent/session.ts",
+          "type": "registry:component",
+          "target": "components/voice-agent/session.ts"
+        }
+      ]
+    },
+    {
+      "name": "mobile-minimized-call",
+      "type": "registry:block",
+      "title": "Minimized call",
+      "description": "Keep a voice call going while the user moves around your app. The call shrinks to a pill under the status bar with the live caption and end call in one tap; tap it to get the full call back.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/live-transcript",
+        "@jds/tool-call",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-minimized-call/mobile-minimized-call.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-minimized-call/mobile-minimized-call.tsx"
+        },
+        {
+          "path": "recipes/mobile-voice-agent/mobile-voice-agent.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-voice-agent/mobile-voice-agent.tsx"
+        },
+        {
+          "path": "recipes/voice-agent/session.ts",
+          "type": "registry:component",
+          "target": "components/voice-agent/session.ts"
+        }
+      ]
+    },
+    {
+      "name": "mobile-push-to-talk",
+      "type": "registry:block",
+      "title": "Push-to-talk",
+      "description": "Voice for noisy places and one hand: hold the big button to talk, let go to send, slide up to cancel. Holding while the agent speaks cuts it off.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/live-transcript",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-push-to-talk/mobile-push-to-talk.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-push-to-talk/mobile-push-to-talk.tsx"
+        },
+        {
+          "path": "recipes/mobile-push-to-talk/session.ts",
+          "type": "registry:component",
+          "target": "components/mobile-push-to-talk/session.ts"
+        }
+      ]
+    },
+    {
+      "name": "mobile-approval",
+      "type": "registry:block",
+      "title": "Approve from phone",
+      "description": "The agent pauses before a risky action and asks. A bottom sheet shows exactly what it will do, lets the user edit it, and puts approve in thumb reach.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/agent-steps",
+        "@jds/approval",
+        "@jds/button",
+        "@jds/drawer",
+        "@jds/textarea",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-approval/mobile-approval.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-approval/mobile-approval.tsx"
+        }
+      ]
+    },
+    {
       "name": "agent-run",
       "type": "registry:block",
       "title": "Agent run",
@@ -2068,6 +2185,36 @@
         {
           "path": "hooks/use-simulated-spectrum.ts",
           "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "mobile-chat",
+      "type": "registry:block",
+      "title": "Mobile chat",
+      "description": "A full-page chat for phones. Generated documents and code show as cards in the reply and open in a drawer: half height to glance, swipe up for full screen, down to get back to the chat.",
+      "dependencies": [
+        "cn@^0.4.0"
+      ],
+      "registryDependencies": [
+        "@jds/artifact",
+        "@jds/button",
+        "@jds/conversation",
+        "@jds/drawer",
+        "@jds/message",
+        "@jds/model-picker",
+        "@jds/prompt-input",
+        "@jds/prompt-input-mic",
+        "@jds/response",
+        "@jds/shimmer",
+        "@jds/suggestions",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-chat/mobile-chat.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-chat/mobile-chat.tsx"
         }
       ]
     },
