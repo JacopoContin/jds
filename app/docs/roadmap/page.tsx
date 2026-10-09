@@ -91,29 +91,49 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
-    title: "Studio: motion and backgrounds",
-    status: "next",
+    title: "Mobile",
+    status: "done",
     items: [
-      "Motion presets you can feel",
-      "Ambient backgrounds: gradient mesh, grain, aurora, dot fields",
-      "Generated code",
+      "Touch pass: tap equivalents for hover, 44px targets, safe areas and dynamic viewport",
+      "Agent panel as a bottom drawer on phones",
+      "Mobile recipes previewed in an iPhone frame, with a Web / Mobile switch on Recipes",
+      "Mobile voice agent and mobile chat (live)",
+      "Minimized call, push-to-talk and approve from phone (live)",
+    ],
+  },
+  {
+    title: "Native tokens",
+    status: "done",
+    items: [
+      "Tokens exported as W3C design tokens JSON (DTCG)",
+      "SwiftUI, Jetpack Compose and React Native exports, from Customize and the Styling page",
+      "Durations, easings and springs carried over, so motion feels the same on every platform",
+    ],
+  },
+  {
+    title: "Studio: motion and backgrounds",
+    status: "done",
+    items: [
+      "Motion Studio: springs, durations, easing and streamed-content entrances, felt on real interactions (live)",
+      "Exports a replacement lib/motion.ts, so the whole app moves the new way",
+      "Ambient Background component: gradient mesh, aurora and dot fields, with grain, tinted by the theme (live)",
+      "Backgrounds Studio, previewed behind an empty chat and a voice call, with generated code (live)",
     ],
   },
   {
     title: "Orbs: more families and visualizers",
-    status: "planned",
+    status: "next",
     items: [
       "Mesh gradient, aurora, sonic rings and halo",
       "Visualizers: circular waveform, radial bars, spectrogram, audio ribbon, pulsing rings",
     ],
   },
   {
-    title: "Portable foundations",
+    title: "Native components",
     status: "planned",
     items: [
-      "Tokens exported as W3C design tokens JSON",
-      "Motion and orb specs written platform-neutral",
-      "Groundwork for native iOS and Android",
+      "Orb specs written platform-neutral",
+      "Groundwork for native iOS and Android components",
     ],
   },
   {
@@ -133,13 +153,13 @@ export default function RoadmapPage() {
     <>
       <PageHeader
         title="Roadmap"
-        description="Components, recipes and visual tools for agent and voice interfaces. Web first, native later."
+        description="Components, recipes and visual tools for agent and voice interfaces. Web first, mobile web now, native next."
       />
       <P>
         Component libraries are plentiful; tools for designing AI interfaces are not. The Studio is where JDS earns its
         place: pick a preset, tune it visually, preview every state, copy the code. It grows in small steps, one surface
         at a time (orbs, then prompt input, then recipes, conversation and activity), until it can configure a whole agent
-        experience. Tokens and specs stay platform-neutral so iOS and Android can follow.
+        experience. Tokens already export to SwiftUI, Compose and React Native; orb specs and native components follow.
       </P>
       {phases.map((phase) => (
         <div key={phase.title}>
