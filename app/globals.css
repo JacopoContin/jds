@@ -6,6 +6,14 @@
 @source "../node_modules/@streamdown/code/dist/*.js";
 
 @custom-variant dark (&:is(.dark *));
+/* Tailwind's hover (pointer devices only), switched off inside phone previews: a phone has no hover. */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:where(:root:not(:has([data-preview])) *):hover {
+      @slot;
+    }
+  }
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -439,4 +447,91 @@
 .dark .docs-code .shiki,
 .dark .docs-code .shiki span {
   color: var(--shiki-dark);
+}
+
+/* Phone previews render in an iframe without the site chrome, with an iPhone's safe areas. */
+body:has([data-preview]) [data-site-header] {
+  display: none;
+}
+:root:has([data-preview]) {
+  --safe-top: 59px;
+  --safe-bottom: 34px;
+}
+/* Tooltips open on mouse hover; a phone never shows them. */
+:root:has([data-preview]) [data-slot="tooltip-content"] {
+  display: none;
+}
+/* A touch point instead of the mouse pointer, like the iOS Simulator: phones have no cursor or hover. */
+:root:has([data-preview]) * {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='13' fill='rgb(128 128 128 / 0.45)' stroke='white' stroke-opacity='0.85' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='14.5' fill='none' stroke='black' stroke-opacity='0.25'/%3E%3C/svg%3E")
+      16 16,
+    pointer !important;
+}
+
+/* The iPhone case around phone previews. Hardware colors, so they ignore the theme. */
+.phone-case {
+  position: relative;
+  padding: 12px;
+  border-radius: 68px;
+  background: #0b0b0c;
+  box-shadow:
+    0 0 0 1.5px #3a3a3e,
+    0 0 0 3px #1c1c1f,
+    0 30px 60px -20px rgb(0 0 0 / 0.45);
+}
+.phone-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 56px;
+  background: var(--background);
+}
+.phone-island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  width: 32%;
+  height: 37px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #000;
+  pointer-events: none;
+}
+.phone-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 34%;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--foreground);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.phone-button {
+  position: absolute;
+  width: 3px;
+  border-radius: 2px;
+  background: #2a2a2e;
+}
+.phone-button-action {
+  left: -3px;
+  top: 17%;
+  height: 4%;
+}
+.phone-button-volume-up {
+  left: -3px;
+  top: 24%;
+  height: 7.5%;
+}
+.phone-button-volume-down {
+  left: -3px;
+  top: 33%;
+  height: 7.5%;
+}
+.phone-button-power {
+  right: -3px;
+  top: 27%;
+  height: 11%;
 }

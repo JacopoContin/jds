@@ -34,6 +34,18 @@ const fallbacks = Object.fromEntries(
 ) as Record<DomSetting, string>
 
 /**
+ * Applies a theme change made in another document of this site, such as the parent page of
+ * a phone preview iframe. Wire it to the window's `storage` event, which only fires there.
+ */
+export function applyStoredTheme(key: string | null, value: string | null) {
+  const attr = (Object.keys(domSettings) as DomSetting[]).find((a) => domSettings[a].key === key)
+  if (!attr) return
+  if (!value || value === domSettings[attr].fallback) delete document.documentElement.dataset[attr]
+  else document.documentElement.dataset[attr] = value
+  window.dispatchEvent(new Event(EVENT))
+}
+
+/**
  * The site theme (color, base, radius, font). Every caller stays in step: writes update
  * <html>, localStorage, and broadcast an event the other callers listen for, so the
  * header's Customize menu and a Studio can edit the same theme side by side.

@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { ComponentPreview } from "@/components/docs/component-preview"
 import { RecipeList } from "@/components/docs/recipe-list"
-import { recipes, recipeTags } from "@/lib/recipes"
+import { recipePlatforms, recipes, recipeTags } from "@/lib/recipes"
 
 export const metadata: Metadata = {
   title: "Recipes",
@@ -22,9 +22,11 @@ export default function RecipesPage() {
       </div>
       <RecipeList
         tags={recipeTags}
+        platforms={recipePlatforms}
         items={recipes.map((r) => ({
           slug: r.slug,
           tags: r.tags,
+          platform: r.platform ?? "web",
           content: (
             <section id={r.slug} className="flex scroll-mt-20 flex-col gap-4">
               <div className="flex items-end justify-between gap-4">
