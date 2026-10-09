@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { motion } from "motion/react"
 import { cn } from "cn"
 
 import { ArtifactCard } from "@/components/ai/artifact"
@@ -24,8 +25,10 @@ import { CommandGroup, CommandItem, CommandShortcut } from "@/components/ui/comm
 import { Skeleton } from "@/components/ui/skeleton"
 import { CallControls, CallEnd, CallInterrupt, CallMute } from "@/components/voice/call-controls"
 import { VoiceOrb, type OrbPalette, type VoiceOrbVariant } from "@/components/voice/voice-orb"
+import { AmbientBackground } from "@/components/effects/ambient-background"
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 import { AddIcon, ArrowRightIcon, ChartIcon, SparkleIcon, WebSearchIcon } from "@/lib/icons"
+import { spring } from "@/lib/motion"
 
 /* ---------- Live mini previews ---------- */
 
@@ -204,10 +207,28 @@ function ExperiencePreview() {
   )
 }
 
-function SoonPreview() {
+function BackgroundPreview() {
   return (
-    <div className="grid size-full place-items-center bg-radial from-primary/15 to-transparent to-60%">
-      <span className="text-xs text-muted-foreground">In the works</span>
+    <div className="relative isolate grid size-full place-items-center">
+      <AmbientBackground variant="aurora" grain={0.3} />
+      <span className="text-sm font-medium">Good morning</span>
+    </div>
+  )
+}
+
+function MotionPreview() {
+  const { level } = useSimulatedSpectrum(true)
+  return (
+    <div className="flex w-56 flex-col gap-3">
+      {["w-full", "w-4/5", "w-3/5"].map((w, i) => (
+        <div key={w} className="flex h-2 items-center rounded-full bg-muted">
+          <motion.span
+            className={cn("h-full origin-left rounded-full bg-primary", w)}
+            animate={{ scaleX: Math.min(1, 0.3 + level * (1.2 - i * 0.2)) }}
+            transition={spring.gentle}
+          />
+        </div>
+      ))}
     </div>
   )
 }
@@ -274,11 +295,16 @@ const tools: Tool[] = [
     preview: <ArtifactPreview />,
   },
   {
-    href: "",
-    title: "Motion and backgrounds",
-    body: "Motion presets to feel, and ambient backgrounds for agent surfaces.",
-    preview: <SoonPreview />,
-    soon: true,
+    href: "/studio/background",
+    title: "Backgrounds",
+    body: "Mesh, aurora and dot fields with grain, tinted by your theme, behind a chat or a call.",
+    preview: <BackgroundPreview />,
+  },
+  {
+    href: "/studio/motion",
+    title: "Motion",
+    body: "Springs, durations and easing you can feel on real interactions, exported as lib/motion.ts.",
+    preview: <MotionPreview />,
   },
 ]
 
