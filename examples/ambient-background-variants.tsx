@@ -2,11 +2,11 @@
 
 import { AmbientBackground, type AmbientBackgroundVariant } from "@/components/effects/ambient-background"
 
-const variants: AmbientBackgroundVariant[] = ["mesh", "aurora", "dots"]
+const variants: AmbientBackgroundVariant[] = ["mesh", "aurora", "spotlight", "rays", "waves", "dots", "grid"]
 
 export default function AmbientBackgroundVariants() {
   return (
-    <div className="grid w-full gap-3 sm:grid-cols-3">
+    <div className="grid w-full gap-3 grid-cols-2 sm:grid-cols-3">
       {variants.map((v) => (
         <div
           key={v}
