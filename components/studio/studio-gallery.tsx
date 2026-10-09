@@ -216,6 +216,33 @@ function BackgroundPreview() {
   )
 }
 
+/** A small app shell whose sidebar expands and collapses to a rail on a loop. */
+function NavSidebarPreview() {
+  return (
+    <div className="flex h-40 w-72 overflow-hidden rounded-xl border bg-background shadow-lg">
+      <motion.div
+        className="flex shrink-0 flex-col gap-1.5 overflow-hidden border-r bg-sidebar p-2"
+        animate={{ width: [36, 104] }}
+        transition={{ duration: 0.6, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", repeatDelay: 1.4 }}
+      >
+        {["w-12", "w-10", "w-14", "w-9"].map((w, i) => (
+          <div key={w} className={cn("flex h-5 shrink-0 items-center gap-2 rounded-md px-1", i === 0 && "bg-sidebar-accent")}>
+            <span className="size-2.5 shrink-0 rounded-sm bg-muted-foreground/50" />
+            <span className={cn("h-1.5 shrink-0 rounded-full bg-muted-foreground/30", w)} />
+          </div>
+        ))}
+      </motion.div>
+      <div className="flex flex-1 flex-col gap-2 p-3">
+        <div className="h-2 w-16 rounded-full bg-muted" />
+        <div className="grid flex-1 grid-cols-2 gap-2">
+          <div className="rounded-md bg-muted" />
+          <div className="rounded-md bg-muted" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function MotionPreview() {
   const { level } = useSimulatedSpectrum(true)
   return (
@@ -271,6 +298,12 @@ const tools: Tool[] = [
     preview: <PanelPreview />,
   },
   {
+    href: "/studio/nav-sidebar",
+    title: "Sidebar navigation",
+    body: "Docked, floating or inset app navigation, and how it collapses: icon rail, off-canvas, hover peek.",
+    preview: <NavSidebarPreview />,
+  },
+  {
     href: "/studio/prompt-input",
     title: "Prompt input",
     body: "Context, tools, scope, voice and send behaviour, previewed where composers live.",
@@ -297,7 +330,7 @@ const tools: Tool[] = [
   {
     href: "/studio/background",
     title: "Backgrounds",
-    body: "Mesh, aurora and dot fields with grain, tinted by your theme, behind a chat or a call.",
+    body: "Mesh, aurora, spotlight, rays, waves, dot and line fields, tinted by your theme.",
     preview: <BackgroundPreview />,
   },
   {
