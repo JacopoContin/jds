@@ -2,12 +2,16 @@
 
 import * as React from "react"
 
-/** Theme choices stored as data attributes on <html>, restored before paint by `settingsInitScript`. */
+/**
+ * Theme choices stored as data attributes on <html>, restored before paint by `settingsInitScript`.
+ * `fallback` is what a first-time visitor sees; `css` is the value globals.css styles with no
+ * attribute, so only other values get one.
+ */
 export const domSettings = {
-  color: { key: "jds:color", fallback: "neutral" },
-  base: { key: "jds:base", fallback: "neutral" },
-  radius: { key: "jds:radius", fallback: "0.625" },
-  font: { key: "jds:font", fallback: "geist" },
+  color: { key: "jds:color", fallback: "blue", css: "neutral" },
+  base: { key: "jds:base", fallback: "neutral", css: "neutral" },
+  radius: { key: "jds:radius", fallback: "0.625", css: "0.625" },
+  font: { key: "jds:font", fallback: "geist", css: "geist" },
 } as const
 
 export type DomSetting = keyof typeof domSettings
@@ -15,14 +19,19 @@ export type DomSetting = keyof typeof domSettings
 export const settingsInitScript = `try{var d=document.documentElement;${Object.entries(domSettings)
   .map(
     ([attr, s]) =>
-      `var ${attr}=localStorage.getItem("${s.key}");if(${attr}&&${attr}!=="${s.fallback}")d.dataset.${attr}=${attr};`,
+      `var ${attr}=localStorage.getItem("${s.key}")||"${s.fallback}";if(${attr}!=="${s.css}")d.dataset.${attr}=${attr};`,
   )
   .join("")}}catch(e){}`
+
+function applyDom(attr: DomSetting, value: string) {
+  if (value === domSettings[attr].css) delete document.documentElement.dataset[attr]
+  else document.documentElement.dataset[attr] = value
+}
 
 const EVENT = "jds:theme"
 
 function readDom(attr: DomSetting) {
-  return document.documentElement.dataset[attr] ?? domSettings[attr].fallback
+  return document.documentElement.dataset[attr] ?? domSettings[attr].css
 }
 
 function readAll(): Record<DomSetting, string> {
@@ -40,8 +49,7 @@ const fallbacks = Object.fromEntries(
 export function applyStoredTheme(key: string | null, value: string | null) {
   const attr = (Object.keys(domSettings) as DomSetting[]).find((a) => domSettings[a].key === key)
   if (!attr) return
-  if (!value || value === domSettings[attr].fallback) delete document.documentElement.dataset[attr]
-  else document.documentElement.dataset[attr] = value
+  applyDom(attr, value || domSettings[attr].fallback)
   window.dispatchEvent(new Event(EVENT))
 }
 
@@ -61,11 +69,9 @@ export function useThemeState() {
   }, [])
 
   const set = React.useCallback((attr: DomSetting, value: string) => {
-    const { key, fallback } = domSettings[attr]
-    if (value === fallback) delete document.documentElement.dataset[attr]
-    else document.documentElement.dataset[attr] = value
+    applyDom(attr, value)
     try {
-      localStorage.setItem(key, value)
+      localStorage.setItem(domSettings[attr].key, value)
     } catch {}
     window.dispatchEvent(new Event(EVENT))
   }, [])

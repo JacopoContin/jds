@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { CodeBlock } from "@/components/docs/code-block"
 import { Code, H2, List, P, PageHeader, Pager } from "@/components/docs/prose"
@@ -13,6 +14,14 @@ export default function MotionPage() {
         title="Motion"
         description="Presets in lib/motion.ts, built on Motion for React. Every animation in the system uses them."
       />
+
+      <P>
+        To change how the whole app feels, tune these presets in the{" "}
+        <Link href="/studio/motion" className="underline underline-offset-4">
+          Motion Studio
+        </Link>{" "}
+        and replace <Code>lib/motion.ts</Code> with what it generates.
+      </P>
 
       <H2>Principles</H2>
       <List>

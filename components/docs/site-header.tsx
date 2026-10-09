@@ -7,6 +7,7 @@ import { GithubIcon } from "@/components/docs/github-icon"
 import { MobileNav } from "@/components/docs/mobile-nav"
 import { Search } from "@/components/docs/search"
 import { ThemeToggle } from "@/components/site/theme-toggle"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { site } from "@/lib/site"
 
 export function SiteHeader() {
@@ -35,15 +36,22 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-1">
           <Search />
-          <a
-            href={site.github}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub"
-            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
-          >
-            <GithubIcon className="size-4" />
-          </a>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <a
+                  href={site.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                />
+              }
+            >
+              <GithubIcon className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent side="bottom">View on GitHub</TooltipContent>
+          </Tooltip>
           <ColorPicker />
           <ThemeToggle />
         </div>

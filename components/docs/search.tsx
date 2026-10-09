@@ -14,6 +14,7 @@ import {
   Command,
 } from "@/components/ui/command"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { components, docHref, nav, type ComponentDoc } from "@/lib/docs"
 import { AgentIcon, FileIcon, SearchIcon, SparkleIcon, VoiceIcon } from "@/lib/icons"
 
@@ -107,9 +108,14 @@ export function Search() {
           <Kbd>K</Kbd>
         </KbdGroup>
       </Button>
-      <Button variant="ghost" size="icon-sm" aria-label="Search" onClick={() => setOpen(true)} className="sm:hidden">
-        <SearchIcon />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger
+          render={<Button variant="ghost" size="icon-sm" aria-label="Search" onClick={() => setOpen(true)} className="sm:hidden" />}
+        >
+          <SearchIcon />
+        </TooltipTrigger>
+        <TooltipContent side="bottom">Search docs</TooltipContent>
+      </Tooltip>
       <CommandDialog
         open={open}
         onOpenChange={setOpen}

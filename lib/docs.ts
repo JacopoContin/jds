@@ -1136,6 +1136,39 @@ const mic = useAudioLevel()
     ],
     isNew: true,
   },
+  // Effects
+  {
+    slug: "ambient-background",
+    title: "Ambient Background",
+    description:
+      "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands or a lit dot field, with optional grain. Tinted from the theme's primary color.",
+    group: "components",
+    files: ["components/effects/ambient-background.tsx"],
+    usage: `import { AmbientBackground } from "@/components/effects/ambient-background"
+
+<div className="relative isolate overflow-hidden">
+  <AmbientBackground variant="aurora" intensity={0.6} grain={0.3} />
+  {children}
+</div>`,
+    examples: [{ name: "ambient-background-variants", title: "Mesh, aurora and dots" }],
+    api: [
+      {
+        component: "AmbientBackground",
+        props: [
+          { name: "variant", type: '"mesh" | "aurora" | "dots"', default: '"mesh"', description: "" },
+          { name: "intensity", type: "number", default: "0.6", description: "Color strength, 0 to 1." },
+          {
+            name: "speed",
+            type: "number",
+            default: "1",
+            description: "Drift speed. 0 holds still. Always still under prefers-reduced-motion.",
+          },
+          { name: "grain", type: "number", default: "0", description: "Film grain over the top, 0 to 1." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
   // Primitives
   ...(
     [

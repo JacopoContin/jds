@@ -6,6 +6,7 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useSiteSettings } from "@/components/docs/site-settings"
 import { ThemeExport } from "@/components/docs/theme-export"
 import { useThemeState } from "@/components/docs/theme-state"
@@ -96,11 +97,44 @@ export function Swatches({
  * Header customizer: primary and base color, radius, font and voice orb, applied across the
  * site as a live preview. "Use this theme in your app" exports the same choices.
  */
+const HINT_KEY = "jds:theme-hint"
+const HINT_DELAY_MS = 800
+const HINT_MS = 4000
+
+/**
+ * The Customize button's tooltip, which also opens on its own once for first-time visitors so
+ * they find the theme editor. Seen once, it only shows on hover.
+ */
+function useFirstVisitHint() {
+  const [open, setOpen] = React.useState(false)
+  React.useEffect(() => {
+    try {
+      if (localStorage.getItem(HINT_KEY)) return
+    } catch {
+      return
+    }
+    // Marked seen only once it shows, so a remount before then still gets it.
+    const show = setTimeout(() => {
+      setOpen(true)
+      try {
+        localStorage.setItem(HINT_KEY, "1")
+      } catch {}
+    }, HINT_DELAY_MS)
+    const hide = setTimeout(() => setOpen(false), HINT_DELAY_MS + HINT_MS)
+    return () => {
+      clearTimeout(show)
+      clearTimeout(hide)
+    }
+  }, [])
+  return [open, setOpen] as const
+}
+
 export function ColorPicker() {
   const { orb, setOrb } = useSiteSettings()
   const { values, set, reset: resetTheme } = useThemeState()
   const [popover, setPopover] = React.useState(false)
   const [exporting, setExporting] = React.useState(false)
+  const [hint, setHint] = useFirstVisitHint()
 
   const reset = () => {
     resetTheme()
@@ -109,10 +143,23 @@ export function ColorPicker() {
 
   return (
     <>
-      <Popover open={popover} onOpenChange={setPopover}>
-        <PopoverTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Customize" />}>
-          <span className={cn("size-3.5 rounded-full ring-1 ring-border", primarySwatch[values.color])} />
-        </PopoverTrigger>
+      <Popover
+        open={popover}
+        onOpenChange={(open) => {
+          setPopover(open)
+          if (open) setHint(false)
+        }}
+      >
+        <Tooltip open={hint && !popover} onOpenChange={setHint}>
+          <TooltipTrigger
+            render={
+              <PopoverTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Customize" />}>
+                <span className={cn("size-3.5 rounded-full ring-1 ring-border", primarySwatch[values.color])} />
+              </PopoverTrigger>
+            }
+          />
+          <TooltipContent side="bottom">Edit your theme</TooltipContent>
+        </Tooltip>
         <PopoverContent align="end" className="w-80 gap-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Customize</span>

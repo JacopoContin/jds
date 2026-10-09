@@ -980,6 +980,23 @@
       ]
     },
     {
+      "name": "ambient-background",
+      "type": "registry:ui",
+      "title": "Ambient Background",
+      "description": "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands or a lit dot field, with optional grain. Tinted from the theme's primary color.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/effects/ambient-background.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar",
