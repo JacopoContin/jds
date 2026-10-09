@@ -65,6 +65,11 @@ export {
   Coins as TokensIcon,
   ChartColumn as ChartIcon,
   Table as TableIcon,
+  House as HomeIcon,
+  Inbox as InboxIcon,
+  Users as UsersIcon,
+  Calendar as CalendarIcon,
+  PanelLeft as SidebarIcon,
 } from "lucide-react"
 
 export type { LucideIcon as IconComponent } from "lucide-react"

@@ -1141,7 +1141,7 @@ const mic = useAudioLevel()
     slug: "ambient-background",
     title: "Ambient Background",
     description:
-      "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands or a lit dot field, with optional grain. Tinted from the theme's primary color.",
+      "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands, a spotlight, light rays, waves, or a lit dot or line field, with optional grain. Tinted from the theme's primary color.",
     group: "components",
     files: ["components/effects/ambient-background.tsx"],
     usage: `import { AmbientBackground } from "@/components/effects/ambient-background"
@@ -1150,12 +1150,17 @@ const mic = useAudioLevel()
   <AmbientBackground variant="aurora" intensity={0.6} grain={0.3} />
   {children}
 </div>`,
-    examples: [{ name: "ambient-background-variants", title: "Mesh, aurora and dots" }],
+    examples: [{ name: "ambient-background-variants", title: "All variants" }],
     api: [
       {
         component: "AmbientBackground",
         props: [
-          { name: "variant", type: '"mesh" | "aurora" | "dots"', default: '"mesh"', description: "" },
+          {
+            name: "variant",
+            type: '"mesh" | "aurora" | "spotlight" | "rays" | "waves" | "dots" | "grid"',
+            default: '"mesh"',
+            description: "The look. All of them are tinted from the theme's primary color.",
+          },
           { name: "intensity", type: "number", default: "0.6", description: "Color strength, 0 to 1." },
           {
             name: "speed",
@@ -1164,6 +1169,119 @@ const mic = useAudioLevel()
             description: "Drift speed. 0 holds still. Always still under prefers-reduced-motion.",
           },
           { name: "grain", type: "number", default: "0", description: "Film grain over the top, 0 to 1." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
+    slug: "nav-sidebar",
+    title: "Nav Sidebar",
+    description:
+      "App navigation beside the page: docked, floating or inset. Collapses to a rail of icons or slides out, can peek open on hover, and becomes an overlay on narrow layouts.",
+    group: "components",
+    files: ["components/navigation/nav-sidebar.tsx"],
+    usage: `import {
+  NavSidebar,
+  NavSidebarContent,
+  NavSidebarGroup,
+  NavSidebarInset,
+  NavSidebarItem,
+  NavSidebarLayout,
+  NavSidebarTrigger,
+} from "@/components/navigation/nav-sidebar"
+
+<NavSidebarLayout className="h-dvh">
+  <NavSidebar collapse="icons">
+    <NavSidebarContent>
+      <NavSidebarGroup>
+        <NavSidebarItem render={<Link href="/inbox" />} icon={<InboxIcon />} active badge={4}>
+          Inbox
+        </NavSidebarItem>
+      </NavSidebarGroup>
+    </NavSidebarContent>
+  </NavSidebar>
+  <NavSidebarInset>
+    <header>
+      <NavSidebarTrigger />
+    </header>
+    {children}
+  </NavSidebarInset>
+</NavSidebarLayout>`,
+    examples: [
+      { name: "nav-sidebar-floating", title: "Floating, peeks open on hover" },
+      { name: "nav-sidebar-inset", title: "Inset, slides out" },
+    ],
+    api: [
+      {
+        component: "NavSidebarLayout",
+        props: [
+          { name: "open", type: "boolean", description: "Controlled expanded state. Or defaultOpen with onOpenChange." },
+          { name: "defaultOpen", type: "boolean", default: "true", description: "Starting state when uncontrolled." },
+          { name: "onOpenChange", type: "(open: boolean) => void", description: "Called when it expands or collapses." },
+          { name: "shortcut", type: "string | false", default: '"b"', description: "Key that toggles it with ⌘ or Ctrl." },
+          {
+            name: "breakpoint",
+            type: "number",
+            default: "768",
+            description: "Layout width in px below which the sidebar becomes an overlay with a scrim.",
+          },
+        ],
+      },
+      {
+        component: "NavSidebar",
+        props: [
+          { name: "side", type: '"left" | "right"', default: '"left"', description: "" },
+          {
+            name: "variant",
+            type: '"docked" | "floating" | "inset"',
+            default: '"docked"',
+            description: "Docked runs full height on the edge; floating is an inset card; inset puts the page in a card.",
+          },
+          {
+            name: "collapse",
+            type: '"icons" | "offcanvas" | "none"',
+            default: '"icons"',
+            description: "Collapsed, it shrinks to a rail of icons, slides fully out, or never collapses.",
+          },
+          {
+            name: "expandOnHover",
+            type: "boolean",
+            default: "false",
+            description: "With icons: hovering the rail opens it over the page until the pointer leaves.",
+          },
+          { name: "surface", type: '"sidebar" | "background" | "glass"', default: '"sidebar"', description: "" },
+          { name: "width", type: "number", default: "256", description: "Expanded width in px." },
+          { name: "railWidth", type: "number", default: "56", description: "Collapsed width in px, with icons." },
+          {
+            name: "indicator",
+            type: '"fill" | "bar" | "text"',
+            default: '"fill"',
+            description: "How the current page stands out. Fill and bar slide between items.",
+          },
+          { name: "density", type: '"compact" | "comfortable"', default: '"comfortable"', description: "" },
+          { name: "motion", type: '"spring" | "tween"', default: '"spring"', description: "" },
+        ],
+      },
+      {
+        component: "NavSidebarItem",
+        props: [
+          { name: "icon", type: "ReactNode", description: "Shown alone on the rail." },
+          { name: "active", type: "boolean", description: "The current page." },
+          { name: "badge", type: "ReactNode", description: "A count at the end. A dot on the rail." },
+          { name: "href", type: "string", description: "Renders a plain link. Without it, a button." },
+          { name: "render", type: "ReactElement", description: "Your router's link, e.g. <Link href=… />." },
+        ],
+      },
+      {
+        component: "NavSidebarTrigger",
+        props: [
+          {
+            name: "onlyWhenHidden",
+            type: "boolean",
+            default: "false",
+            description: "Render only while the sidebar is out of view. Use it in the page when your main trigger is in the sidebar.",
+          },
         ],
       },
     ],

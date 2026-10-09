@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "jds",
-  "homepage": "https://jds-ruddy.vercel.app",
+  "homepage": "https://www.usejds.dev",
   "items": [
     {
       "name": "style",
@@ -983,7 +983,7 @@
       "name": "ambient-background",
       "type": "registry:ui",
       "title": "Ambient Background",
-      "description": "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands or a lit dot field, with optional grain. Tinted from the theme's primary color.",
+      "description": "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands, a spotlight, light rays, waves, or a lit dot or line field, with optional grain. Tinted from the theme's primary color.",
       "dependencies": [
         "cn@^0.4.0",
         "motion"
@@ -992,6 +992,29 @@
       "files": [
         {
           "path": "components/effects/ambient-background.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "nav-sidebar",
+      "type": "registry:ui",
+      "title": "Nav Sidebar",
+      "description": "App navigation beside the page: docked, floating or inset. Collapses to a rail of icons or slides out, can peek open on hover, and becomes an overlay on narrow layouts.",
+      "dependencies": [
+        "@base-ui/react",
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/kbd",
+        "@jds/tooltip",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/navigation/nav-sidebar.tsx",
           "type": "registry:component"
         }
       ]

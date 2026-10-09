@@ -38,6 +38,18 @@ const presets: { name: string; body: string; config: Config }[] = [
     config: { variant: "dots", intensity: 70, speed: 1, grain: 0 },
   },
   {
+    name: "Spotlight",
+    body: "One soft light from above",
+    config: { variant: "spotlight", intensity: 70, speed: 1, grain: 25 },
+  },
+  { name: "Light rays", body: "Beams fanning down", config: { variant: "rays", intensity: 70, speed: 1, grain: 20 } },
+  { name: "Waves", body: "Swells for a voice call", config: { variant: "waves", intensity: 70, speed: 1, grain: 0 } },
+  {
+    name: "Blueprint",
+    body: "A line grid under a moving glow",
+    config: { variant: "grid", intensity: 70, speed: 1, grain: 0 },
+  },
+  {
     name: "Still glow",
     body: "No motion, heavier grain",
     config: { variant: "mesh", intensity: 45, speed: 0, grain: 45 },
@@ -47,7 +59,11 @@ const presets: { name: string; body: string; config: Config }[] = [
 const looks: Record<AmbientBackgroundVariant, string> = {
   mesh: "drifting glows in the primary color",
   aurora: "soft bands of the primary color across the top",
+  spotlight: "a breathing glow of the primary color from above",
+  rays: "beams of the primary color fanning down from the top",
+  waves: "layered swells of the primary color along the bottom",
   dots: "a dot field lit by a moving glow in the primary color",
+  grid: "a line grid lit by a moving glow in the primary color",
 }
 
 const fraction = (percent: number) => Math.round(percent) / 100
@@ -175,7 +191,11 @@ export function BackgroundBuilder() {
             options={[
               { value: "mesh", label: "Mesh" },
               { value: "aurora", label: "Aurora" },
+              { value: "spotlight", label: "Spotlight" },
+              { value: "rays", label: "Rays" },
+              { value: "waves", label: "Waves" },
               { value: "dots", label: "Dots" },
+              { value: "grid", label: "Grid" },
             ]}
           />
           <Range
