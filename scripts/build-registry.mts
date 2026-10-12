@@ -146,7 +146,8 @@ const items: object[] = [
     description: `Sets --primary and --ring to ${p.label.toLowerCase()}. Install after ${NS}/style.`,
     cssVars: { light: p.light, dark: p.dark },
   })),
-  ...components.map((c) => ({
+  // Pro items are served by app/r/pro, never from the public registry.
+  ...components.filter((c) => !c.pro).map((c) => ({
     name: c.slug,
     type: c.group === "components" ? "registry:ui" : "registry:component",
     title: c.title,

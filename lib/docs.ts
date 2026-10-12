@@ -16,6 +16,12 @@ export type ComponentDoc = {
    * (anchored at `#${section}`) instead of its own page. Still its own registry item.
    */
   parent?: { slug: string; section: string }
+  /**
+   * JDS Pro: installed from the license-gated `@jds-pro` registry. `files` are paths in the
+   * private pro repo, so their source is never read here, shipped by the public registry or
+   * shown in the docs.
+   */
+  pro?: boolean
 }
 
 export const components: ComponentDoc[] = [

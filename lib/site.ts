@@ -4,4 +4,5 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usejds.dev",
   github: "https://github.com/JacopoContin/jds",
   namespace: "@jds",
+  proNamespace: "@jds-pro",
 }

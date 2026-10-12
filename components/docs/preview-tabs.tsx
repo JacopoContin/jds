@@ -6,7 +6,6 @@ import { cn } from "cn"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CopyButton } from "@/components/docs/copy-button"
 import { Example } from "@/components/docs/example"
-import { site } from "@/lib/site"
 
 export function PreviewTabs({
   name,
@@ -47,7 +46,7 @@ export function PreviewTabs({
           <div className="border-b px-4 py-2.5 text-xs text-muted-foreground">
             Install first:{" "}
             <code className="font-mono text-foreground">
-              npx shadcn@latest add {site.namespace}/{install}
+              npx shadcn@latest add {install}
             </code>
             . This snippet only uses the component; the install copies its source into your project.
           </div>

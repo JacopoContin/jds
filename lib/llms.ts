@@ -28,9 +28,13 @@ function api(doc: ComponentDoc, level = "##") {
   return doc.api.map((a) => `${level}# ${a.component}\n\n${propsTable(a.props)}`).join("\n\n")
 }
 
+const proSetup = `Add \`"${site.proNamespace}": { "url": "${site.url}/r/pro/{name}.json", "headers": { "Authorization": "Bearer \${JDS_PRO_TOKEN}" } }\` to \`registries\` in components.json and set JDS_PRO_TOKEN in .env.`
+
 function install(doc: ComponentDoc) {
   const item = (registry.items as RegistryItem[]).find((i) => i.name === doc.slug)
-  const lines = [fence(`npx shadcn@latest add ${site.namespace}/${doc.slug}`, "bash")]
+  const ns = doc.pro ? site.proNamespace : site.namespace
+  const lines = [fence(`npx shadcn@latest add ${ns}/${doc.slug}`, "bash")]
+  if (doc.pro) lines.push(`JDS Pro: requires a license key. ${proSetup}`)
   if (item?.dependencies?.length) lines.push(`npm dependencies: ${item.dependencies.map((d) => `\`${d}\``).join(", ")}`)
   if (item?.registryDependencies?.length)
     lines.push(`Also installs: ${item.registryDependencies.map((d) => `\`${d}\``).join(", ")}`)
@@ -67,7 +71,7 @@ export async function componentMarkdown(slug: string, { source = true } = {}) {
   const a = api(doc)
   if (a) out.push("## API Reference", a)
 
-  if (source) {
+  if (source && !doc.pro) {
     out.push("## Source")
     for (const file of doc.files) out.push(`### ${file}`, fence(await read(file), lang(file)))
   }
