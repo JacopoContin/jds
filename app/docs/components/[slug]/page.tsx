@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs"
+import path from "node:path"
+
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -20,6 +23,10 @@ const proRegistryConfig = `{
     }
   }
 }`
+
+/** Pro demos exist only when scripts/fetch-pro.mts could reach the private registry at build time. */
+const hasProPreview = (slug: string) =>
+  existsSync(path.join(/* turbopackIgnore: true */ process.cwd(), "examples/pro", `${slug}-demo.tsx`))
 
 const itemRef = (c: ComponentDoc) => `${c.pro ? site.proNamespace : site.namespace}/${c.slug}`
 
@@ -52,7 +59,15 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
     <>
       <PageHeader title={doc.title} description={doc.description} />
 
-      <ComponentPreview name={`${slug}-demo`} install={itemRef(doc)} />
+      {!doc.pro ? (
+        <ComponentPreview name={`${slug}-demo`} install={itemRef(doc)} />
+      ) : hasProPreview(slug) ? (
+        <ComponentPreview name={`${slug}-demo`} dir="examples/pro" install={itemRef(doc)} />
+      ) : (
+        <div className="flex min-h-72 items-center justify-center rounded-xl border bg-card p-6 text-center text-sm text-muted-foreground">
+          Live preview unavailable in this build.
+        </div>
+      )}
 
       <H2>Installation</H2>
       {doc.pro ? (

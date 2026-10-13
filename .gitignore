@@ -50,3 +50,7 @@ next-env.d.ts
 /tests/**/*-darwin.png
 /tests/**/*-win32.png
 /.next-test
+
+# JDS Pro source, fetched at build time by scripts/fetch-pro.mts. Never commit.
+/components/pro
+/examples/pro

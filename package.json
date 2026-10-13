@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "pnpm registry:build && next build",
+    "dev": "node scripts/fetch-pro.mts && next dev",
+    "build": "node scripts/fetch-pro.mts && pnpm registry:build && next build",
     "start": "next start",
     "lint": "eslint",
     "registry:build": "node scripts/build-registry.mts && shadcn build",
     "test:visual": "playwright test",
-    "test:visual:update": "playwright test --update-snapshots"
+    "test:visual:update": "playwright test --update-snapshots",
+    "pro:fetch": "node scripts/fetch-pro.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

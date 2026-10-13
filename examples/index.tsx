@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic"
 import type { ComponentType } from "react"
 
+import { proExamples } from "./pro"
+
 /** Demo name → lazily loaded component. Source is read from examples/<name>.tsx for the Code tab. */
 export const examples: Record<string, ComponentType> = {
   "accordion-demo": dynamic(() => import("./accordion-demo")),
@@ -113,4 +115,6 @@ export const examples: Record<string, ComponentType> = {
   "mobile-approval-screen": dynamic(() => import("@/recipes/mobile-approval/mobile-approval")),
   "mobile-chat-screen": dynamic(() => import("@/recipes/mobile-chat/mobile-chat")),
   "voice-session": dynamic(() => import("@/recipes/voice-session/voice-session")),
+  // JDS Pro demos, fetched at build time; empty without the pro registry token.
+  ...proExamples,
 }
