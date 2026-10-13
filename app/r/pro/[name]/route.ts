@@ -11,9 +11,9 @@ const noStore = { "Cache-Control": "private, no-store" }
 export async function GET(request: Request, ctx: RouteContext<"/r/pro/[name]">) {
   const name = (await ctx.params).name.replace(/\.json$/, "")
 
-  if (!isValidLicense(licenseFromRequest(request))) {
+  if (!(await isValidLicense(licenseFromRequest(request)))) {
     return Response.json(
-      { error: `A valid JDS Pro license is required. Get one at ${site.url} and set JDS_PRO_TOKEN.` },
+      { error: `A valid JDS Pro license is required. Get one at ${site.url}/pro and set JDS_PRO_TOKEN.` },
       { status: 401, headers: { ...noStore, "WWW-Authenticate": 'Bearer realm="jds-pro"' } },
     )
   }

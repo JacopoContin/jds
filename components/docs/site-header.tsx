@@ -33,6 +33,9 @@ export function SiteHeader() {
           <Link href="/recipes" className="transition-colors hover:text-foreground">
             Recipes
           </Link>
+          <Link href="/pro" className="transition-colors hover:text-foreground">
+            Pro
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-1">
           <Search />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { CodeBlock } from "@/components/docs/code-block"
@@ -57,8 +58,12 @@ export default async function ComponentPage({ params }: PageProps<"/docs/compone
       {doc.pro ? (
         <div className="flex flex-col gap-4">
           <P>
-            Part of JDS Pro. Add the Pro registry to <Code>components.json</Code> and set <Code>JDS_PRO_TOKEN</Code>{" "}
-            in <Code>.env</Code> to your license key:
+            Part of{" "}
+            <Link href="/pro" className="font-medium text-foreground underline underline-offset-4">
+              JDS Pro
+            </Link>
+            . Add the Pro registry to <Code>components.json</Code> and set <Code>JDS_PRO_TOKEN</Code> in{" "}
+            <Code>.env</Code> to your license key:
           </P>
           <CodeBlock code={proRegistryConfig} lang="json" />
           <Command command={`shadcn@latest add ${itemRef(doc)}`} />
