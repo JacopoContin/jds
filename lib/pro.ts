@@ -2,15 +2,17 @@ import { createHash, timingSafeEqual } from "node:crypto"
 
 /**
  * JDS Pro: registry items served only to license holders. The source never lives in this
- * public repo; the private repo builds each item's JSON and uploads it to `JDS_PRO_REGISTRY_URL`.
+ * public repo; the private jds-pro repo builds each item to `r/<name>.json`, read here through
+ * the GitHub contents API.
  *
  * Licenses are sold through Polar, which emails each buyer a key and lets them recover it
  * from its customer portal. Server-only environment:
  * - POLAR_ORGANIZATION_ID: the Polar organization whose license keys unlock Pro.
  * - JDS_PRO_KEYS: optional comma-separated SHA-256 hex digests of keys issued by hand (comps,
  *   reviewers), checked before Polar. Hashes, so a leaked env dump doesn't leak working keys.
- * - JDS_PRO_REGISTRY_URL: base URL of the private item store, without a trailing slash.
- * - JDS_PRO_REGISTRY_TOKEN: optional bearer token for that store.
+ * - JDS_PRO_REGISTRY_URL: base URL of the built items, without a trailing slash, e.g.
+ *   https://api.github.com/repos/JacopoContin/jds-pro/contents/r
+ * - JDS_PRO_REGISTRY_TOKEN: a fine-grained GitHub token with read-only Contents access to jds-pro.
  */
 
 const sha256 = (value: string) => createHash("sha256").update(value).digest()
@@ -71,16 +73,33 @@ export const isItemName = (name: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(na
 
 export type ProFetchResult = { status: "ok"; item: unknown } | { status: "not-found" | "unconfigured" | "error" }
 
+/** Items change only when jds-pro is pushed; a short cache keeps installs off GitHub's rate limit. */
+const items = new Map<string, { item: unknown; until: number }>()
+const ITEM_CACHE_MS = 5 * 60_000
+
 export async function fetchProItem(name: string): Promise<ProFetchResult> {
   const base = process.env.JDS_PRO_REGISTRY_URL
   if (!base) return { status: "unconfigured" }
+  const hit = items.get(name)
+  if (hit && hit.until > Date.now()) return { status: "ok", item: hit.item }
+
   const token = process.env.JDS_PRO_REGISTRY_TOKEN
   const res = await fetch(`${base}/${name}.json`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    headers: {
+      // Asks the GitHub contents API for the file itself rather than base64 metadata.
+      Accept: "application/vnd.github.raw+json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
     cache: "no-store",
   }).catch(() => null)
   if (!res) return { status: "error" }
-  if (res.status === 404 || res.status === 403) return { status: "not-found" }
-  if (!res.ok) return { status: "error" }
-  return { status: "ok", item: await res.json() }
+  if (res.status === 404) return { status: "not-found" }
+  if (!res.ok) {
+    // 401/403 mean a bad or expired token, or a rate limit: worth seeing in the logs.
+    console.error(`JDS Pro registry: ${res.status} fetching ${name}`)
+    return { status: "error" }
+  }
+  const item: unknown = await res.json()
+  items.set(name, { item, until: Date.now() + ITEM_CACHE_MS })
+  return { status: "ok", item }
 }
