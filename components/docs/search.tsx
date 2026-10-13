@@ -57,7 +57,7 @@ const sections: { heading: string; icon: React.ReactNode; entries: Entry[] }[] =
   {
     heading: "Docs",
     icon: <FileIcon />,
-    entries: [...nav[0].items, { title: "Recipes", href: "/recipes" }].map((i) => ({
+    entries: [...nav[0].items, { title: "Recipes", href: "/recipes" }, { title: "Pro", href: "/pro" }].map((i) => ({
       title: i.title,
       href: i.href,
     })),
