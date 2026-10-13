@@ -35,7 +35,7 @@ const eslintConfig = defineConfig([
       "shadcn/require-static-classes": "off",
     },
   },
-  globalIgnores([".next/**", ".next-test/**", "test-results/**", "playwright-report/**", "out/**", "build/**", "public/r/**", "next-env.d.ts"]),
+  globalIgnores([".next/**", ".next-test/**", "test-results/**", "playwright-report/**", "out/**", "build/**", "public/r/**", "next-env.d.ts", "components/pro/**", "examples/pro/**"]),
 ]);
 
 export default eslintConfig;

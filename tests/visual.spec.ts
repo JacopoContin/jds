@@ -36,7 +36,8 @@ async function settle(page: Page, preview: ReturnType<Page["locator"]>) {
   await page.addStyleTag({ content: HIDE_RANDOM })
 }
 
-const pages = components.filter((c) => !c.parent)
+// Pro previews need the private registry token, which CI doesn't have.
+const pages = components.filter((c) => !c.parent && !c.pro)
 
 for (const doc of pages) {
   test(`component: ${doc.slug}`, async ({ page }, info) => {

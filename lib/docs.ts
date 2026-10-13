@@ -1181,6 +1181,36 @@ const mic = useAudioLevel()
     isNew: true,
   },
   {
+    slug: "border-beam",
+    title: "Border Beam",
+    description:
+      "A short beam of light that travels around a surface's border. For the one card or input that should draw the eye, or an agent that is working.",
+    group: "components",
+    files: ["components/pro/border-beam.tsx"],
+    usage: `import { BorderBeam } from "@/components/pro/border-beam"
+
+<div className="relative rounded-xl border p-6">
+  Agent is working
+  <BorderBeam />
+</div>`,
+    api: [
+      {
+        component: "BorderBeam",
+        props: [
+          { name: "duration", type: "number", default: "6", description: "Seconds for one lap." },
+          { name: "length", type: "number", default: "0.2", description: "Share of the border the beam covers, 0 to 1." },
+          { name: "width", type: "number", default: "1", description: "Border thickness in pixels." },
+          { name: "colorFrom", type: "string", default: '"var(--primary)"', description: "Color at the beam's head." },
+          { name: "colorTo", type: "string", description: "Color the tail fades through. Defaults to a translucent primary." },
+          { name: "reverse", type: "boolean", default: "false", description: "Travel counterclockwise." },
+          { name: "delay", type: "number", default: "0", description: "Seconds before the first lap. Offset two beams to chase each other." },
+        ],
+      },
+    ],
+    isNew: true,
+    pro: true,
+  },
+  {
     slug: "nav-sidebar",
     title: "Nav Sidebar",
     description:
@@ -1367,7 +1397,7 @@ const mic = useAudioLevel()
 
 export const componentBySlug = Object.fromEntries(components.map((c) => [c.slug, c]))
 
-export type NavItem = { title: string; href: string; isNew?: boolean }
+export type NavItem = { title: string; href: string; isNew?: boolean; isPro?: boolean }
 export type NavGroup = { title: string; items: NavItem[] }
 
 /** Where a component is documented: its own page, or a section of its parent's. */
@@ -1380,7 +1410,7 @@ const toNav = (group: ComponentDoc["group"]) =>
   components
     .filter((c) => c.group === group && !c.parent)
     .sort((a, b) => a.title.localeCompare(b.title))
-    .map((c) => ({ title: c.title, href: `/docs/components/${c.slug}`, isNew: c.isNew }))
+    .map((c) => ({ title: c.title, href: `/docs/components/${c.slug}`, isNew: c.isNew, isPro: c.pro }))
 
 export const nav: NavGroup[] = [
   {

@@ -16,8 +16,8 @@ export async function ComponentPreview({
   install,
 }: {
   name: string
-  /** "recipes" shows the recipe's entry file, recipes/<name>/<name>.tsx. */
-  dir?: "examples" | "recipes"
+  /** "recipes" shows the recipe's entry file, recipes/<name>/<name>.tsx. "examples/pro" holds fetched Pro demos. */
+  dir?: "examples" | "examples/pro" | "recipes"
   align?: "center" | "start"
   className?: string
   /** Registry item the snippet needs, e.g. "@jds/button". Labels the tab "Usage" and says to install it first. */
