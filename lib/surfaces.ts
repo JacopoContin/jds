@@ -5,6 +5,8 @@
  * In dark, a faint white veil also lifts the surface off the page, keeping any base tint.
  * Wells (tab lists, segmented tracks) sink instead. Measured from a dark reference UI.
  *
+ * Set data-surface="lit" on <html> for the whole app, or on any element to light only its subtree.
+ *
  * Tokens: --surface-edge (ring-surface-edge / border-surface-edge), --surface-highlight
  * (inset-shadow-surface), --surface-well (inset-shadow-well).
  */
