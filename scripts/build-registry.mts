@@ -76,8 +76,10 @@ for (const b of baseColors) {
 for (const p of colorPresets) {
   presetCss += `:root[data-color="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-color="${p.name}"] {\n${decl(p.dark)}\n}\n`
 }
+// Surfaces also scope to any element: <div data-surface="lit"> lights only what's inside it.
 for (const p of surfacePresets) {
-  presetCss += `:root[data-surface="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-surface="${p.name}"] {\n${decl(p.dark)}\n}\n`
+  const sel = `[data-surface="${p.name}"]`
+  presetCss += `:root${sel},\n${sel} {\n${decl(p.light)}\n}\n:root.dark${sel},\n.dark ${sel} {\n${decl(p.dark)}\n}\n`
 }
 const globals = readFileSync("app/globals.css", "utf8")
   .replace(/\n\/\* Primary color presets[\s\S]*?(?=\n@layer base)/, "")
@@ -85,6 +87,7 @@ const globals = readFileSync("app/globals.css", "utf8")
 writeFileSync("app/globals.css", globals)
 
 const css = globals
+const prefixed = (o: Record<string, string>) => Object.fromEntries(Object.entries(o).map(([k, v]) => [`--${k}`, v]))
 function vars(selector: RegExp) {
   const block = css.match(selector)?.[1] ?? ""
   return Object.fromEntries(
@@ -124,6 +127,13 @@ const items: object[] = [
       dark,
     },
     css: {
+      // Lets an app stay flat and light single components with data-surface="lit".
+      ...Object.fromEntries(
+        surfacePresets.flatMap((p) => [
+          [`[data-surface="${p.name}"]`, prefixed(p.light)],
+          [`.dark [data-surface="${p.name}"]`, prefixed(p.dark)],
+        ])
+      ),
       "@keyframes shimmer": { from: { "background-position": "100% 0" }, to: { "background-position": "-100% 0" } },
       "@keyframes pulse-soft": { "0%, 100%": { opacity: "0.4" }, "50%": { opacity: "1" } },
     },
