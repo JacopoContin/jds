@@ -24,7 +24,16 @@ import {
 import { PromptInputMic } from "@/components/ai/prompt-input-mic"
 import { PromptInputOptionMenu } from "@/components/ai/prompt-input-option-menu"
 import { AgentPanelVoiceButton } from "@/components/ai/agent-panel"
-import { bases, baseSwatch, orbs, primaries, primarySwatch, radii, Swatches } from "@/components/docs/color-picker"
+import {
+  bases,
+  baseSwatch,
+  orbs,
+  primaries,
+  primarySwatch,
+  radii,
+  surfaces as lighting,
+  Swatches,
+} from "@/components/docs/color-picker"
 import { useSiteSettings } from "@/components/docs/site-settings"
 import { useThemeState } from "@/components/docs/theme-state"
 import { ControlGroup, Segmented, Toggle } from "@/components/studio/controls"
@@ -303,7 +312,7 @@ function generateMarkdown(c: Config, t: ThemeChoice) {
   const surface = surfaces.find((s) => s.value === c.surface)!
   const choices: [string, string][] = [
     ["Surface", `${surface.title}: ${surface.body}`],
-    ["Theme", `primary ${t.color}, base ${t.base}, radius ${t.radius}rem, font ${t.font}, ${t.orb} orb`],
+    ["Theme", `primary ${t.color}, base ${t.base}, radius ${t.radius}rem, font ${t.font}, ${t.surface} surfaces, ${t.orb} orb`],
   ]
   if (usesComposer(c))
     choices.push([
@@ -532,6 +541,21 @@ export function ExperienceBuilder() {
               {radii.map((r) => (
                 <ToggleGroupItem key={r} value={r} aria-label={`Radius ${r}rem`}>
                   {r}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label>Surfaces</Label>
+            <ToggleGroup
+              value={[theme.values.surface]}
+              onValueChange={(v) => v[0] && theme.set("surface", v[0] as string)}
+              variant="outline"
+              size="sm"
+            >
+              {lighting.map((l) => (
+                <ToggleGroupItem key={l.value} value={l.value}>
+                  {l.label}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>

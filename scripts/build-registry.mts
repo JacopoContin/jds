@@ -8,6 +8,7 @@ import { baseColorVars, baseColors, colorPresets } from "../lib/colors.ts"
 import { components } from "../lib/docs.ts"
 import { installedPath, recipes } from "../lib/recipes.ts"
 import { site } from "../lib/site.ts"
+import { surfacePresets } from "../lib/surfaces.ts"
 
 const NS = site.namespace
 
@@ -75,6 +76,9 @@ for (const b of baseColors) {
 for (const p of colorPresets) {
   presetCss += `:root[data-color="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-color="${p.name}"] {\n${decl(p.dark)}\n}\n`
 }
+for (const p of surfacePresets) {
+  presetCss += `:root[data-surface="${p.name}"] {\n${decl(p.light)}\n}\n:root.dark[data-surface="${p.name}"] {\n${decl(p.dark)}\n}\n`
+}
 const globals = readFileSync("app/globals.css", "utf8")
   .replace(/\n\/\* Primary color presets[\s\S]*?(?=\n@layer base)/, "")
   .replace("\n@layer base", presetCss + "\n@layer base")
@@ -108,6 +112,9 @@ const items: object[] = [
         "color-info": "var(--info)",
         "color-info-foreground": "var(--info-foreground)",
         "color-destructive-foreground": "var(--destructive-foreground)",
+        "color-surface-edge": "var(--surface-edge)",
+        "inset-shadow-surface": "var(--surface-highlight)",
+        "inset-shadow-well": "var(--surface-well)",
         "ease-out-quint": "cubic-bezier(0.22, 1, 0.36, 1)",
         "ease-in-out-quart": "cubic-bezier(0.76, 0, 0.24, 1)",
         "animate-shimmer": "shimmer 2s linear infinite",
@@ -144,6 +151,13 @@ const items: object[] = [
     type: "registry:theme",
     title: `${p.label} primary`,
     description: `Sets --primary and --ring to ${p.label.toLowerCase()}. Install after ${NS}/style.`,
+    cssVars: { light: p.light, dark: p.dark },
+  })),
+  ...surfacePresets.map((p) => ({
+    name: `surface-${p.name}`,
+    type: "registry:theme",
+    title: `${p.label} surfaces`,
+    description: `Lights cards, inputs and menus from above: a dark rim, an inner top highlight and a contact shadow. Install after ${NS}/style.`,
     cssVars: { light: p.light, dark: p.dark },
   })),
   // Pro items are served by app/r/pro, never from the public registry.

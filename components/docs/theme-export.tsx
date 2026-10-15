@@ -25,6 +25,7 @@ function markdown(t: ThemeChoice) {
       ["Base color", t.base],
       ["Radius", `${t.radius}rem`],
       ["Font", t.font],
+      ["Surfaces", t.surface],
       ["Voice orb", t.orb],
     ],
     install: `npx ${installCommand(t)}`,
@@ -66,7 +67,7 @@ export function ThemeExport({
         <DialogHeader>
           <DialogTitle>Use this theme in your app</DialogTitle>
           <DialogDescription>
-            Primary {theme.color}, base {theme.base}, radius {theme.radius}rem, {theme.font} font, {theme.orb} orb.
+            Primary {theme.color}, base {theme.base}, radius {theme.radius}rem, {theme.font} font, {theme.surface} surfaces, {theme.orb} orb.
             Components read these through tokens, so every one you install follows it.
           </DialogDescription>
         </DialogHeader>

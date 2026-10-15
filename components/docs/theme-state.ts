@@ -12,6 +12,7 @@ export const domSettings = {
   base: { key: "jds:base", fallback: "neutral", css: "neutral" },
   radius: { key: "jds:radius", fallback: "0.625", css: "0.625" },
   font: { key: "jds:font", fallback: "geist", css: "geist" },
+  surface: { key: "jds:surface", fallback: "flat", css: "flat" },
 } as const
 
 export type DomSetting = keyof typeof domSettings
@@ -35,7 +36,7 @@ function readDom(attr: DomSetting) {
 }
 
 function readAll(): Record<DomSetting, string> {
-  return { color: readDom("color"), base: readDom("base"), radius: readDom("radius"), font: readDom("font") }
+  return { color: readDom("color"), base: readDom("base"), radius: readDom("radius"), font: readDom("font"), surface: readDom("surface") }
 }
 
 const fallbacks = Object.fromEntries(
@@ -54,7 +55,7 @@ export function applyStoredTheme(key: string | null, value: string | null) {
 }
 
 /**
- * The site theme (color, base, radius, font). Every caller stays in step: writes update
+ * The site theme (color, base, radius, font, surface). Every caller stays in step: writes update
  * <html>, localStorage, and broadcast an event the other callers listen for, so the
  * header's Customize menu and a Studio can edit the same theme side by side.
  */

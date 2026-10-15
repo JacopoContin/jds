@@ -139,7 +139,7 @@ function PromptInput({
           if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files)
         }}
         className={cn(
-          "relative flex w-full flex-col rounded-2xl border border-input bg-card shadow-xs transition-[border-color,box-shadow] duration-200",
+          "relative flex w-full flex-col rounded-2xl border border-surface-edge bg-card shadow-xs inset-shadow-surface transition-[border-color,box-shadow] duration-200",
           "focus-within:border-ring/60 focus-within:ring-4 focus-within:ring-ring/10",
           "data-dragging:border-ring data-dragging:ring-4 data-dragging:ring-ring/20",
           className
