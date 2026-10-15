@@ -67,16 +67,21 @@ type LayerProps = { intensity: number; still: boolean; drift: (seconds: number, 
 
 function Mesh({ intensity, still, drift }: LayerProps) {
   const blobs = [
-    { className: "-top-1/4 -left-1/5 w-3/5", opacity: 0.55, x: ["0%", "18%"], y: ["0%", "12%"], seconds: 1 },
-    { className: "-right-1/5 -bottom-1/4 w-3/5", opacity: 0.4, x: ["0%", "-16%"], y: ["0%", "-10%"], seconds: 1.3 },
-    { className: "top-1/4 left-1/3 w-2/5", opacity: 0.25, x: ["0%", "-20%"], y: ["0%", "16%"], seconds: 0.8 },
+    { className: "-top-1/4 -left-1/5 w-3/5", opacity: 0.55, x: ["0%", "22%", "8%"], y: ["0%", "6%", "16%"], seconds: 0.8 },
+    { className: "-right-1/5 -bottom-1/4 w-3/5", opacity: 0.4, x: ["0%", "-10%", "-20%"], y: ["0%", "-14%", "-4%"], seconds: 1 },
+    { className: "top-1/4 left-1/3 w-2/5", opacity: 0.25, x: ["0%", "-24%", "-8%"], y: ["0%", "10%", "20%"], seconds: 0.6 },
   ]
   return blobs.map((b, i) => (
     <motion.div
       key={i}
       className={cn("absolute aspect-square rounded-full bg-primary blur-3xl", b.className)}
       initial={false}
-      animate={{ opacity: b.opacity * intensity, x: still ? "0%" : b.x, y: still ? "0%" : b.y }}
+      animate={{
+        opacity: b.opacity * intensity,
+        x: still ? "0%" : b.x,
+        y: still ? "0%" : b.y,
+        scale: still ? 1 : [1, 1.15, 0.95],
+      }}
       transition={{ opacity: { duration: 0.4 }, default: drift(b.seconds, i * 1.5) }}
     />
   ))
@@ -84,9 +89,9 @@ function Mesh({ intensity, still, drift }: LayerProps) {
 
 function Aurora({ intensity, still, drift }: LayerProps) {
   const bands = [
-    { className: "top-0 h-1/3 -rotate-6", opacity: 0.9, x: ["-12%", "8%"], seconds: 1 },
-    { className: "top-1/6 h-1/4 rotate-3", opacity: 0.6, x: ["10%", "-10%"], seconds: 1.4 },
-    { className: "-top-1/12 h-1/5 -rotate-2", opacity: 0.5, x: ["-6%", "12%"], seconds: 0.7 },
+    { className: "top-0 h-1/3", opacity: 0.9, x: ["-12%", "8%"], rotate: [-6, -3], seconds: 0.8 },
+    { className: "top-1/6 h-1/4", opacity: 0.6, x: ["10%", "-10%"], rotate: [3, 6], seconds: 1.1 },
+    { className: "-top-1/12 h-1/5", opacity: 0.5, x: ["-6%", "12%"], rotate: [-2, 1], seconds: 0.6 },
   ]
   return bands.map((b, i) => (
     <motion.div
@@ -96,7 +101,13 @@ function Aurora({ intensity, still, drift }: LayerProps) {
         b.className,
       )}
       initial={false}
-      animate={{ opacity: b.opacity * intensity, x: still ? "0%" : b.x, scaleY: still ? 1 : [1, 1.3] }}
+      animate={{
+        opacity: b.opacity * intensity,
+        x: still ? "0%" : b.x,
+        y: still ? "0%" : ["0%", "12%", "-6%"],
+        rotate: still ? b.rotate[0] : b.rotate,
+        scaleY: still ? 1 : [1, 1.35],
+      }}
       transition={{ opacity: { duration: 0.4 }, default: drift(b.seconds, i) }}
     />
   ))
@@ -110,16 +121,21 @@ function Spotlight({ intensity, still, drift }: LayerProps) {
         initial={false}
         animate={{
           opacity: still ? 0.5 * intensity : [0.5 * intensity, 0.3 * intensity],
-          scale: still ? 1 : [1, 1.12],
+          scale: still ? 1 : [1, 1.15],
+          x: still ? "0%" : ["-6%", "6%"],
         }}
-        transition={drift(0.4)}
+        transition={drift(0.35)}
       />
       {/* A tighter, brighter core so the light has a source. */}
       <motion.div
         className="absolute -top-1/6 left-3/8 aspect-square w-1/4 rounded-full bg-primary blur-2xl"
         initial={false}
-        animate={{ opacity: still ? 0.45 * intensity : [0.45 * intensity, 0.6 * intensity] }}
-        transition={drift(0.3, 1)}
+        animate={{
+          opacity: still ? 0.45 * intensity : [0.45 * intensity, 0.6 * intensity],
+          x: still ? "0%" : ["-10%", "10%"],
+          scale: still ? 1 : [0.9, 1.1],
+        }}
+        transition={drift(0.25, 1)}
       />
     </>
   )
@@ -127,12 +143,12 @@ function Spotlight({ intensity, still, drift }: LayerProps) {
 
 function Rays({ intensity, still, drift }: LayerProps) {
   const rays = [
-    { angle: -40, opacity: 0.4, sway: 4, seconds: 1.1 },
-    { angle: -22, opacity: 0.7, sway: -3, seconds: 0.8 },
-    { angle: -7, opacity: 0.5, sway: 3, seconds: 1.3 },
-    { angle: 9, opacity: 0.8, sway: -4, seconds: 0.9 },
-    { angle: 25, opacity: 0.45, sway: 3, seconds: 1.2 },
-    { angle: 41, opacity: 0.35, sway: -3, seconds: 1 },
+    { angle: -40, opacity: 0.4, sway: 6, seconds: 0.8 },
+    { angle: -22, opacity: 0.7, sway: -5, seconds: 0.6 },
+    { angle: -7, opacity: 0.5, sway: 5, seconds: 0.9 },
+    { angle: 9, opacity: 0.8, sway: -6, seconds: 0.65 },
+    { angle: 25, opacity: 0.45, sway: 5, seconds: 0.85 },
+    { angle: 41, opacity: 0.35, sway: -5, seconds: 0.7 },
   ]
   return (
     // Fan out from a point above the top edge, fading before they reach the bottom.
@@ -145,6 +161,7 @@ function Rays({ intensity, still, drift }: LayerProps) {
           animate={{
             rotate: still ? r.angle : [r.angle, r.angle + r.sway],
             opacity: still ? r.opacity * intensity : [r.opacity * intensity, r.opacity * intensity * 0.4],
+            scaleX: still ? 1 : [1, 1.6, 0.8],
           }}
           transition={drift(r.seconds, i * 0.7)}
         />
@@ -154,35 +171,59 @@ function Rays({ intensity, still, drift }: LayerProps) {
 }
 
 function Waves({ intensity, still, speed }: { intensity: number; still: boolean; speed: number }) {
+  // Back layers are taller and slower; the middle one travels the other way so the layers cross.
   const layers = [
-    { className: "h-2/5", opacity: 0.3, amp: 30, seconds: 1.4 },
-    { className: "h-1/3", opacity: 0.4, amp: 22, seconds: 1 },
-    { className: "h-1/4", opacity: 0.5, amp: 14, seconds: 0.7 },
+    { className: "h-2/5", opacity: 0.3, amp: 34, seconds: 0.55, swell: 1.3, reverse: false },
+    { className: "h-1/3", opacity: 0.4, amp: 26, seconds: 0.4, swell: 1.4, reverse: true },
+    { className: "h-1/4", opacity: 0.5, amp: 18, seconds: 0.3, swell: 1.5, reverse: false },
   ]
   const id = React.useId()
+  const wave = (amp: number) => {
+    let d = `M0 50 Q75 ${50 - amp} 150 50`
+    for (let x = 300; x <= 1200; x += 150) d += ` T${x} 50`
+    return `${d} V100 H0Z`
+  }
   return layers.map((l, i) => (
-    // Twice as wide as the surface with two identical periods, so sliding by half loops seamlessly.
-    <motion.svg
+    // The wrapper swells up and down from the bottom edge; the SVG inside slides sideways.
+    <motion.div
       key={i}
-      viewBox="0 0 1200 100"
-      preserveAspectRatio="none"
-      className={cn("absolute bottom-0 left-0 w-2/1 text-primary", l.className)}
+      className={cn("absolute inset-x-0 bottom-0 origin-bottom", l.className)}
       initial={false}
-      animate={{ opacity: l.opacity * intensity, x: still ? "0%" : ["0%", "-50%"] }}
+      animate={{ opacity: l.opacity * intensity, scaleY: still ? 1 : [1, l.swell] }}
       transition={{
         opacity: { duration: 0.4 },
         default: still
           ? { duration: 0 }
-          : { duration: (l.seconds * DRIFT_S) / speed, repeat: Infinity, ease: "linear", repeatType: "loop" },
+          : {
+              duration: (l.seconds * DRIFT_S * 0.6) / speed,
+              delay: i * 0.8,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            },
       }}
     >
-      {/* Bright at the crest, fading toward the bottom edge, so each swell reads as light, not a solid band. */}
-      <linearGradient id={`${id}-${i}`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="currentColor" />
-        <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-      </linearGradient>
-      <path fill={`url(#${id}-${i})`} d={`M0 50 Q150 ${50 - l.amp} 300 50 T600 50 T900 50 T1200 50 V100 H0Z`} />
-    </motion.svg>
+      {/* Twice as wide as the surface with an even number of periods, so sliding by half loops seamlessly. */}
+      <motion.svg
+        viewBox="0 0 1200 100"
+        preserveAspectRatio="none"
+        className="absolute inset-y-0 left-0 h-full w-2/1 text-primary"
+        initial={false}
+        animate={{ x: still ? "0%" : l.reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
+        transition={
+          still
+            ? { duration: 0 }
+            : { duration: (l.seconds * DRIFT_S) / speed, repeat: Infinity, ease: "linear", repeatType: "loop" }
+        }
+      >
+        {/* Bright at the crest, fading toward the bottom edge, so each swell reads as light, not a solid band. */}
+        <linearGradient id={`${id}-${i}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+        <path fill={`url(#${id}-${i})`} d={wave(l.amp)} />
+      </motion.svg>
+    </motion.div>
   ))
 }
 
@@ -214,10 +255,10 @@ function Field({ kind, intensity, still, drift }: LayerProps & { kind: "dots" | 
         className="absolute inset-0 mask-radial-[35%_45%] mask-radial-from-0% mask-radial-to-100% mask-radial-at-(--glow)"
         initial={false}
         animate={{
-          opacity: Math.min(1, intensity * 1.4),
-          "--glow": still ? "50% 45%" : ["30% 35%", "70% 60%"],
+          opacity: still ? Math.min(1, intensity * 1.4) : [Math.min(1, intensity * 1.4), Math.min(1, intensity)],
+          "--glow": still ? "50% 45%" : ["30% 35%", "65% 30%", "70% 60%", "35% 65%"],
         }}
-        transition={{ opacity: { duration: 0.4 }, default: drift(1) }}
+        transition={{ opacity: drift(0.3), default: drift(1.2) }}
       >
         {field("text-primary", kind === "dots" ? 1.6 : 1.5)}
       </motion.div>
