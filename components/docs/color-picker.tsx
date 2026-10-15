@@ -12,6 +12,7 @@ import { ThemeExport } from "@/components/docs/theme-export"
 import { useThemeState } from "@/components/docs/theme-state"
 import type { VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { baseColors, colorPresets } from "@/lib/colors"
+import { surfacePresets } from "@/lib/surfaces"
 import { CheckIcon } from "@/lib/icons"
 
 export const primarySwatch: Record<string, string> = {
@@ -38,6 +39,7 @@ export const fonts = [
   { value: "inter", label: "Inter" },
   { value: "system", label: "System" },
 ]
+export const surfaces = [{ value: "flat", label: "Flat" }, ...surfacePresets.map(({ name, label }) => ({ value: name, label }))]
 export const orbs: { value: VoiceOrbVariant; label: string }[] = [
   { value: "particles", label: "Particles" },
   { value: "ring", label: "Ring" },
@@ -94,7 +96,7 @@ export function Swatches({
 }
 
 /**
- * Header customizer: primary and base color, radius, font and voice orb, applied across the
+ * Header customizer: primary and base color, radius, font, surface lighting and voice orb, applied across the
  * site as a live preview. "Use this theme in your app" exports the same choices.
  */
 const HINT_KEY = "jds:theme-hint"
@@ -197,6 +199,20 @@ export function ColorPicker() {
               {fonts.map((f) => (
                 <ToggleGroupItem key={f.value} value={f.value}>
                   {f.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </Section>
+          <Section title="Surfaces">
+            <ToggleGroup
+              value={[values.surface]}
+              onValueChange={(v) => v[0] && set("surface", v[0] as string)}
+              variant="outline"
+              size="sm"
+            >
+              {surfaces.map((s) => (
+                <ToggleGroupItem key={s.value} value={s.value}>
+                  {s.label}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>

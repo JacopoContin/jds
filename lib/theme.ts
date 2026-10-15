@@ -1,14 +1,16 @@
 import { baseColorVars, baseColors, colorPresets } from "./colors.ts"
 import { site } from "./site.ts"
+import { surfacePresets } from "./surfaces.ts"
 
 /** The choices in the header's Customize panel. */
-export type ThemeChoice = { color: string; base: string; radius: string; font: string; orb: string }
+export type ThemeChoice = { color: string; base: string; radius: string; font: string; surface: string; orb: string }
 
 export const themeDefaults: ThemeChoice = {
   color: "neutral",
   base: "neutral",
   radius: "0.625",
   font: "geist",
+  surface: "flat",
   orb: "particles",
 }
 
@@ -25,20 +27,22 @@ export function parseTheme(params: URLSearchParams): ThemeChoice {
     base: pick("base", ["neutral", ...baseColors.map((b) => b.name)]),
     radius: pick("radius", ["0", "0.3", "0.5", "0.625", "0.75", "1"]),
     font: pick("font", ["geist", "inter", "system"]),
+    surface: pick("surface", ["flat", ...surfacePresets.map((p) => p.name)]),
     orb: params.get("orb") ?? themeDefaults.orb,
   }
 }
 
 /**
  * A shadcn registry theme item for a choice. It depends on the JDS style, so one install
- * brings the full token set plus these overrides: base grays, primary, radius, and a
- * system font stack (Geist and Inter load through next/font in the layout instead).
+ * brings the full token set plus these overrides: base grays, primary, radius, surface
+ * lighting, and a system font stack (Geist and Inter load through next/font in the layout instead).
  */
 export function themeItem(t: ThemeChoice) {
   const base = baseColors.find((b) => b.name === t.base)
   const color = colorPresets.find((p) => p.name === t.color)
-  const light: Record<string, string> = { ...(base && baseColorVars(base, "light")), ...color?.light }
-  const dark: Record<string, string> = { ...(base && baseColorVars(base, "dark")), ...color?.dark }
+  const surface = surfacePresets.find((p) => p.name === t.surface)
+  const light: Record<string, string> = { ...(base && baseColorVars(base, "light")), ...color?.light, ...surface?.light }
+  const dark: Record<string, string> = { ...(base && baseColorVars(base, "dark")), ...color?.dark, ...surface?.dark }
   if (t.radius !== themeDefaults.radius) light.radius = `${t.radius}rem`
   if (t.font === "system") light["font-sans"] = dark["font-sans"] = SYSTEM_FONT
   return {
@@ -55,7 +59,7 @@ export function themeItem(t: ThemeChoice) {
 /** Only the parts that differ from the defaults, as query params. */
 export function themeQuery(t: ThemeChoice) {
   const params = new URLSearchParams()
-  for (const key of ["color", "base", "radius", "font"] as const) {
+  for (const key of ["color", "base", "radius", "font", "surface"] as const) {
     if (t[key] !== themeDefaults[key]) params.set(key, t[key])
   }
   return params.toString()
@@ -69,7 +73,7 @@ export const themeUrl = (t: ThemeChoice) => {
 export const isDefaultTheme = (t: ThemeChoice) => themeQuery(t) === ""
 
 function describe(t: ThemeChoice) {
-  return `Primary ${t.color}, base ${t.base}, radius ${t.radius}rem, font ${t.font}.`
+  return `Primary ${t.color}, base ${t.base}, radius ${t.radius}rem, font ${t.font}, ${t.surface} surfaces.`
 }
 
 /** What the font choice needs in the root layout; nothing for the system stack. */
