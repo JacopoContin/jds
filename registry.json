@@ -2095,6 +2095,36 @@
       ]
     },
     {
+      "name": "mobile-voice-panel",
+      "type": "registry:block",
+      "title": "Voice panel",
+      "description": "Talk to the agent without leaving the page. A floating bottom panel shows the live caption over your screen, drags up for the whole conversation and the agent's actions, and closes to end the chat.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/call-controls",
+        "@jds/live-transcript",
+        "@jds/tool-call",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/mobile-voice-panel/mobile-voice-panel.tsx",
+          "type": "registry:component",
+          "target": "components/mobile-voice-panel/mobile-voice-panel.tsx"
+        },
+        {
+          "path": "recipes/voice-agent/session.ts",
+          "type": "registry:component",
+          "target": "components/voice-agent/session.ts"
+        }
+      ]
+    },
+    {
       "name": "mobile-push-to-talk",
       "type": "registry:block",
       "title": "Push-to-talk",

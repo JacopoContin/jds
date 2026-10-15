@@ -146,6 +146,35 @@ export const viewport = { viewportFit: "cover" }`,
     session: "recipes/voice-agent/session.ts",
   },
   {
+    slug: "mobile-voice-panel",
+    platform: "mobile",
+    tags: ["voice"],
+    title: "Voice panel",
+    description:
+      "Talk to the agent without leaving the page. A floating bottom panel shows the live caption over your screen, drags up for the whole conversation and the agent's actions, and closes to end the chat.",
+    steps: [
+      {
+        title: "Wrap your screen",
+        body: "Put your app's screen inside it. The page stays visible and usable above the panel; expanded, the panel stops short of your header (reserveTop).",
+        code: `<MobileVoicePanel session={session} open={open} onOpenChange={setOpen} reserveTop={72}>
+  <YourScreen />
+</MobileVoicePanel>`,
+      },
+      {
+        title: "Style the orb and surface",
+        body: "Paste orb props from the Voice Orb Studio. The panel uses lit surfaces (data-surface=\"lit\") on its own, so it reads as a physical layer even if the rest of your app is flat.",
+        code: `<MobileVoicePanel orb={{ variant: "glass", palette: "iris" }} … />`,
+      },
+      {
+        title: "Connect your session",
+        body: "It reads the same VoiceAgentSession as the other voice recipes. Start the session when you open the panel; closing it calls end().",
+        code: `const session = useSimulatedVoiceAgent() // swap for useMyVoiceSession()`,
+      },
+    ],
+    files: ["recipes/mobile-voice-panel/mobile-voice-panel.tsx", "recipes/voice-agent/session.ts"],
+    session: "recipes/voice-agent/session.ts",
+  },
+  {
     slug: "mobile-push-to-talk",
     platform: "mobile",
     tags: ["voice"],
