@@ -47,7 +47,9 @@ export default function IntroductionPage() {
 
       <H2>Primitives, components and recipes</H2>
       <P>
-        <strong>Primitives</strong> are Base UI building blocks with the JDS look: button, menu, dialog.{" "}
+        <strong>Primitives</strong> are Base UI building blocks with the JDS look: button, menu, dialog. They live
+        under <Link href="/docs/foundations" className="text-foreground underline underline-offset-4">Foundations</Link>{" "}
+        and install on their own when a component needs them.{" "}
         <strong>Components</strong> are the agent and voice pieces built on them. <strong>Recipes</strong> are
         complete experiences, like a voice agent or a side panel, that install with one command and take the styles
         you set in the Studio.

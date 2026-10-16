@@ -38,7 +38,7 @@ import { FolderIcon, InfoIcon, ReasoningIcon, ResearchIcon, VoiceIcon, WebSearch
 
 type OptionKey = "web" | "research" | "think"
 
-type Config = {
+export type PromptInputConfig = {
   placeholder: string
   header: boolean
   headerText: string
@@ -65,9 +65,11 @@ type Config = {
   submitOn: SubmitKey
 }
 
+type Config = PromptInputConfig
+
 type Surface = "page" | "docked" | "panel"
 
-const defaults: Config = {
+export const promptInputDefaults: PromptInputConfig = {
   placeholder: "Ask anything…",
   header: false,
   headerText: "Add context, let the agent manage the rest",
@@ -90,6 +92,7 @@ const defaults: Config = {
   submitStyle: "filled",
   submitOn: "enter",
 }
+const defaults = promptInputDefaults
 
 /** Common composers to start from. */
 const presets: { name: string; body: string; config: Partial<Config> }[] = [
@@ -395,7 +398,8 @@ ${jsx
 
 /* ---------- Preview ---------- */
 
-function Composer({ c, status }: { c: Config; status: ChatStatus }) {
+/** The composer for a Studio config. Also the homepage's mini studio, so both always match. */
+export function PromptInputComposer({ c, status }: { c: PromptInputConfig; status: ChatStatus }) {
   const options = c.options === "off" ? [] : chips(c)
   const chipEls = options.map((k) => (
     <PromptInputOption key={k} icon={optionMeta[k].node} defaultPressed={k === "web"}>
@@ -487,7 +491,7 @@ function SurfacePreview({ c, status, surface }: { c: Config; status: ChatStatus;
     return (
       <div className="m-auto flex w-full max-w-2xl flex-col items-center gap-6">
         <h2 className="text-2xl font-semibold tracking-tight">What can I help with?</h2>
-        <Composer c={c} status={status} />
+        <PromptInputComposer c={c} status={status} />
       </div>
     )
   const thread = (
@@ -505,7 +509,7 @@ function SurfacePreview({ c, status, surface }: { c: Config; status: ChatStatus;
       <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
         {thread}
         <div className="p-4 pt-0">
-          <Composer c={c} status={status} />
+          <PromptInputComposer c={c} status={status} />
         </div>
       </div>
     )
@@ -514,7 +518,7 @@ function SurfacePreview({ c, status, surface }: { c: Config; status: ChatStatus;
       <div className="border-b px-4 py-3 text-sm font-medium">Agent</div>
       {thread}
       <div className="border-t p-3">
-        <Composer c={c} status={status} />
+        <PromptInputComposer c={c} status={status} />
       </div>
     </div>
   )

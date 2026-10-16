@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { cn } from "cn"
 
 import { LiveTranscript } from "@/components/voice/live-transcript"
+import { VoiceGlow } from "@/components/voice/voice-glow"
 import { VoiceOrb, type VoiceState } from "@/components/voice/voice-orb"
 import { ChevronUpIcon, CloseIcon, MicIcon } from "@/lib/icons"
 import { duration, ease, spring } from "@/lib/motion"
@@ -15,6 +16,8 @@ import type { PushToTalkSession } from "./session"
 type MobilePushToTalkOrb = Omit<React.ComponentProps<typeof VoiceOrb>, "state" | "level">
 
 /** How far up the thumb slides, in px, before letting go cancels instead of sends. */
+/** Corner radius of recent iPhone displays, so the glow's edge line follows the screen. */
+const DISPLAY_RADIUS = 55
 const CANCEL_DISTANCE = 72
 /** How far the button follows the thumb, so the slide feels connected without covering the hint. */
 const MAX_LIFT = 16
@@ -110,7 +113,9 @@ function MobilePushToTalk({
         )}
       </div>
 
-      <footer className="flex shrink-0 flex-col items-center gap-4 border-t bg-card px-6 pt-4 pb-(--safe-bottom)">
+      <footer className="relative isolate flex shrink-0 flex-col items-center gap-4 overflow-hidden px-6 pt-4 pb-(--safe-bottom)">
+        {/* Light from below the screen edge; DISPLAY_RADIUS wraps it around the phone's corners. */}
+        <VoiceGlow state={orbState[state]} level={level} radius={DISPLAY_RADIUS} className="h-full" />
         <div className="flex min-h-14 w-full items-end justify-center text-center" aria-live="polite">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.p

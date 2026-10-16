@@ -139,7 +139,7 @@ function PromptInput({
           if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files)
         }}
         className={cn(
-          "relative flex w-full flex-col rounded-2xl border border-surface-edge bg-card shadow-xs inset-shadow-surface transition-[border-color,box-shadow] duration-200",
+          "relative flex w-full flex-col rounded-2xl border border-surface-edge bg-card shadow-xs inset-shadow-surface surface-sheen transition-[border-color,box-shadow] duration-200",
           "focus-within:border-ring/60 focus-within:ring-4 focus-within:ring-ring/10",
           "data-dragging:border-ring data-dragging:ring-4 data-dragging:ring-ring/20",
           className
@@ -236,6 +236,55 @@ function PromptInputAttachments({ className, ...props }: React.ComponentProps<"d
               <CloseIcon className="size-3" />
             </button>
           </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/** Something you've pointed the agent at, like a row you clicked in your app. */
+type PromptInputContextItem = { id: string; label: string; icon?: React.ReactNode }
+
+/**
+ * Context chips above the textarea: what the next message is about. You own the list (add an
+ * item when the user picks something in your UI), so it can come from anywhere on the page.
+ */
+function PromptInputContextItems({
+  items,
+  onRemove,
+  className,
+  ...props
+}: Omit<React.ComponentProps<"div">, "children"> & {
+  items: PromptInputContextItem[]
+  onRemove?: (id: string) => void
+}) {
+  if (items.length === 0) return null
+  return (
+    <div data-slot="prompt-input-context" className={cn("flex flex-wrap gap-1.5 px-3 pt-3", className)} {...props}>
+      <AnimatePresence initial={false}>
+        {items.map((item) => (
+          <motion.span
+            key={item.id}
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={spring.snappy}
+            className="inline-flex h-6 max-w-full items-center gap-1 rounded-md border bg-muted/50 pr-0.5 pl-1.5 text-xs [&>svg]:size-3 [&>svg]:shrink-0 [&>svg]:text-muted-foreground"
+          >
+            {item.icon}
+            <span className="truncate">{item.label}</span>
+            {onRemove && (
+              <button
+                type="button"
+                aria-label={`Remove ${item.label}`}
+                onClick={() => onRemove(item.id)}
+                className="relative grid size-4 shrink-0 place-items-center rounded-sm text-muted-foreground pointer-coarse:after:absolute pointer-coarse:after:top-1/2 pointer-coarse:after:left-1/2 pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 pointer-coarse:after:-translate-1/2 transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <CloseIcon className="size-3" />
+              </button>
+            )}
+          </motion.span>
         ))}
       </AnimatePresence>
     </div>
@@ -404,6 +453,7 @@ export {
   PromptInput,
   PromptInputTextarea,
   PromptInputAttachments,
+  PromptInputContextItems,
   PromptInputToolbar,
   PromptInputTools,
   PromptInputAttachButton,
@@ -414,5 +464,6 @@ export {
   PromptInputOption,
   usePromptInput,
   type ChatStatus,
+  type PromptInputContextItem,
   type SubmitKey,
 }

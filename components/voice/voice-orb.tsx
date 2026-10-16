@@ -3,6 +3,8 @@
 import * as React from "react"
 import { cn } from "cn"
 
+import { FACE_LANDMARKS, FACE_SCALE, FACE_TRIANGLES, FACE_VERTICES } from "@/components/voice/face-mesh"
+
 /**
  * Semantic states every orb supports. Connecting breathes while a session opens;
  * error turns destructive and nearly still, so it reads without relying on color.
@@ -167,6 +169,286 @@ function ParticleOrb({
   return orbFrame("particles", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
 }
 
+/* ---------- Face: an average face drawn in particles ---------- */
+
+/**
+ * Per-state head movement. look: how far it turns side to side. pace: how fast. pitch: up (+)
+ * or down (-). mouth: how much the voice level opens it. swell: how much level puffs the mesh.
+ */
+const faceTargets: Record<VoiceState, { look: number; pace: number; pitch: number; mouth: number; swell: number }> = {
+  idle: { look: 0.28, pace: 0.35, pitch: 0.04, mouth: 0, swell: 0 },
+  connecting: { look: 0.16, pace: 0.8, pitch: 0, mouth: 0, swell: 0 },
+  listening: { look: 0.1, pace: 0.4, pitch: -0.08, mouth: 0, swell: 0.5 },
+  thinking: { look: 0.42, pace: 0.55, pitch: 0.18, mouth: 0, swell: 0 },
+  speaking: { look: 0.16, pace: 0.5, pitch: 0.02, mouth: 1, swell: 0.2 },
+  error: { look: 0.03, pace: 0.2, pitch: -0.28, mouth: 0, swell: 0 },
+}
+
+/** A point on the face: where it sits, which way its surface faces, and how far the jaw moves it. */
+type FacePoint = {
+  x: number
+  y: number
+  z: number
+  nx: number
+  ny: number
+  nz: number
+  /** How far the jaw moves it, 0 to 1. */
+  jaw: number
+  /** 1 inside the face, fading to 0 at the mesh's edge. */
+  edge: number
+  size: number
+}
+
+/** The face mesh, decoded once and shared by every face orb. */
+let faceMesh: { v: Float32Array; f: Uint16Array; n: Float32Array } | null = null
+
+function decodeFace() {
+  if (faceMesh) return faceMesh
+  const bytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer
+  const raw = new Int16Array(bytes(FACE_VERTICES))
+  const v = Float32Array.from(raw, (c) => (c / 32767) * FACE_SCALE)
+  const f = new Uint16Array(bytes(FACE_TRIANGLES))
+  // Smooth normals: each vertex averages the faces around it, so the light rolls over the form.
+  const n = new Float32Array(v.length)
+  for (let i = 0; i < f.length; i += 3) {
+    const [a, b, c] = [f[i] * 3, f[i + 1] * 3, f[i + 2] * 3]
+    const [ux, uy, uz] = [v[b] - v[a], v[b + 1] - v[a + 1], v[b + 2] - v[a + 2]]
+    const [wx, wy, wz] = [v[c] - v[a], v[c + 1] - v[a + 1], v[c + 2] - v[a + 2]]
+    const [cx, cy, cz] = [uy * wz - uz * wy, uz * wx - ux * wz, ux * wy - uy * wx]
+    for (const k of [a, b, c]) {
+      n[k] += cx
+      n[k + 1] += cy
+      n[k + 2] += cz
+    }
+  }
+  // Point the normals out of the face, whichever way the triangles wind.
+  let facing = 0
+  for (let i = 2; i < n.length; i += 3) facing += n[i]
+  const flip = facing < 0 ? -1 : 1
+  for (let i = 0; i < n.length; i += 3) {
+    const len = Math.hypot(n[i], n[i + 1], n[i + 2]) || 1
+    n[i] *= flip / len
+    n[i + 1] *= flip / len
+    n[i + 2] *= flip / len
+  }
+  faceMesh = { v, f, n }
+  return faceMesh
+}
+
+/**
+ * About `count` points over the face, on a regular grid seen from the front (like the sphere's
+ * rows, so it reads as fine scan lines rather than noise). Each grid cell takes the nearest
+ * surface the mesh covers it with, its normal, and a fade towards the mesh's edge so the face
+ * dissolves into the head outline instead of ending in a hard line.
+ */
+function createFace(count: number): { points: FacePoint[]; eyes: [number, number, number][] } {
+  const { v, f, n } = decodeFace()
+  const at = (i: number) => [v[i * 3], v[i * 3 + 1], v[i * 3 + 2]] as const
+  const L = FACE_LANDMARKS
+  const mid = (a: number, b: number) => at(a).map((c, k) => (c + at(b)[k]) / 2) as [number, number, number]
+  const mouth = mid(L.upperLip, L.lowerLip)
+  const mouthWidth = Math.abs(at(L.mouthRight)[0] - at(L.mouthLeft)[0])
+
+  // The grid covers the face's extent; about 60% of its cells land on the face.
+  const side = Math.max(24, Math.round(Math.sqrt(count / 0.6)))
+  const [x0, x1, y0, y1] = [-1.1, 1.1, -1.08, 1.08]
+  const step = (x1 - x0) / side
+  const rows = Math.round((y1 - y0) / step)
+  const cells = side * rows
+  const depth = new Float32Array(cells).fill(-Infinity)
+  const normal = new Float32Array(cells * 3)
+
+  // Rasterize every triangle into the grid, keeping the front-most surface in each cell.
+  for (let i = 0; i < f.length; i += 3) {
+    const [a, b, c] = [f[i], f[i + 1], f[i + 2]]
+    const [A, B, C] = [at(a), at(b), at(c)]
+    const area = (B[0] - A[0]) * (C[1] - A[1]) - (C[0] - A[0]) * (B[1] - A[1])
+    if (Math.abs(area) < 1e-9) continue
+    const cMin = Math.max(0, Math.floor((Math.min(A[0], B[0], C[0]) - x0) / step))
+    const cMax = Math.min(side - 1, Math.ceil((Math.max(A[0], B[0], C[0]) - x0) / step))
+    const rMin = Math.max(0, Math.floor((Math.min(A[1], B[1], C[1]) - y0) / step))
+    const rMax = Math.min(rows - 1, Math.ceil((Math.max(A[1], B[1], C[1]) - y0) / step))
+    for (let r = rMin; r <= rMax; r++) {
+      const py = y0 + (r + 0.5) * step
+      for (let col = cMin; col <= cMax; col++) {
+        const px = x0 + (col + 0.5) * step
+        const wa = ((B[0] - px) * (C[1] - py) - (C[0] - px) * (B[1] - py)) / area
+        const wb = ((C[0] - px) * (A[1] - py) - (A[0] - px) * (C[1] - py)) / area
+        const wc = 1 - wa - wb
+        if (wa < 0 || wb < 0 || wc < 0) continue
+        const z = wa * A[2] + wb * B[2] + wc * C[2]
+        const cell = r * side + col
+        if (z <= depth[cell]) continue
+        depth[cell] = z
+        for (let o = 0; o < 3; o++) normal[cell * 3 + o] = wa * n[a * 3 + o] + wb * n[b * 3 + o] + wc * n[c * 3 + o]
+      }
+    }
+  }
+
+  const covered = (r: number, col: number) =>
+    r >= 0 && r < rows && col >= 0 && col < side && depth[r * side + col] > -Infinity
+  const points: FacePoint[] = []
+  for (let r = 0; r < rows; r++) {
+    // Each row slides a little, so the columns don't line up into a visible grid.
+    const shift = (Math.random() - 0.5) * step
+    for (let col = 0; col < side; col++) {
+      const cell = r * side + col
+      if (depth[cell] === -Infinity) continue
+      // How much of the neighborhood is face: 1 inside, falling towards the mesh's edge.
+      let inside = 0
+      for (let dr = -3; dr <= 3; dr++) for (let dc = -3; dc <= 3; dc++) inside += covered(r + dr, col + dc) ? 1 : 0
+      const x = x0 + (col + 0.5) * step + shift
+      const y = y0 + (r + 0.5) * step
+      // Lips part at the mouth and nowhere else: the movement narrows to the mouth's width and
+      // fades out towards the cheeks, then the chin follows below.
+      const jaw = y < mouth[1] ? Math.exp(-(((x - mouth[0]) / (mouthWidth * 0.42)) ** 4)) : 0
+      const len = Math.hypot(normal[cell * 3], normal[cell * 3 + 1], normal[cell * 3 + 2]) || 1
+      points.push({
+        x,
+        y,
+        z: depth[cell],
+        nx: normal[cell * 3] / len,
+        ny: normal[cell * 3 + 1] / len,
+        nz: normal[cell * 3 + 2] / len,
+        jaw,
+        edge: Math.min(1, Math.max(0, (inside / 49 - 0.45) / 0.45)),
+        size: 0.8 + Math.random() ** 3 * 0.8,
+      })
+    }
+  }
+  return { points, eyes: [mid(L.leftEyeTop, L.leftEyeBottom), mid(L.rightEyeTop, L.rightEyeBottom)] }
+}
+
+/** Where the head's centre sits relative to the face, so it turns about its own axis. */
+const HEAD_CENTER: [number, number, number] = [0, 0.08, -0.72]
+
+/**
+ * An average human face drawn in particles, lit from above so its forehead, eyes, nose and
+ * mouth have real form. It glances around when idle, looks
+ * up and away while thinking, leans in while listening, drops its jaw with the level while
+ * speaking, and lowers its head on error. The face comes from MediaPipe's canonical face model,
+ * so it is no one in particular. Reads best from about 96px.
+ */
+function FaceOrb({
+  state = "idle",
+  level = 0,
+  size = 160,
+  speed = 1,
+  glow = 0,
+  particles,
+  className,
+  ...props
+}: OrbProps & { particles?: number }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const input = React.useRef({ state, level, speed })
+  const redraw = React.useRef<(() => void) | null>(null)
+  const count = particles ?? Math.round(Math.min(3500, size * size * 0.045))
+
+  React.useEffect(() => {
+    input.current = { state, level, speed }
+    redraw.current?.()
+  }, [state, level, speed])
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext("2d")
+    if (!canvas || !ctx) return
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const px = size * dpr
+    canvas.width = px
+    canvas.height = px
+
+    const { points, eyes } = createFace(count)
+    const cur = { ...faceTargets.idle, level: 0, time: 0, blink: 0, nextBlink: 2 + Math.random() * 3 }
+    let last = performance.now()
+    let raf = 0
+    // Light from above and slightly to the left, towards the face.
+    const [lx, ly, lz] = [-0.25, 0.55, 0.8].map((c) => c / Math.hypot(0.25, 0.55, 0.8))
+
+    const draw = (now: number) => {
+      const dt = reduced ? 0 : Math.max(0, Math.min(0.05, (now - last) / 1000))
+      last = now
+      const { state, level, speed } = input.current
+      const target = faceTargets[state]
+      const k = reduced ? 1 : 1 - Math.exp(-dt * 3)
+      cur.look += (target.look - cur.look) * k
+      cur.pace += (target.pace - cur.pace) * k
+      cur.pitch += (target.pitch - cur.pitch) * k
+      cur.mouth += (target.mouth - cur.mouth) * k
+      cur.swell += (target.swell - cur.swell) * k
+      const targetLevel = state === "listening" || state === "speaking" ? level : 0
+      cur.level += (targetLevel - cur.level) * (reduced ? 1 : 1 - Math.exp(-dt * 14))
+      cur.time += dt * speed
+      // A blink every few seconds: the catchlights go out for about 150ms.
+      cur.nextBlink -= dt
+      if (cur.nextBlink <= 0) {
+        cur.blink = 1
+        cur.nextBlink = 2.5 + Math.random() * 4
+      }
+      cur.blink = Math.max(0, cur.blink - dt / 0.15)
+
+      const t = cur.time
+      // Two slow sines, so the glances don't repeat on an obvious loop.
+      const yaw = cur.look * (Math.sin(t * cur.pace) * 0.75 + Math.sin(t * cur.pace * 0.43 + 1.3) * 0.25)
+      const pitch = cur.pitch + Math.sin(t * cur.pace * 0.7) * 0.04 + (state === "listening" ? cur.level * 0.06 : 0)
+      const drop = cur.mouth * cur.level * 0.09
+      const [cy, sy, cp, sp] = [Math.cos(yaw), Math.sin(yaw), Math.cos(pitch), Math.sin(pitch)]
+      /** Turn then tilt a point (or a normal, with `about` off) round the head's centre. */
+      const turn = (x: number, y: number, z: number, about = true): [number, number, number] => {
+        const [ox, oy, oz] = about ? HEAD_CENTER : [0, 0, 0]
+        const [dx, dy, dz] = [x - ox, y - oy, z - oz]
+        const x1 = dx * cy + dz * sy
+        const z1 = -dx * sy + dz * cy
+        return [x1 + ox, dy * cp - z1 * sp + oy, dy * sp + z1 * cp + oz]
+      }
+
+      const unit = px * 0.34 * (1 + cur.swell * cur.level * 0.04)
+      const cx = px / 2
+      const cyPx = px * 0.53
+
+      ctx.clearRect(0, 0, px, px)
+      ctx.fillStyle = getComputedStyle(canvas).color
+
+      for (const p of points) {
+        const shimmer = 0.004 * Math.sin(p.x * 30 + p.y * 20 + t * 1.6)
+        const [x, y] = turn(p.x, p.y - p.jaw * drop, p.z + shimmer)
+        const [nx, ny, nz] = turn(p.nx, p.ny, p.nz, false)
+        if (nz < -0.1) continue
+        // Lit from above: the brow, nose and cheeks catch the light, the sockets and under the
+        // nose fall into shadow.
+        const light = Math.max(0, nx * lx + ny * ly + nz * lz)
+        ctx.globalAlpha = Math.min(1, 0.05 + light ** 1.4 * 0.95) * p.edge
+        if (p.edge === 0) continue
+        const s = p.size * dpr * (0.65 + Math.max(0, nz) * 0.35)
+        ctx.fillRect(cx + x * unit - s / 2, cyPx - y * unit - s / 2, s, s)
+      }
+
+      // A catchlight in each eye, so they read as eyes rather than holes. Blinking hides them.
+      if (cur.blink < 0.5) {
+        for (const [ex, ey, ez] of eyes) {
+          const [x, y] = turn(ex, ey, ez + 0.02)
+          ctx.globalAlpha = 0.9
+          const s = 1.6 * dpr
+          ctx.fillRect(cx + x * unit - s / 2, cyPx - y * unit - s / 2, s, s)
+        }
+      }
+      ctx.globalAlpha = 1
+      if (!reduced) raf = requestAnimationFrame(draw)
+    }
+
+    redraw.current = reduced ? () => draw(performance.now()) : null
+    raf = requestAnimationFrame(draw)
+    return () => {
+      cancelAnimationFrame(raf)
+      redraw.current = null
+    }
+  }, [size, count])
+
+  return orbFrame("face", state, size, glow, className, props, <canvas ref={canvasRef} className="size-full" />)
+}
+
 /** Per-state targets for the ring. */
 const ringTargets: Record<VoiceState, { wobble: number; spin: number; scale: number; width: number }> = {
   idle: { wobble: 0.018, spin: 0.15, scale: 1, width: 1 },
@@ -278,23 +560,23 @@ function RingOrb({
     className,
     props,
     <svg viewBox="0 0 100 100" className="size-full overflow-visible">
-        <defs>
-          {/* Dim at the top, full strength at the bottom; rotated to sweep the light around. */}
-          <linearGradient ref={gradientRef} id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="currentColor" stopOpacity="0.25" />
-            <stop offset="0.6" stopColor="currentColor" stopOpacity="0.7" />
-            <stop offset="1" stopColor="currentColor" stopOpacity="1" />
-          </linearGradient>
-          <filter id={`${id}-blur`} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2.2" />
-          </filter>
-          <filter id={`${id}-halo`} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-        </defs>
-        <path ref={haloRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-halo)`} opacity="0.35" />
-        <path ref={glowRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-blur)`} opacity="0.85" />
-        <path ref={coreRef} fill="none" stroke={`url(#${id}-g)`} strokeLinejoin="round" />
+      <defs>
+        {/* Dim at the top, full strength at the bottom; rotated to sweep the light around. */}
+        <linearGradient ref={gradientRef} id={`${id}-g`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="currentColor" stopOpacity="0.25" />
+          <stop offset="0.6" stopColor="currentColor" stopOpacity="0.7" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="1" />
+        </linearGradient>
+        <filter id={`${id}-blur`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.2" />
+        </filter>
+        <filter id={`${id}-halo`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+      </defs>
+      <path ref={haloRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-halo)`} opacity="0.35" />
+      <path ref={glowRef} fill="none" stroke={`url(#${id}-g)`} filter={`url(#${id}-blur)`} opacity="0.85" />
+      <path ref={coreRef} fill="none" stroke={`url(#${id}-g)`} strokeLinejoin="round" />
     </svg>,
   )
 }
@@ -397,46 +679,46 @@ function WaveOrb({ state = "idle", level = 0, size = 160, speed = 1, glow = 0, c
     cn("h-[calc(var(--orb-size)*0.6)] w-[calc(var(--orb-size)*2)] max-w-full", className),
     props,
     <svg viewBox="0 0 200 100" preserveAspectRatio="none" className="size-full overflow-visible">
-        <defs>
-          {/* Fade the ends into the flat centre line. */}
-          <linearGradient id={`${id}-fade`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="currentColor" stopOpacity="0" />
-            <stop offset="0.25" stopColor="currentColor" stopOpacity="1" />
-            <stop offset="0.75" stopColor="currentColor" stopOpacity="1" />
-            <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-          </linearGradient>
-          <filter id={`${id}-glow`} x="-20%" y="-50%" width="140%" height="200%">
-            <feGaussianBlur stdDeviation="1.6" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <g filter={`url(#${id}-glow)`}>
-          <line x1="0" y1="50" x2="200" y2="50" stroke={`url(#${id}-fade)`} strokeWidth="0.8" opacity="0.8" />
-          {RIBBONS.map((r, i) => (
-            <g key={i}>
-              <path
-                ref={(el) => {
-                  fillRefs.current[i] = el
-                }}
-                fill={`url(#${id}-fade)`}
-                fillOpacity={r.fill}
-              />
-              <path
-                ref={(el) => {
-                  edgeRefs.current[i] = el
-                }}
-                fill="none"
-                stroke={`url(#${id}-fade)`}
-                strokeWidth={i === 0 ? 0.9 : 0.5}
-                strokeOpacity={i === 0 ? 0.95 : 0.6}
-                vectorEffect="non-scaling-stroke"
-              />
-            </g>
-          ))}
-        </g>
+      <defs>
+        {/* Fade the ends into the flat centre line. */}
+        <linearGradient id={`${id}-fade`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="0.25" stopColor="currentColor" stopOpacity="1" />
+          <stop offset="0.75" stopColor="currentColor" stopOpacity="1" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+        <filter id={`${id}-glow`} x="-20%" y="-50%" width="140%" height="200%">
+          <feGaussianBlur stdDeviation="1.6" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g filter={`url(#${id}-glow)`}>
+        <line x1="0" y1="50" x2="200" y2="50" stroke={`url(#${id}-fade)`} strokeWidth="0.8" opacity="0.8" />
+        {RIBBONS.map((r, i) => (
+          <g key={i}>
+            <path
+              ref={(el) => {
+                fillRefs.current[i] = el
+              }}
+              fill={`url(#${id}-fade)`}
+              fillOpacity={r.fill}
+            />
+            <path
+              ref={(el) => {
+                edgeRefs.current[i] = el
+              }}
+              fill="none"
+              stroke={`url(#${id}-fade)`}
+              strokeWidth={i === 0 ? 0.9 : 0.5}
+              strokeOpacity={i === 0 ? 0.95 : 0.6}
+              vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        ))}
+      </g>
     </svg>,
   )
 }
@@ -768,7 +1050,6 @@ const barsTargets: Record<VoiceState, { base: number; speed: number; sweep: numb
   speaking: { base: 0.12, speed: 3, sweep: 0, spin: 0.2 },
   error: { base: 0.05, speed: 0.3, sweep: 0, spin: 0.02 },
 }
-
 
 /**
  * Bars around a ring, like a circular equalizer. Bar length follows `level` while
@@ -1335,7 +1616,8 @@ function GlassOrb({
   )
 }
 
-type VoiceOrbVariant = "particles" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"
+type VoiceOrbVariant =
+  "particles" | "face" | "ring" | "wave" | "aura" | "bars" | "halftone" | "plasma" | "liquid" | "glass" | "dot"
 
 /** Style an orb can take from a provider. Size stays per orb, since it depends on where the orb sits. */
 type OrbStyle = OrbMaterial &
@@ -1358,7 +1640,8 @@ function VoiceOrbProvider({ children, ...style }: OrbStyle & { children: React.R
 
 /**
  * Presence for a voice agent, drawn in the primary color.
- * `particles`: a rotating particle mesh. `ring`: a soft glowing ring.
+ * `particles`: a rotating particle mesh. `face`: the same mesh shaped into a head that glances,
+ * thinks and talks. `ring`: a soft glowing ring.
  * `wave`: twisting ribbons along a line, twice as wide as `size`.
  * `aura`: soft blurred blobs. `bars`: a circular equalizer. `halftone`: a rippling dot matrix.
  * `plasma`: glowing warped noise in a sphere. `liquid`: glossy merging metaballs. `glass`: light
@@ -1368,7 +1651,7 @@ function VoiceOrbProvider({ children, ...style }: OrbStyle & { children: React.R
  */
 /** Shape and material settings. Each applies to the variants named; the rest ignore it. */
 type OrbMaterial = {
-  /** Particles: approximate count. Defaults to scale with size. */
+  /** Particles and face: approximate count. Defaults to scale with size. */
   particles?: number
   /** Ring: stroke weight. Glass: how strongly it bends and tints the light. 1 is the default. */
   thickness?: number
@@ -1421,6 +1704,7 @@ function VoiceOrb(own: VoiceOrbProps) {
   const webgl = React.useSyncExternalStore(noSubscribe, hasWebGL, () => true)
   const props = { ...rest, level: Math.min(1, level * sensitivity) }
   const aura = <AuraOrb palette={palette} grain={grain} {...props} />
+  if (resolved === "face") return <FaceOrb particles={particles} {...props} />
   if (resolved === "ring") return <RingOrb thickness={thickness} {...props} />
   if (resolved === "wave") return <WaveOrb {...props} />
   if (resolved === "aura") return aura
@@ -1428,7 +1712,8 @@ function VoiceOrb(own: VoiceOrbProps) {
     return webgl ? <PlasmaOrb palette={palette} turbulence={turbulence} filaments={filaments} {...props} /> : aura
   if (resolved === "glass")
     return webgl ? <GlassOrb palette={palette} thickness={thickness} gloss={gloss} {...props} /> : aura
-  if (resolved === "liquid") return webgl ? <LiquidOrb palette={palette} blobs={blobs} gloss={gloss} {...props} /> : aura
+  if (resolved === "liquid")
+    return webgl ? <LiquidOrb palette={palette} blobs={blobs} gloss={gloss} {...props} /> : aura
   if (resolved === "dot") return <DotOrb {...props} />
   if (resolved === "bars") return <BarsOrb bars={bars} {...props} />
   if (resolved === "halftone") return <HalftoneOrb density={density} {...props} />

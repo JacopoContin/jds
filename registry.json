@@ -28,6 +28,8 @@
           "color-surface-edge": "var(--surface-edge)",
           "inset-shadow-surface": "var(--surface-highlight)",
           "inset-shadow-well": "var(--surface-well)",
+          "color-glass": "var(--glass)",
+          "inset-shadow-glass": "var(--glass-highlight)",
           "ease-out-quint": "cubic-bezier(0.22, 1, 0.36, 1)",
           "ease-in-out-quart": "cubic-bezier(0.76, 0, 0.24, 1)",
           "animate-shimmer": "shimmer 2s linear infinite",
@@ -79,7 +81,11 @@
           "sidebar-ring": "oklch(0.6 0 0)",
           "surface-edge": "color-mix(in oklab, var(--foreground) 10%, transparent)",
           "surface-highlight": "0 0 #0000",
-          "surface-well": "0 0 #0000"
+          "surface-well": "0 0 #0000",
+          "surface-sheen": "none",
+          "surface-backdrop": "none",
+          "glass": "oklch(1 0 0 / 45%)",
+          "glass-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 85%), inset 0 0 0 1px oklch(1 0 0 / 45%), inset 0 -1px 1px 0 oklch(0 0 0 / 6%), inset 0 0 20px 0 oklch(1 0 0 / 25%), 0 8px 24px -10px oklch(0 0 0 / 22%)"
         },
         "dark": {
           "background": "oklch(0.185 0 0)",
@@ -122,19 +128,63 @@
           "sidebar-ring": "oklch(0.55 0 0)",
           "surface-edge": "color-mix(in oklab, var(--foreground) 10%, transparent)",
           "surface-highlight": "0 0 #0000",
-          "surface-well": "0 0 #0000"
+          "surface-well": "0 0 #0000",
+          "surface-sheen": "none",
+          "surface-backdrop": "none",
+          "glass": "oklch(0.32 0 0 / 28%)",
+          "glass-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 28%), inset 0 0 0 1px oklch(1 0 0 / 10%), inset 0 -1px 0 0 oklch(1 0 0 / 8%), inset 0 0 24px 0 oklch(1 0 0 / 5%), 0 10px 30px -12px oklch(0 0 0 / 65%)"
         }
       },
       "css": {
+        "@utility surface-sheen": {
+          "background-image": "var(--surface-sheen)",
+          "backdrop-filter": "var(--surface-backdrop)"
+        },
         "[data-surface=\"lit\"]": {
           "--surface-edge": "oklch(0 0 0 / 9%)",
           "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 90%), inset 0 -1px 0 0 oklch(0 0 0 / 4%), 0 1px 2px 0 oklch(0 0 0 / 6%)",
-          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(0 0 0 / 4%)"
+          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(0 0 0 / 4%)",
+          "--surface-sheen": "none",
+          "--surface-backdrop": "none"
         },
         ".dark [data-surface=\"lit\"]": {
           "--surface-edge": "oklch(0 0 0 / 25%)",
           "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 5%), inset 0 0 0 1px oklch(1 0 0 / 5%), inset 0 0 0 100vmax oklch(1 0 0 / 4.5%), 0 1px 3px 0 oklch(0 0 0 / 35%)",
-          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)"
+          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)",
+          "--surface-sheen": "none",
+          "--surface-backdrop": "none"
+        },
+        "[data-surface=\"metal\"]": {
+          "--surface-edge": "oklch(0 0 0 / 16%)",
+          "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 100%), inset 0 -1px 0 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(1 0 0 / 50%), 0 1px 2px 0 oklch(0 0 0 / 10%), 0 4px 12px -4px oklch(0 0 0 / 12%)",
+          "--surface-well": "inset 0 1px 3px 0 oklch(0 0 0 / 14%), inset 0 0 0 1px oklch(0 0 0 / 8%), 0 1px 0 0 oklch(1 0 0 / 80%)",
+          "--surface-sheen": "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'320'%20height%3D'320'%3E%3Cfilter%20id%3D'b'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.003%200.9'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200.1%200%200%200%20-0.03333333333333333'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23b)'%2F%3E%3C%2Fsvg%3E\"), linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 55%) 42%, transparent 58%), linear-gradient(180deg, oklch(1 0 0 / 70%), oklch(1 0 0 / 0%) 45%, oklch(0 0 0 / 0%) 60%, oklch(0 0 0 / 6%))",
+          "--surface-backdrop": "none"
+        },
+        ".dark [data-surface=\"metal\"]": {
+          "--surface-edge": "oklch(0 0 0 / 50%)",
+          "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 22%), inset 0 -1px 0 0 oklch(1 0 0 / 7%), inset 0 0 0 1px oklch(1 0 0 / 6%), inset 0 0 0 100vmax oklch(1 0 0 / 3%), 0 1px 2px 0 oklch(0 0 0 / 50%), 0 8px 20px -8px oklch(0 0 0 / 55%)",
+          "--surface-well": "inset 0 1px 3px 0 oklch(0 0 0 / 55%), inset 0 0 0 1px oklch(0 0 0 / 30%), 0 1px 0 0 oklch(1 0 0 / 6%)",
+          "--surface-sheen": "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'320'%20height%3D'320'%3E%3Cfilter%20id%3D'b'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.003%200.9'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%200%200%200%200%201%200%200%200%200%201%200.09%200%200%200%20-0.03'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23b)'%2F%3E%3C%2Fsvg%3E\"), linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 5%) 42%, transparent 58%), linear-gradient(180deg, oklch(1 0 0 / 9%), oklch(1 0 0 / 2%) 40%, oklch(0 0 0 / 0%) 60%, oklch(0 0 0 / 18%))",
+          "--surface-backdrop": "none"
+        },
+        "[data-surface=\"glass\"]": {
+          "--card": "oklch(1 0 0 / 55%)",
+          "--popover": "oklch(1 0 0 / 72%)",
+          "--surface-edge": "oklch(0 0 0 / 8%)",
+          "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 85%), inset 0 0 0 1px oklch(1 0 0 / 45%), inset 0 0 20px 0 oklch(1 0 0 / 25%), 0 8px 24px -10px oklch(0 0 0 / 18%)",
+          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 10%), inset 0 0 0 1px oklch(0 0 0 / 5%)",
+          "--surface-sheen": "linear-gradient(180deg, oklch(1 0 0 / 35%), oklch(1 0 0 / 0%) 45%)",
+          "--surface-backdrop": "blur(20px) saturate(1.6)"
+        },
+        ".dark [data-surface=\"glass\"]": {
+          "--card": "oklch(0.26 0 0 / 50%)",
+          "--popover": "oklch(0.24 0 0 / 70%)",
+          "--surface-edge": "oklch(1 0 0 / 10%)",
+          "--surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 24%), inset 0 0 0 1px oklch(1 0 0 / 8%), inset 0 -1px 0 0 oklch(1 0 0 / 6%), inset 0 0 24px 0 oklch(1 0 0 / 4%), 0 10px 30px -12px oklch(0 0 0 / 65%)",
+          "--surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)",
+          "--surface-sheen": "linear-gradient(180deg, oklch(1 0 0 / 7%), oklch(1 0 0 / 0%) 45%)",
+          "--surface-backdrop": "blur(20px) saturate(1.6)"
         },
         "@keyframes shimmer": {
           "from": {
@@ -454,17 +504,69 @@
       "name": "surface-lit",
       "type": "registry:theme",
       "title": "Lit surfaces",
-      "description": "Lights cards, inputs and menus from above: a dark rim, an inner top highlight and a contact shadow. Install after @jds/style.",
+      "description": "Lit surfaces for cards, inputs and menus, for the whole app. To style one element, set data-surface=\"lit\" on it instead. Install after @jds/style.",
       "cssVars": {
         "light": {
           "surface-edge": "oklch(0 0 0 / 9%)",
           "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 90%), inset 0 -1px 0 0 oklch(0 0 0 / 4%), 0 1px 2px 0 oklch(0 0 0 / 6%)",
-          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(0 0 0 / 4%)"
+          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(0 0 0 / 4%)",
+          "surface-sheen": "none",
+          "surface-backdrop": "none"
         },
         "dark": {
           "surface-edge": "oklch(0 0 0 / 25%)",
           "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 5%), inset 0 0 0 1px oklch(1 0 0 / 5%), inset 0 0 0 100vmax oklch(1 0 0 / 4.5%), 0 1px 3px 0 oklch(0 0 0 / 35%)",
-          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)"
+          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)",
+          "surface-sheen": "none",
+          "surface-backdrop": "none"
+        }
+      }
+    },
+    {
+      "name": "surface-metal",
+      "type": "registry:theme",
+      "title": "Metal surfaces",
+      "description": "Metal surfaces for cards, inputs and menus, for the whole app. To style one element, set data-surface=\"metal\" on it instead. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "surface-edge": "oklch(0 0 0 / 16%)",
+          "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 100%), inset 0 -1px 0 0 oklch(0 0 0 / 8%), inset 0 0 0 1px oklch(1 0 0 / 50%), 0 1px 2px 0 oklch(0 0 0 / 10%), 0 4px 12px -4px oklch(0 0 0 / 12%)",
+          "surface-well": "inset 0 1px 3px 0 oklch(0 0 0 / 14%), inset 0 0 0 1px oklch(0 0 0 / 8%), 0 1px 0 0 oklch(1 0 0 / 80%)",
+          "surface-sheen": "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'320'%20height%3D'320'%3E%3Cfilter%20id%3D'b'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.003%200.9'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200%200%200%200%200%200%200%200%200%200%200%200.1%200%200%200%20-0.03333333333333333'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23b)'%2F%3E%3C%2Fsvg%3E\"), linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 55%) 42%, transparent 58%), linear-gradient(180deg, oklch(1 0 0 / 70%), oklch(1 0 0 / 0%) 45%, oklch(0 0 0 / 0%) 60%, oklch(0 0 0 / 6%))",
+          "surface-backdrop": "none"
+        },
+        "dark": {
+          "surface-edge": "oklch(0 0 0 / 50%)",
+          "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 22%), inset 0 -1px 0 0 oklch(1 0 0 / 7%), inset 0 0 0 1px oklch(1 0 0 / 6%), inset 0 0 0 100vmax oklch(1 0 0 / 3%), 0 1px 2px 0 oklch(0 0 0 / 50%), 0 8px 20px -8px oklch(0 0 0 / 55%)",
+          "surface-well": "inset 0 1px 3px 0 oklch(0 0 0 / 55%), inset 0 0 0 1px oklch(0 0 0 / 30%), 0 1px 0 0 oklch(1 0 0 / 6%)",
+          "surface-sheen": "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'320'%20height%3D'320'%3E%3Cfilter%20id%3D'b'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.003%200.9'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%200%200%200%200%201%200%200%200%200%201%200.09%200%200%200%20-0.03'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23b)'%2F%3E%3C%2Fsvg%3E\"), linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 5%) 42%, transparent 58%), linear-gradient(180deg, oklch(1 0 0 / 9%), oklch(1 0 0 / 2%) 40%, oklch(0 0 0 / 0%) 60%, oklch(0 0 0 / 18%))",
+          "surface-backdrop": "none"
+        }
+      }
+    },
+    {
+      "name": "surface-glass",
+      "type": "registry:theme",
+      "title": "Glass surfaces",
+      "description": "Glass surfaces for cards, inputs and menus, for the whole app. To style one element, set data-surface=\"glass\" on it instead. Install after @jds/style.",
+      "cssVars": {
+        "light": {
+          "card": "oklch(1 0 0 / 55%)",
+          "popover": "oklch(1 0 0 / 72%)",
+          "surface-edge": "oklch(0 0 0 / 8%)",
+          "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 85%), inset 0 0 0 1px oklch(1 0 0 / 45%), inset 0 0 20px 0 oklch(1 0 0 / 25%), 0 8px 24px -10px oklch(0 0 0 / 18%)",
+          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 10%), inset 0 0 0 1px oklch(0 0 0 / 5%)",
+          "surface-sheen": "linear-gradient(180deg, oklch(1 0 0 / 35%), oklch(1 0 0 / 0%) 45%)",
+          "surface-backdrop": "blur(20px) saturate(1.6)"
+        },
+        "dark": {
+          "card": "oklch(0.26 0 0 / 50%)",
+          "popover": "oklch(0.24 0 0 / 70%)",
+          "surface-edge": "oklch(1 0 0 / 10%)",
+          "surface-highlight": "inset 0 1px 0 0 oklch(1 0 0 / 24%), inset 0 0 0 1px oklch(1 0 0 / 8%), inset 0 -1px 0 0 oklch(1 0 0 / 6%), inset 0 0 24px 0 oklch(1 0 0 / 4%), 0 10px 30px -12px oklch(0 0 0 / 65%)",
+          "surface-well": "inset 0 1px 2px 0 oklch(0 0 0 / 35%), inset 0 0 0 1px oklch(0 0 0 / 20%)",
+          "surface-sheen": "linear-gradient(180deg, oklch(1 0 0 / 7%), oklch(1 0 0 / 0%) 45%)",
+          "surface-backdrop": "blur(20px) saturate(1.6)"
         }
       }
     },
@@ -659,6 +761,29 @@
       "files": [
         {
           "path": "components/ai/approval.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "agent-runs",
+      "type": "registry:component",
+      "title": "Agent Runs",
+      "description": "Every agent working for you, from a status in your side panel's header or a nav item: what's running and what needs you, approve in place, or open a run in the panel.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/popover",
+        "@jds/shimmer",
+        "@jds/spinner",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/agent-runs.tsx",
           "type": "registry:component"
         }
       ]
@@ -914,6 +1039,10 @@
         {
           "path": "components/voice/voice-orb.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "components/voice/face-mesh.ts",
+          "type": "registry:component"
         }
       ]
     },
@@ -935,6 +1064,25 @@
         {
           "path": "hooks/use-audio-level.ts",
           "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "voice-glow",
+      "type": "registry:component",
+      "title": "Voice Glow",
+      "description": "Light rising from the bottom edge of a voice surface, as if it spills in from outside the screen. It swells with the voice level and breathes while the agent thinks.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "components/voice/voice-glow.tsx",
+          "type": "registry:component"
         }
       ]
     },
@@ -1029,6 +1177,22 @@
       "files": [
         {
           "path": "components/effects/ambient-background.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "liquid-glass",
+      "type": "registry:ui",
+      "title": "Liquid Glass",
+      "description": "A see-through surface for controls that float over content: it blurs and tints the backdrop, lights its rim, and in Chromium bends the backdrop at the edges like a lens.",
+      "dependencies": [
+        "cn@^0.4.0"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/effects/liquid-glass.tsx",
           "type": "registry:component"
         }
       ]
@@ -2098,7 +2262,7 @@
       "name": "mobile-voice-panel",
       "type": "registry:block",
       "title": "Voice panel",
-      "description": "Talk to the agent without leaving the page. A floating bottom panel shows the live caption over your screen, drags up for the whole conversation and the agent's actions, and closes to end the chat.",
+      "description": "Talk to the agent without leaving the page, hands-free or push-to-talk. A floating drawer shows the live caption over your screen and drags up for the whole conversation, or go full screen; closing ends the chat.",
       "dependencies": [
         "cn@^0.4.0",
         "motion"
@@ -2106,9 +2270,12 @@
       "registryDependencies": [
         "@jds/button",
         "@jds/call-controls",
+        "@jds/liquid-glass",
         "@jds/live-transcript",
+        "@jds/push-to-talk",
         "@jds/tool-call",
         "@jds/utils",
+        "@jds/voice-glow",
         "@jds/voice-orb"
       ],
       "files": [
@@ -2121,6 +2288,11 @@
           "path": "recipes/voice-agent/session.ts",
           "type": "registry:component",
           "target": "components/voice-agent/session.ts"
+        },
+        {
+          "path": "recipes/mobile-push-to-talk/session.ts",
+          "type": "registry:component",
+          "target": "components/mobile-push-to-talk/session.ts"
         }
       ]
     },
@@ -2136,6 +2308,7 @@
       "registryDependencies": [
         "@jds/live-transcript",
         "@jds/utils",
+        "@jds/voice-glow",
         "@jds/voice-orb"
       ],
       "files": [
@@ -2173,6 +2346,36 @@
           "path": "recipes/mobile-approval/mobile-approval.tsx",
           "type": "registry:component",
           "target": "components/mobile-approval/mobile-approval.tsx"
+        }
+      ]
+    },
+    {
+      "name": "agent-takeover",
+      "type": "registry:block",
+      "title": "Agent takeover",
+      "description": "The agent works directly on your app's UI while you supervise: a light runs round the surface it has, a bar says what it's doing with Take back, and the cell it's writing lights up inline.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/shimmer",
+        "@jds/spinner",
+        "@jds/utils",
+        "@jds/voice-glow",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/agent-takeover/agent-takeover.tsx",
+          "type": "registry:component",
+          "target": "components/agent-takeover/agent-takeover.tsx"
+        },
+        {
+          "path": "recipes/agent-takeover/session.ts",
+          "type": "registry:component",
+          "target": "components/agent-takeover/session.ts"
         }
       ]
     },

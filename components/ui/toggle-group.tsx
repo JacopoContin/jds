@@ -43,6 +43,8 @@ function ToggleGroup({
       style={{ "--gap": spacing } as React.CSSProperties}
       className={cn(
         "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-lg data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-vertical:flex-col data-vertical:items-stretch",
+        // A segmented control: one sunken track holding the options, like a tab list.
+        variant === "segmented" && "gap-0.5 bg-muted p-[3px] inset-shadow-well",
         className
       )}
       {...props}

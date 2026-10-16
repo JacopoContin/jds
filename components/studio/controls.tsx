@@ -37,7 +37,7 @@ export function Segmented<T extends string>({
       <ToggleGroup
         value={[value]}
         onValueChange={(v) => v[0] && onChange(v[0] as T)}
-        variant="outline"
+        variant="segmented"
         size="sm"
         // Four options wrap to a 2×2 grid, five or more to rows of three, so labels keep their room.
         className={cn(

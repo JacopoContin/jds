@@ -31,7 +31,10 @@ export const baseSwatch: Record<string, string> = {
   slate: "bg-[oklch(0.55_0.05_257)]",
 }
 
-export const primaries = [{ name: "neutral", label: "Neutral" }, ...colorPresets.map(({ name, label }) => ({ name, label }))]
+export const primaries = [
+  { name: "neutral", label: "Neutral" },
+  ...colorPresets.map(({ name, label }) => ({ name, label })),
+]
 export const bases = [{ name: "neutral", label: "Neutral" }, ...baseColors.map(({ name, label }) => ({ name, label }))]
 export const radii = ["0", "0.3", "0.5", "0.625", "0.75", "1"]
 export const fonts = [
@@ -39,9 +42,24 @@ export const fonts = [
   { value: "inter", label: "Inter" },
   { value: "system", label: "System" },
 ]
-export const surfaces = [{ value: "flat", label: "Flat" }, ...surfacePresets.map(({ name, label }) => ({ value: name, label }))]
+export const backgrounds = [
+  { value: "none", label: "None" },
+  { value: "mesh", label: "Mesh" },
+  { value: "aurora", label: "Aurora" },
+  { value: "spotlight", label: "Spotlight" },
+  { value: "rays", label: "Rays" },
+  { value: "waves", label: "Waves" },
+  { value: "dots", label: "Dots" },
+  { value: "grid", label: "Grid" },
+]
+export const surfaces = [
+  { value: "flat", label: "Flat" },
+  ...surfacePresets.map(({ name, label }) => ({ value: name, label })),
+]
 export const orbs: { value: VoiceOrbVariant; label: string }[] = [
   { value: "particles", label: "Particles" },
+  // Not good enough to ship yet: only offered while developing.
+  ...(process.env.NODE_ENV === "production" ? [] : [{ value: "face" as const, label: "Face" }]),
   { value: "ring", label: "Ring" },
   { value: "wave", label: "Wave" },
   { value: "aura", label: "Aura" },
@@ -170,7 +188,12 @@ export function ColorPicker() {
             </Button>
           </div>
           <Section title="Primary color">
-            <Swatches options={primaries} value={values.color} swatch={primarySwatch} onChange={(v) => set("color", v)} />
+            <Swatches
+              options={primaries}
+              value={values.color}
+              swatch={primarySwatch}
+              onChange={(v) => set("color", v)}
+            />
           </Section>
           <Section title="Base color">
             <Swatches options={bases} value={values.base} swatch={baseSwatch} onChange={(v) => set("base", v)} />
@@ -213,6 +236,21 @@ export function ColorPicker() {
               {surfaces.map((s) => (
                 <ToggleGroupItem key={s.value} value={s.value}>
                   {s.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </Section>
+          <Section title="Background">
+            <ToggleGroup
+              value={[values.background]}
+              onValueChange={(v) => v[0] && set("background", v[0] as string)}
+              variant="outline"
+              size="sm"
+              className="grid grid-cols-4"
+            >
+              {backgrounds.map((b) => (
+                <ToggleGroupItem key={b.value} value={b.value}>
+                  {b.label}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
