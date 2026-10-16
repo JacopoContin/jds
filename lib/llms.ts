@@ -107,9 +107,13 @@ ${group("ai")}
 
 ${group("voice")}
 
-## Primitives
+## Effects
 
-${group("components")}
+${group("effects")}
+
+## Foundations
+
+${group("foundations")}
 
 ## Optional
 

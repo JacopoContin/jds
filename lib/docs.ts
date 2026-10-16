@@ -4,7 +4,8 @@ export type ComponentDoc = {
   slug: string
   title: string
   description: string
-  group: "ai" | "voice" | "components"
+  /** Agent, voice and effects are the catalog; foundations are the primitives they build on. */
+  group: "ai" | "voice" | "effects" | "foundations"
   /** Source files, relative to the repo root. Shown in the Code tab and shipped by the registry. */
   files: string[]
   usage: string
@@ -1031,6 +1032,42 @@ const mic = useAudioLevel()
     isNew: true,
   },
   {
+    slug: "voice-glow",
+    title: "Voice Glow",
+    description:
+      "Light rising from the bottom edge of a voice surface, as if it spills in from outside the screen. It swells with the voice level and breathes while the agent thinks.",
+    group: "voice",
+    files: ["components/voice/voice-glow.tsx"],
+    usage: `import { VoiceGlow } from "@/components/voice/voice-glow"
+
+<div className="relative isolate overflow-hidden rounded-4xl">
+  <VoiceGlow state={session.orb} level={session.level} />
+  {/* controls */}
+</div>`,
+    api: [
+      {
+        component: "VoiceGlow",
+        props: [
+          { name: "state", type: "VoiceState", default: '"idle"', description: "Same states as the voice orb." },
+          { name: "level", type: "number", default: "0", description: "Loudness 0 to 1 of whoever is talking." },
+          {
+            name: "palette",
+            type: '"spectrum" | "iris" | "ember" | "primary" | string[]',
+            default: '"spectrum"',
+            description: "Colors left to right along the edge. primary follows the theme.",
+          },
+          { name: "intensity", type: "number", default: "1", description: "Overall brightness, 0 to 1." },
+          {
+            name: "radius",
+            type: "number",
+            description: "Corner radius the edge line follows. Defaults to the container's; pass the display radius at the bottom of a phone screen.",
+          },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "push-to-talk",
     title: "Push to Talk",
     description:
@@ -1148,7 +1185,7 @@ const mic = useAudioLevel()
     title: "Ambient Background",
     description:
       "A soft, moving backdrop for empty chats, voice calls and onboarding: drifting mesh, aurora bands, a spotlight, light rays, waves, or a lit dot or line field, with optional grain. Tinted from the theme's primary color.",
-    group: "components",
+    group: "effects",
     files: ["components/effects/ambient-background.tsx"],
     usage: `import { AmbientBackground } from "@/components/effects/ambient-background"
 
@@ -1181,11 +1218,35 @@ const mic = useAudioLevel()
     isNew: true,
   },
   {
+    slug: "liquid-glass",
+    title: "Liquid Glass",
+    description:
+      "A see-through surface for controls that float over content: it blurs and tints the backdrop, lights its rim, and in Chromium bends the backdrop at the edges like a lens.",
+    group: "effects",
+    files: ["components/effects/liquid-glass.tsx"],
+    usage: `import { LiquidGlass } from "@/components/effects/liquid-glass"
+
+<LiquidGlass className="flex items-center gap-1 rounded-full p-1.5">
+  {/* controls */}
+</LiquidGlass>`,
+    api: [
+      {
+        component: "LiquidGlass",
+        props: [
+          { name: "refraction", type: "number", default: "24", description: "How far the edge bends the backdrop, in px. 0 turns it off. Capped at 0.9 × bezel so the rim squeezes rather than mirrors." },
+          { name: "bezel", type: "number", default: "24", description: "Width of the curved rim that bends light, in px." },
+          { name: "blur", type: "number", default: "6", description: "Backdrop blur in px. Doubled where refraction isn't supported." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "border-beam",
     title: "Border Beam",
     description:
       "A short beam of light that travels around a surface's border. For the one card or input that should draw the eye, or an agent that is working.",
-    group: "components",
+    group: "effects",
     files: ["components/pro/border-beam.tsx"],
     usage: `import { BorderBeam } from "@/components/pro/border-beam"
 
@@ -1215,7 +1276,7 @@ const mic = useAudioLevel()
     title: "Nav Sidebar",
     description:
       "App navigation beside the page: docked, floating or inset. Collapses to a rail of icons or slides out, can peek open on hover, and becomes an overlay on narrow layouts.",
-    group: "components",
+    group: "foundations",
     files: ["components/navigation/nav-sidebar.tsx"],
     usage: `import {
   NavSidebar,
@@ -1388,7 +1449,7 @@ const mic = useAudioLevel()
     slug,
     title,
     description,
-    group: "components",
+    group: "foundations",
     files: [`components/ui/${slug}.tsx`],
     usage: "",
     examples,
@@ -1428,7 +1489,9 @@ export const nav: NavGroup[] = [
   },
   { title: "Agent", items: toNav("ai") },
   { title: "Voice", items: toNav("voice") },
-  { title: "Components", items: toNav("components") },
+  { title: "Effects", items: toNav("effects") },
+  // The primitives live on one page, so the nav stays about agents and voice.
+  { title: "Foundations", items: [{ title: "Primitives", href: "/docs/foundations" }] },
 ]
 
 export const flatNav = nav.flatMap((g) => g.items)

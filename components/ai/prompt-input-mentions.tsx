@@ -209,7 +209,7 @@ function PromptInputMentions({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: duration.fast, ease: ease.out }}
-                className="fixed top-(--menu-y) left-(--menu-x) z-50 w-72 overflow-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-surface-edge inset-shadow-surface"
+                className="fixed top-(--menu-y) left-(--menu-x) z-50 w-72 overflow-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-surface-edge inset-shadow-surface surface-sheen"
               >
                 {results.map((item, i) => (
                   <div

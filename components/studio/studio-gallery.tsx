@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge"
 import { CommandGroup, CommandItem, CommandShortcut } from "@/components/ui/command"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CallControls, CallEnd, CallInterrupt, CallMute } from "@/components/voice/call-controls"
+import { VoiceGlow } from "@/components/voice/voice-glow"
 import { VoiceOrb, type OrbPalette, type VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { AmbientBackground } from "@/components/effects/ambient-background"
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
@@ -69,6 +70,16 @@ function CallPreview() {
         <CallInterrupt />
         <CallEnd />
       </CallControls>
+    </div>
+  )
+}
+
+function VoicePanelPreview() {
+  const { level } = useSimulatedSpectrum(true)
+  return (
+    <div className="relative isolate flex h-40 w-56 flex-col justify-end gap-3 overflow-hidden rounded-3xl border bg-card p-4 shadow-lg">
+      <VoiceGlow state="speaking" level={level} className="h-3/5" />
+      <p className="text-xs">Tomorrow you&apos;re both free at 10:30…</p>
     </div>
   )
 }
@@ -290,6 +301,12 @@ const tools: Tool[] = [
     title: "Voice call",
     body: "Layout, captions, waveform and backdrop for a call screen, with a live sample call.",
     preview: <CallPreview />,
+  },
+  {
+    href: "/studio/voice-panel",
+    title: "Voice panel",
+    body: "Mobile voice chat as a drawer or full screen: panel material, controls, and the glow's colors and texture.",
+    preview: <VoicePanelPreview />,
   },
   {
     href: "/studio/side-panel",

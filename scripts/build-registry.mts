@@ -118,6 +118,8 @@ const items: object[] = [
         "color-surface-edge": "var(--surface-edge)",
         "inset-shadow-surface": "var(--surface-highlight)",
         "inset-shadow-well": "var(--surface-well)",
+        "color-glass": "var(--glass)",
+        "inset-shadow-glass": "var(--glass-highlight)",
         "ease-out-quint": "cubic-bezier(0.22, 1, 0.36, 1)",
         "ease-in-out-quart": "cubic-bezier(0.76, 0, 0.24, 1)",
         "animate-shimmer": "shimmer 2s linear infinite",
@@ -127,6 +129,10 @@ const items: object[] = [
       dark,
     },
     css: {
+      "@utility surface-sheen": {
+        "background-image": "var(--surface-sheen)",
+        "backdrop-filter": "var(--surface-backdrop)",
+      },
       // Lets an app stay flat and light single components with data-surface="lit".
       ...Object.fromEntries(
         surfacePresets.flatMap((p) => [
@@ -167,13 +173,13 @@ const items: object[] = [
     name: `surface-${p.name}`,
     type: "registry:theme",
     title: `${p.label} surfaces`,
-    description: `Lights cards, inputs and menus from above: a dark rim, an inner top highlight and a contact shadow. Install after ${NS}/style.`,
+    description: `${p.label} surfaces for cards, inputs and menus, for the whole app. To style one element, set data-surface="${p.name}" on it instead. Install after ${NS}/style.`,
     cssVars: { light: p.light, dark: p.dark },
   })),
   // Pro items are served by app/r/pro, never from the public registry.
   ...components.filter((c) => !c.pro).map((c) => ({
     name: c.slug,
-    type: c.group === "components" ? "registry:ui" : "registry:component",
+    type: c.group === "ai" || c.group === "voice" ? "registry:component" : "registry:ui",
     title: c.title,
     description: c.description,
     ...analyze(c.files),

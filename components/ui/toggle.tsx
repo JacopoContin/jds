@@ -12,6 +12,9 @@ const toggleVariants = cva(
         default: "bg-transparent",
         outline:
           "border border-input bg-transparent hover:bg-muted aria-pressed:border-foreground/30 data-pressed:border-foreground/30",
+        // Inside a segmented ToggleGroup: the chosen option is raised out of the sunken track.
+        segmented:
+          "border border-transparent bg-transparent text-muted-foreground hover:bg-transparent aria-pressed:bg-background data-pressed:bg-background data-pressed:shadow-sm data-pressed:inset-shadow-surface data-pressed:surface-sheen dark:data-pressed:border-input dark:data-pressed:bg-input/30",
       },
       size: {
         default: "h-8 min-w-8 px-2.5 pointer-coarse:h-11 pointer-coarse:min-w-11 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",

@@ -151,7 +151,7 @@ export const viewport = { viewportFit: "cover" }`,
     tags: ["voice"],
     title: "Voice panel",
     description:
-      "Talk to the agent without leaving the page. A floating bottom panel shows the live caption over your screen, drags up for the whole conversation and the agent's actions, and closes to end the chat.",
+      "Talk to the agent without leaving the page, hands-free or push-to-talk. A floating drawer shows the live caption over your screen and drags up for the whole conversation, or go full screen; closing ends the chat.",
     steps: [
       {
         title: "Wrap your screen",
@@ -161,9 +161,14 @@ export const viewport = { viewportFit: "cover" }`,
 </MobileVoicePanel>`,
       },
       {
-        title: "Style the orb and surface",
-        body: "Paste orb props from the Voice Orb Studio. The panel uses lit surfaces (data-surface=\"lit\") on its own, so it reads as a physical layer even if the rest of your app is flat.",
-        code: `<MobileVoicePanel orb={{ variant: "glass", palette: "iris" }} … />`,
+        title: "Style the panel and glow",
+        body: "Pick drawer or full screen, the panel's material (lit, metal or glass) and the glow's colors and texture in the Voice Panel Studio, then paste the props. It styles itself, so it reads as a physical layer even if the rest of your app is flat.",
+        code: `<MobileVoicePanel
+  layout="drawer"
+  surface="metal"
+  glow={{ palette: ["#ff0055", "#00e5ff", "#ffd400"], reach: 1.2, grain: 0.3 }}
+  …
+/>`,
       },
       {
         title: "Connect your session",
@@ -171,7 +176,11 @@ export const viewport = { viewportFit: "cover" }`,
         code: `const session = useSimulatedVoiceAgent() // swap for useMyVoiceSession()`,
       },
     ],
-    files: ["recipes/mobile-voice-panel/mobile-voice-panel.tsx", "recipes/voice-agent/session.ts"],
+    files: [
+      "recipes/mobile-voice-panel/mobile-voice-panel.tsx",
+      "recipes/voice-agent/session.ts",
+      "recipes/mobile-push-to-talk/session.ts",
+    ],
     session: "recipes/voice-agent/session.ts",
   },
   {
@@ -229,6 +238,42 @@ export const viewport = { viewportFit: "cover" }`,
       },
     ],
     files: ["recipes/mobile-approval/mobile-approval.tsx"],
+  },
+  {
+    slug: "agent-takeover",
+    tags: ["operations"],
+    title: "Agent takeover",
+    description:
+      "The agent works directly on your app's UI while you supervise: a light runs round the surface it has, a bar says what it's doing with Take back, and the cell it's writing lights up inline.",
+    steps: [
+      {
+        title: "Wrap the surface it works on",
+        body: "Put the page or panel the agent edits inside AgentTakeover. While it works, a scrim takes the user's clicks so they never fight the agent for a control.",
+        code: `<AgentTakeover
+  state={session.state}
+  status={session.status}
+  finished={session.finished}
+  onTakeBack={session.takeBack}
+  onResume={session.resume}
+>
+  <YourPage />
+</AgentTakeover>`,
+      },
+      {
+        title: "Mark what it touches",
+        body: "AgentTyped types a new value with a caret; AgentField shows pending, writing and done for each value it fills. Let people click what the agent should look at and pass it to the composer with PromptInputContextItems.",
+        code: `<AgentField state="writing" label="Emailing…">{order.status}</AgentField>
+
+<PromptInputContextItems items={picked} onRemove={unpick} />`,
+      },
+      {
+        title: "Connect your agent",
+        body: "Commit one step at a time and stop between steps on takeBack, so taking back never leaves a half edit.",
+        code: `const session = useSimulatedTakeover() // swap for your agent's actions`,
+      },
+    ],
+    files: ["recipes/agent-takeover/agent-takeover.tsx", "recipes/agent-takeover/session.ts"],
+    session: "recipes/agent-takeover/session.ts",
   },
   {
     slug: "agent-run",

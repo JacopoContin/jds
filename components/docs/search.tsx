@@ -64,7 +64,9 @@ const sections: { heading: string; icon: React.ReactNode; entries: Entry[] }[] =
   },
   { heading: "Agent", icon: <SparkleIcon />, entries: byGroup("ai") },
   { heading: "Voice", icon: <VoiceIcon />, entries: byGroup("voice") },
-  { heading: "Components", icon: <AgentIcon />, entries: byGroup("components") },
+  { heading: "Effects", icon: <AgentIcon />, entries: byGroup("effects") },
+  // Still searchable, after the agent and voice pieces.
+  { heading: "Foundations", icon: <FileIcon />, entries: byGroup("foundations") },
 ]
 
 /** ⌘K / Ctrl+K (or "/") opens a palette over every page and component. */

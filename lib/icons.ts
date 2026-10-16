@@ -46,6 +46,7 @@ export {
   SlidersHorizontal as SettingsIcon,
   AtSign as MentionIcon,
   Folder as FolderIcon,
+  Package as PackageIcon,
   Layers as ScopeIcon,
   Bot as AgentIcon,
   Play as PlayIcon,
