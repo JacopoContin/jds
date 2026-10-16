@@ -20,6 +20,8 @@ import {
   type VoiceOrbVariant,
   type VoiceState,
 } from "@/components/voice/voice-orb"
+import { PushToTalk } from "@/components/voice/push-to-talk"
+import { useAudioLevel } from "@/hooks/use-audio-level"
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
 
 type Config = {
@@ -96,6 +98,7 @@ const materials: Partial<
 /** Starting points: a variant plus the settings that make it read well. */
 const presets: { name: string; config: Partial<Config> }[] = [
   { name: "Sphere", config: { variant: "particles" } },
+  ...(process.env.NODE_ENV === "production" ? [] : [{ name: "Face", config: { variant: "face" as const, glow: 0.3 } }]),
   { name: "Halo", config: { variant: "ring", glow: 0.5 } },
   { name: "Signal", config: { variant: "wave", glow: 0.3, speed: 1.1 } },
   { name: "Iris", config: { variant: "aura", color: "iris", glow: 0.35 } },
@@ -115,7 +118,12 @@ const states: { value: VoiceState; label: string; body: string; status: string }
   { value: "listening", label: "Listening", body: "Hearing the user. Follows mic level.", status: "Listening…" },
   { value: "thinking", label: "Thinking", body: "Working. Faster, turning motion.", status: "Thinking…" },
   { value: "speaking", label: "Speaking", body: "Agent talking. Follows output level.", status: "Speaking…" },
-  { value: "error", label: "Error", body: "Something failed. Destructive and nearly still.", status: "Couldn't connect" },
+  {
+    value: "error",
+    label: "Error",
+    body: "Something failed. Destructive and nearly still.",
+    status: "Couldn't connect",
+  },
 ]
 
 const voiced = (s: VoiceState) => s === "listening" || s === "speaking"
@@ -269,7 +277,12 @@ function CallSurface({ c, state, level }: SurfaceProps) {
   const [startedAt] = React.useState(() => Date.now())
   const segments = [
     { id: "a", speaker: "agent" as const, text: "Hi, this is Aria at Harbor Dental. How can I help?", final: true },
-    { id: "u", speaker: "user" as const, text: "I need to move my cleaning to next week.", final: state !== "listening" },
+    {
+      id: "u",
+      speaker: "user" as const,
+      text: "I need to move my cleaning to next week.",
+      final: state !== "listening",
+    },
   ]
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-6">
@@ -338,11 +351,37 @@ export function VoiceOrbBuilder() {
   const [state, setState] = React.useState<VoiceState>("listening")
   const [cycle, setCycle] = React.useState(false)
   const [surface, setSurface] = React.useState<Surface>("stage")
-  const { level } = useSimulatedSpectrum(voiced(state))
+  // Hold to talk: listening follows your real mic, then the orb thinks and answers.
+  const mic = useAudioLevel()
+  const [holding, setHolding] = React.useState(false)
+  const turn = React.useRef<ReturnType<typeof setTimeout>[]>([])
+  const live = holding && mic.active
+  const simulated = useSimulatedSpectrum(voiced(state) && !live)
+  const level = live ? mic.level : simulated.level
   const set =
     <K extends keyof Config>(key: K) =>
     (value: Config[K]) =>
       setC((prev) => ({ ...prev, [key]: value }))
+
+  const cancelTurn = () => {
+    turn.current.forEach(clearTimeout)
+    turn.current = []
+  }
+  React.useEffect(() => () => turn.current.forEach(clearTimeout), [])
+  const startTalking = () => {
+    cancelTurn()
+    setCycle(false)
+    setHolding(true)
+    setState("listening")
+    void mic.start()
+  }
+  // Let go: a beat of thinking, then a reply, then back to idle, like a real turn.
+  const stopTalking = () => {
+    setHolding(false)
+    mic.stop()
+    setState("thinking")
+    turn.current = [setTimeout(() => setState("speaking"), 900), setTimeout(() => setState("idle"), 900 + 2800)]
+  }
 
   // Walk through every state so transitions can be judged, not just end points.
   React.useEffect(() => {
@@ -407,6 +446,8 @@ export function VoiceOrbBuilder() {
             }
             options={[
               { value: "particles", label: "Particles" },
+              // Not good enough to ship yet: only offered while developing.
+              ...(process.env.NODE_ENV === "production" ? [] : [{ value: "face" as const, label: "Face" }]),
               { value: "ring", label: "Ring" },
               { value: "wave", label: "Wave" },
               { value: "aura", label: "Aura" },
@@ -529,6 +570,7 @@ export function VoiceOrbBuilder() {
                   value={[state]}
                   onValueChange={(v) => {
                     if (!v[0]) return
+                    cancelTurn()
                     setCycle(false)
                     setState(v[0] as VoiceState)
                   }}
@@ -543,6 +585,12 @@ export function VoiceOrbBuilder() {
                   ))}
                 </ToggleGroup>
                 <Toggle label="Cycle states" checked={cycle} onChange={setCycle} />
+              </div>
+              <div className="flex items-center gap-3">
+                <PushToTalk onPressStart={startTalking} onPressEnd={stopTalking} level={level} className="size-12" />
+                <span className="text-xs text-muted-foreground">
+                  {holding ? (mic.active ? "Listening to your mic…" : "Listening…") : "Hold to talk, or hold Space"}
+                </span>
               </div>
             </div>
           </div>

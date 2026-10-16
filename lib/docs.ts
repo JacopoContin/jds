@@ -900,7 +900,7 @@ const { status, sendMessage, stop } = useChat()
     description:
       "Presence for a voice agent, drawn in the primary color. Ten variants: particle mesh, glowing ring, twisting ribbons, soft aura, circular bars, halftone dots, three WebGL shaders (plasma, liquid and glass), and a minimal dot for small spots. All share the same states, speed, glow and sensitivity, and react to voice level. Tune one in the Studio.",
     group: "voice",
-    files: ["components/voice/voice-orb.tsx"],
+    files: ["components/voice/voice-orb.tsx", "components/voice/face-mesh.ts"],
     usage: `import { VoiceOrb, VoiceOrbProvider } from "@/components/voice/voice-orb"
 
 <VoiceOrb state="listening" level={level} />

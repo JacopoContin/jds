@@ -1016,6 +1016,10 @@
         {
           "path": "components/voice/voice-orb.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "components/voice/face-mesh.ts",
+          "type": "registry:component"
         }
       ]
     },

@@ -38,7 +38,7 @@ export default function Home() {
         {featured.map(({ slug, demo, studio }) => {
           const doc = componentBySlug[slug]
           return (
-            <div key={slug} className="flex flex-col overflow-hidden rounded-xl border bg-card">
+            <div key={slug} className="flex flex-col overflow-hidden rounded-xl bg-card ring-1 ring-surface-edge inset-shadow-surface surface-sheen">
               <div className="flex min-h-96 flex-1 items-center justify-center p-6">
                 <Example name={demo ?? `${slug}-demo`} />
               </div>
@@ -62,7 +62,7 @@ export default function Home() {
       {/* The agent showcase: a small Voice Panel Studio running the real recipe on a phone, in the site theme. */}
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium text-muted-foreground">Agent</h2>
-        <div className="flex flex-col overflow-hidden rounded-xl border bg-card">
+        <div className="flex flex-col overflow-hidden rounded-xl bg-card ring-1 ring-surface-edge inset-shadow-surface surface-sheen">
           <div className="flex justify-center p-6 md:p-10">
             <Example name="voice-panel-studio-preview" />
           </div>
@@ -84,7 +84,7 @@ export default function Home() {
       {/* The agent working directly on your app's UI, with you supervising: edge light, take back, inline signals. */}
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium text-muted-foreground">Takeover</h2>
-        <div className="flex flex-col overflow-hidden rounded-xl border bg-card">
+        <div className="flex flex-col overflow-hidden rounded-xl bg-card ring-1 ring-surface-edge inset-shadow-surface surface-sheen">
           <div className="p-6 md:p-10">
             <Example name="agent-takeover" />
           </div>

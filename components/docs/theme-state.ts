@@ -13,6 +13,8 @@ export const domSettings = {
   radius: { key: "jds:radius", fallback: "0.625", css: "0.625" },
   font: { key: "jds:font", fallback: "geist", css: "geist" },
   surface: { key: "jds:surface", fallback: "flat", css: "flat" },
+  // A moving backdrop behind the whole site, to see surfaces (glass above all) over something.
+  background: { key: "jds:background", fallback: "none", css: "none" },
 } as const
 
 export type DomSetting = keyof typeof domSettings
@@ -36,7 +38,7 @@ function readDom(attr: DomSetting) {
 }
 
 function readAll(): Record<DomSetting, string> {
-  return { color: readDom("color"), base: readDom("base"), radius: readDom("radius"), font: readDom("font"), surface: readDom("surface") }
+  return Object.fromEntries((Object.keys(domSettings) as DomSetting[]).map((a) => [a, readDom(a)])) as Record<DomSetting, string>
 }
 
 const fallbacks = Object.fromEntries(

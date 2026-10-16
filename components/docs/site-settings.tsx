@@ -6,7 +6,20 @@ import { applyStoredTheme } from "@/components/docs/theme-state"
 import { VoiceOrbProvider, type VoiceOrbVariant } from "@/components/voice/voice-orb"
 
 const ORB_KEY = "jds:orb"
-const ORB_VARIANTS = ["particles", "ring", "wave", "aura", "bars", "halftone", "plasma", "liquid", "glass", "dot"]
+// Face isn't shipped yet, so a saved "face" falls back to the default in production.
+const ORB_VARIANTS = [
+  "particles",
+  ...(process.env.NODE_ENV === "production" ? [] : ["face"]),
+  "ring",
+  "wave",
+  "aura",
+  "bars",
+  "halftone",
+  "plasma",
+  "liquid",
+  "glass",
+  "dot",
+]
 const isOrbVariant = (v: string | null): v is VoiceOrbVariant => !!v && ORB_VARIANTS.includes(v)
 
 type SiteSettings = { orb: VoiceOrbVariant; setOrb: (v: VoiceOrbVariant) => void }

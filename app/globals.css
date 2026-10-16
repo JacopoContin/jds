@@ -536,6 +536,10 @@ body:has([data-preview]) [data-site-header] {
   --safe-top: 59px;
   --safe-bottom: 34px;
 }
+/* Phone previews show the recipe alone, without the site's background. */
+:root:has([data-preview]) [data-slot="site-background"] {
+  display: none;
+}
 /* Tooltips open on mouse hover; a phone never shows them. */
 :root:has([data-preview]) [data-slot="tooltip-content"] {
   display: none;

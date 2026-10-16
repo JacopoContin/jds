@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 
 import { settingsInitScript } from "@/components/docs/theme-state"
+import { SiteBackground } from "@/components/docs/site-background"
 import { SiteHeader } from "@/components/docs/site-header"
 import { SiteSettingsProvider } from "@/components/docs/site-settings"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="isolate flex min-h-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SiteSettingsProvider>
+            <SiteBackground />
             <TooltipProvider>
               <SiteHeader />
               <div className="flex flex-1 flex-col">{children}</div>
