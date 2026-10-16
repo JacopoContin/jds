@@ -466,6 +466,35 @@ const { status, sendMessage, stop } = useChat()
     isNew: true,
   },
   {
+    slug: "agent-runs",
+    title: "Agent Runs",
+    description:
+      "Every agent working for you, from a status in your side panel's header or a nav item: what's running and what needs you, approve in place, or open a run in the panel.",
+    group: "ai",
+    files: ["components/ai/agent-runs.tsx"],
+    usage: `import { AgentRuns } from "@/components/ai/agent-runs"
+
+<AgentRuns runs={runs} onOpen={openInPanel} onApprove={approve} onDeny={deny} />`,
+    api: [
+      {
+        component: "AgentRuns",
+        props: [
+          {
+            name: "runs",
+            type: "AgentRun[]",
+            description: "id, title, agent, status (needs-you, running, done), detail, startedAt for a live timer, duration.",
+          },
+          { name: "onOpen", type: "(id: string) => void", description: "A run was picked: show its thread in your panel." },
+          { name: "onApprove", type: "(id: string) => void", description: "Approve a run that needs you, from the list." },
+          { name: "onDeny", type: "(id: string) => void", description: "Deny it." },
+          { name: "onOpenAll", type: "() => void", description: "Adds Open all, e.g. to a full agent inbox." },
+          { name: "side", type: '"top" | "bottom" | "left" | "right"', default: '"bottom"', description: "Use right in a nav sidebar." },
+        ],
+      },
+    ],
+    isNew: true,
+  },
+  {
     slug: "agent-steps",
     title: "Agent Steps",
     description: "Plan and progress for a multi-step run: what's done, what's running, what's next.",

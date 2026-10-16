@@ -104,6 +104,7 @@ export const examples: Record<string, ComponentType> = {
   "agent-side-panel": dynamic(() => import("./agent-side-panel-demo")),
   "agent-run": dynamic(() => import("@/recipes/agent-run/agent-run")),
   "agent-takeover": dynamic(() => import("./agent-takeover-demo")),
+  "agent-runs-demo": dynamic(() => import("./agent-runs-demo")),
   "agent-settings": dynamic(() => import("@/recipes/agent-settings/agent-settings")),
   "chat-app": dynamic(() => import("@/recipes/chat-app/chat-app")),
   "run-history": dynamic(() => import("@/recipes/run-history/run-history")),

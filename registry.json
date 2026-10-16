@@ -766,6 +766,29 @@
       ]
     },
     {
+      "name": "agent-runs",
+      "type": "registry:component",
+      "title": "Agent Runs",
+      "description": "Every agent working for you, from a status in your side panel's header or a nav item: what's running and what needs you, approve in place, or open a run in the panel.",
+      "dependencies": [
+        "cn@^0.4.0",
+        "motion"
+      ],
+      "registryDependencies": [
+        "@jds/button",
+        "@jds/popover",
+        "@jds/shimmer",
+        "@jds/spinner",
+        "@jds/utils"
+      ],
+      "files": [
+        {
+          "path": "components/ai/agent-runs.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "agent-steps",
       "type": "registry:component",
       "title": "Agent Steps",
