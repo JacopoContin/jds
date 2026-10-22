@@ -4,9 +4,9 @@ import * as React from "react"
 import { useTheme } from "next-themes"
 import { cn } from "cn"
 
-import { sans } from "@/app/fonts"
+import { bricolage, grotesk, sans, serif } from "@/app/fonts"
 import { baseColorVars, baseColors, colorPresets } from "@/lib/colors"
-import type { DirectionTheme } from "@/lib/directions"
+import type { DirectionTheme, Heading } from "@/lib/directions"
 import { flatSurface, surfacePresets } from "@/lib/surfaces"
 import { SYSTEM_FONT } from "@/lib/theme"
 
@@ -14,6 +14,13 @@ const fontFamily: Record<string, string> = {
   geist: sans.style.fontFamily,
   inter: "var(--font-inter)",
   system: SYSTEM_FONT,
+}
+
+const headingFamily: Record<Heading, string> = {
+  serif: serif.style.fontFamily,
+  grotesk: grotesk.style.fontFamily,
+  bricolage: bricolage.style.fontFamily,
+  body: "var(--font-sans)",
 }
 
 /**
@@ -29,6 +36,7 @@ function themeVars(t: DirectionTheme, mode: "light" | "dark") {
     ...surface[mode],
     radius: `${t.radius}rem`,
     "font-sans": fontFamily[t.font] ?? fontFamily.geist,
+    "font-heading": headingFamily[t.heading],
   }
   return Object.fromEntries(Object.entries(vars).map(([k, v]) => [`--${k}`, v])) as React.CSSProperties
 }

@@ -20,7 +20,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --font-heading: var(--font-sans);
+  /* Display type for headings. Falls back to the body font until an app sets --font-heading. */
+  --font-heading: var(--font-heading, var(--font-sans));
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);

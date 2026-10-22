@@ -204,9 +204,9 @@ function DirectorPreview() {
           data-surface={d.theme.surface === "flat" ? undefined : d.theme.surface}
           className={cn("flex w-24 flex-col gap-2 rounded-lg border p-2.5", i === 1 && "mb-4")}
         >
-          <div className="h-1.5 w-12 rounded-full bg-muted-foreground/40" />
+          <span className="font-heading text-2xl leading-none">Aa</span>
           <div className="h-1.5 w-16 rounded-full bg-muted" />
-          <div className="mt-3 h-5 rounded-md bg-primary" />
+          <div className="mt-2 h-5 rounded-md bg-primary" />
         </ThemeScope>
       ))}
     </div>
@@ -315,7 +315,7 @@ const tools: Tool[] = [
   {
     href: "/studio/director",
     title: "Creative director",
-    body: "No brand yet? Say how your product should feel and pick from three complete looks.",
+    body: "No brand yet? Say how your product should feel, pick from three landing pages, and take the code.",
     preview: <DirectorPreview />,
   },
   {

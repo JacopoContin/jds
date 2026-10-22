@@ -18,6 +18,7 @@
       ],
       "cssVars": {
         "theme": {
+          "font-heading": "var(--font-heading, var(--font-sans))",
           "color-success": "var(--success)",
           "color-success-foreground": "var(--success-foreground)",
           "color-warning": "var(--warning)",
@@ -590,6 +591,11 @@
           "path": "skills/jds/references/copy.md",
           "type": "registry:file",
           "target": ".claude/skills/jds/references/copy.md"
+        },
+        {
+          "path": "skills/jds/references/landing.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/landing.md"
         },
         {
           "path": "skills/jds/references/layout.md",
@@ -2716,6 +2722,31 @@
           "path": "recipes/run-history/run-history.tsx",
           "type": "registry:component",
           "target": "components/run-history/run-history.tsx"
+        }
+      ]
+    },
+    {
+      "name": "landing-page",
+      "type": "registry:block",
+      "title": "Landing page",
+      "description": "A one-page site for your AI product: header, a hero with the product working, how it works, a closing call to action and a footer. Pick its look in the Creative Director.",
+      "dependencies": [
+        "cn@^0.4.0"
+      ],
+      "registryDependencies": [
+        "@jds/ambient-background",
+        "@jds/button",
+        "@jds/message",
+        "@jds/prompt-input",
+        "@jds/tool-call",
+        "@jds/utils",
+        "@jds/voice-orb"
+      ],
+      "files": [
+        {
+          "path": "recipes/landing-page/landing-page.tsx",
+          "type": "registry:component",
+          "target": "components/landing-page/landing-page.tsx"
         }
       ]
     }

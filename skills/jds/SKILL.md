@@ -26,7 +26,7 @@ JDS ships components and tokens. These rules are the taste that goes with them. 
 
 These are the patterns that make UI look AI-generated. Don't produce them unless asked:
 
-- A hero with a gradient headline, a subheading and two CTA buttons above every page.
+- A hero with a gradient headline, a subheading and two CTA buttons above every page. Heroes belong on a landing page only; see [landing](references/landing.md).
 - Purple-to-blue gradients, glowing borders, or `shadow-2xl` on ordinary cards.
 - Cards inside cards inside cards. One level of surface, then use spacing and dividers.
 - Feature grids of three icon-title-paragraph cards.
@@ -47,6 +47,7 @@ Read the file that matches what you are doing:
 - [copy.md](references/copy.md): labels, empty states, errors
 - [mobile.md](references/mobile.md): touch, safe areas, no hover
 - [agent-ui.md](references/agent-ui.md): chat, voice, tool calls, approvals, streaming
+- [landing.md](references/landing.md): a landing page for the product, hero to footer
 
 ## Check your work
 

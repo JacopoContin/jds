@@ -9,11 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { CheckIcon, DownloadIcon, FileIcon } from "@/lib/icons"
 import { site } from "@/lib/site"
-import { fontSnippet, isDefaultTheme, orbSnippet, themeQuery, themeUrl, type ThemeChoice } from "@/lib/theme"
+import { fontSnippet, isDefaultTheme, orbSnippet, themeInstall, themeQuery, type ThemeChoice } from "@/lib/theme"
 import { tokenFiles, tokenFormats, tokensUrl } from "@/lib/token-formats"
 
-const installCommand = (t: ThemeChoice) =>
-  isDefaultTheme(t) ? `shadcn@latest add ${site.namespace}/style` : `shadcn@latest add "${themeUrl(t)}"`
 
 function markdown(t: ThemeChoice) {
   const font = fontSnippet(t)
@@ -28,9 +26,11 @@ function markdown(t: ThemeChoice) {
       ["Surfaces", t.surface],
       ["Voice orb", t.orb],
     ],
-    install: `npx ${installCommand(t)}`,
+    install: themeInstall(t)
+      .map((c) => `npx ${c}`)
+      .join("\n"),
     placement: [
-      "Run the install once. It adds the JDS style and writes the theme's variables into globals.css.",
+      "Run the install. It adds the JDS style, then writes the theme's variables over it in globals.css.",
       font
         ? "Load the font in the root layout (app/layout.tsx) with the variable --font-sans, as in the code."
         : "Nothing to load for the font: the theme uses the system font stack.",
@@ -75,11 +75,13 @@ export function ThemeExport({
         <ol className="flex min-w-0 flex-col gap-5 text-sm [&>li]:min-w-0">
           <li className="flex flex-col gap-2">
             <span className="font-medium">1. Install the theme</span>
-            <Command command={installCommand(theme)} />
+            {themeInstall(theme).map((c) => (
+              <Command key={c} command={c} />
+            ))}
             <span className="text-xs text-muted-foreground">
               {isDefaultTheme(theme)
                 ? "These are the default choices, so the JDS style is all you need."
-                : "Adds the JDS style and writes this theme's variables into globals.css."}
+                : "Adds the JDS style, then writes this theme's variables over it in globals.css."}
             </span>
           </li>
           {font && (

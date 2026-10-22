@@ -179,7 +179,8 @@ const rules = [
     "Marketing copy. Say what the thing does in plain words.",
   ],
   ["copy", "warn", /—/, "Em dash in UI copy. Use a comma, colon or parentheses."],
-  ["copy", "warn", /["'>][^"'<]*\p{Extended_Pictographic}/u, "Emoji in UI. Use an icon from lib/icons.ts."],
+  // ©, ® and ™ are pictographic in Unicode but are plain text marks.
+  ["copy", "warn", /["'>][^"'<]*[\p{Extended_Pictographic}--[©®™]]/v, "Emoji in UI. Use an icon from lib/icons.ts."],
 ]
 
 const skipDirs = new Set(["node_modules", ".next", ".git", "dist", "build", "out", ".claude", "ui"])
