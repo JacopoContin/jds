@@ -121,8 +121,67 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
-    title: "Orbs: more families and visualizers",
+    title: "Studio: navigation and backgrounds, round two",
+    status: "done",
+    items: [
+      "Nav Sidebar component with its own Studio (live)",
+      "Spotlight, rays, waves and grid backgrounds (live)",
+      "Richer drift in ambient background layers (live)",
+    ],
+  },
+  {
+    title: "JDS Pro",
+    status: "done",
+    items: [
+      "License-gated registry and a /pro page",
+      "Live previews of Pro components in the docs",
+    ],
+  },
+  {
+    title: "Surfaces and effects",
+    status: "done",
+    items: [
+      "Lit surface lighting tokens, scoped to any element with data-surface",
+      "Metal and glass surface presets, segmented toggle group",
+      "Voice Glow and Liquid Glass effects",
+      "Site background setting in Customize, to test surfaces over ambient backgrounds",
+    ],
+  },
+  {
+    title: "Agentic refocus",
+    status: "done",
+    items: [
+      "Voice Panel Studio: drawer or full screen, hands-free or push-to-talk, panel material (live)",
+      "Mobile voice panel recipe (live)",
+      "Agent takeover recipe: edge light, take back bar, inline signals, context selection (live)",
+      "Agent runs status and popover for the side panel: approve in place, live timers (live)",
+      "Catalog split into agent, voice, effects and foundations",
+    ],
+  },
+  {
+    title: "Skills: taste built into the system",
     status: "next",
+    items: [
+      "Installable agent skills from the registry: layout, type, color, motion, copy and mobile",
+      "Short rules with a reason each, written for the agent that builds with JDS",
+      "Every rule that can be checked ships with a check: lint rules, contrast, type scale and touch targets",
+      "Served alongside llms.txt, so any agent picks them up",
+    ],
+  },
+  {
+    title: "Studio: creative director",
+    status: "next",
+    items: [
+      "For builders with no brand: describe the product, who it's for and how it should feel",
+      "Three deliberately distinct directions, each a complete, valid theme with a one-line rationale",
+      "Fixed opinions (spacing rhythm, type scale, contrast, motion budget, banned patterns), free expression (hue, warmth, type pairing, radius, material, motion personality, background, orb)",
+      "Pick one, tune it, preview it on real recipes",
+      "Exports tokens, code and a brand skill that keeps agents on-brand after export",
+    ],
+  },
+  {
+    title: "Orbs: more families and visualizers",
+    status: "planned",
     items: [
       "Mesh gradient, aurora, sonic rings and halo",
       "Visualizers: circular waveform, radial bars, spectrogram, audio ribbon, pulsing rings",
