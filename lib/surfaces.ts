@@ -28,24 +28,6 @@ function brushed(ink: 0 | 1, strength: number) {
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }
 
-/** Flat, the default: mirrors the surface tokens in :root and .dark in app/globals.css. */
-export const flatSurface: Pick<SurfacePreset, "light" | "dark"> = {
-  light: {
-    "surface-edge": "color-mix(in oklab, var(--foreground) 10%, transparent)",
-    "surface-highlight": "0 0 #0000",
-    "surface-well": "0 0 #0000",
-    "surface-sheen": "none",
-    "surface-backdrop": "none",
-  },
-  dark: {
-    "surface-edge": "color-mix(in oklab, var(--foreground) 10%, transparent)",
-    "surface-highlight": "0 0 #0000",
-    "surface-well": "0 0 #0000",
-    "surface-sheen": "none",
-    "surface-backdrop": "none",
-  },
-}
-
 export const surfacePresets: SurfacePreset[] = [
   {
     name: "lit",

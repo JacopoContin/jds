@@ -7,7 +7,7 @@
  * backend replaces the simulated one without touching the UI. The rest keep their scripted
  * behaviour inside the component and get a session as they grow.
  */
-export type RecipeTag = "voice" | "panel" | "chat" | "operations" | "site"
+export type RecipeTag = "voice" | "panel" | "chat" | "operations"
 
 /** Quick filters on /recipes, in display order. */
 export const recipeTags: { value: RecipeTag; label: string }[] = [
@@ -15,7 +15,6 @@ export const recipeTags: { value: RecipeTag; label: string }[] = [
   { value: "panel", label: "Side panel" },
   { value: "chat", label: "Chat" },
   { value: "operations", label: "Operations" },
-  { value: "site", label: "Landing page" },
 ]
 
 export type RecipePlatform = "web" | "mobile"
@@ -434,25 +433,6 @@ export const viewport = { viewportFit: "cover", interactiveWidget: "resizes-cont
       "Browse and add prebuilt agents. Search and category filters, details with permissions, and add or remove in place.",
     files: ["recipes/agent-marketplace/agent-marketplace.tsx"],
     hidden: true,
-  },
-  {
-    slug: "landing-page",
-    tags: ["site"],
-    title: "Landing page",
-    description:
-      "A one-page site for your AI product: header, a hero with the product working, how it works, a closing call to action and a footer. Pick its look in the Creative Director.",
-    steps: [
-      {
-        title: "Pick a direction",
-        body: "Say how your product should feel in the Creative Director and choose one of three looks. Its Code tab has the theme, fonts and page below, filled in.",
-      },
-      {
-        title: "Write your copy",
-        body: "Pass your product's name and one sentence on what it does. The feature rows are placeholders in the file: replace them in your own words.",
-        code: `<LandingPage name="Acme" description="An assistant that does the busywork, so your team can do the work." hero="left" />`,
-      },
-    ],
-    files: ["recipes/landing-page/landing-page.tsx"],
   },
 ]
 

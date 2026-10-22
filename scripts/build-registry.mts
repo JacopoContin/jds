@@ -109,7 +109,6 @@ const items: object[] = [
     registryDependencies: [`${NS}/utils`],
     cssVars: {
       theme: {
-        "font-heading": "var(--font-heading, var(--font-sans))",
         "color-success": "var(--success)",
         "color-success-foreground": "var(--success-foreground)",
         "color-warning": "var(--warning)",

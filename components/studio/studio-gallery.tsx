@@ -27,9 +27,7 @@ import { CallControls, CallEnd, CallInterrupt, CallMute } from "@/components/voi
 import { VoiceGlow } from "@/components/voice/voice-glow"
 import { VoiceOrb, type OrbPalette, type VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { AmbientBackground } from "@/components/effects/ambient-background"
-import { ThemeScope } from "@/components/studio/theme-scope"
 import { useSimulatedSpectrum } from "@/hooks/use-simulated-spectrum"
-import { deal } from "@/lib/directions"
 import { AddIcon, ArrowRightIcon, ChartIcon, SparkleIcon, WebSearchIcon } from "@/lib/icons"
 import { spring } from "@/lib/motion"
 
@@ -193,26 +191,6 @@ function ArtifactPreview() {
   )
 }
 
-/** Three directions side by side, each a tiny surface in its own theme. */
-function DirectorPreview() {
-  return (
-    <div className="flex items-end gap-3">
-      {deal([]).map((d, i) => (
-        <ThemeScope
-          key={d.name}
-          theme={d.theme}
-          data-surface={d.theme.surface === "flat" ? undefined : d.theme.surface}
-          className={cn("flex w-24 flex-col gap-2 rounded-lg border p-2.5", i === 1 && "mb-4")}
-        >
-          <span className="font-heading text-2xl leading-none">Aa</span>
-          <div className="h-1.5 w-16 rounded-full bg-muted" />
-          <div className="mt-2 h-5 rounded-md bg-primary" />
-        </ThemeScope>
-      ))}
-    </div>
-  )
-}
-
 function ExperiencePreview() {
   const { level } = useSimulatedSpectrum(true)
   return (
@@ -311,12 +289,6 @@ const tools: Tool[] = [
     body: "Pick chat, a side panel copilot or a voice agent, then set the look, parts and behaviour in one flow and export the whole app.",
     preview: <ExperiencePreview />,
     featured: true,
-  },
-  {
-    href: "/studio/director",
-    title: "Creative director",
-    body: "No brand yet? Say how your product should feel, pick from three landing pages, and take the code.",
-    preview: <DirectorPreview />,
   },
   {
     href: "/studio/voice-orb",

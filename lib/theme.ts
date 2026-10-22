@@ -14,7 +14,7 @@ export const themeDefaults: ThemeChoice = {
   orb: "particles",
 }
 
-export const SYSTEM_FONT ='ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'
+const SYSTEM_FONT = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'
 
 /** Reads a choice from query params, falling back to defaults for anything missing or unknown. */
 export function parseTheme(params: URLSearchParams): ThemeChoice {

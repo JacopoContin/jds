@@ -170,19 +170,6 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     ],
   },
   {
-    title: "Studio: creative director",
-    status: "next",
-    items: [
-      "For builders with no brand: name the product, say what it does and how it should feel (live)",
-      "Three landing pages in deliberately distinct directions, each with a one-line rationale (live)",
-      "Fixed opinions (spacing rhythm, type scale, contrast, banned patterns), free expression (color, base, display type, radius, material, background, hero, orb) (live)",
-      "Landing page recipe and display faces for headings, installable with the theme (live)",
-      "Contrast-safe color presets",
-      "More display faces and section types",
-      "Exports a brand skill that keeps agents on-brand after export",
-    ],
-  },
-  {
     title: "Orbs: more families and visualizers",
     status: "planned",
     items: [

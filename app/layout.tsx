@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
+import { Geist, Geist_Mono, Inter } from "next/font/google"
 
-import { inter, mono, sans } from "@/app/fonts"
 import { settingsInitScript } from "@/components/docs/theme-state"
 import { SiteBackground } from "@/components/docs/site-background"
 import { SiteHeader } from "@/components/docs/site-header"
@@ -9,6 +9,10 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import "./globals.css"
+
+const sans = Geist({ variable: "--font-sans", subsets: ["latin"] })
+const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap", preload: false })
 
 export const metadata: Metadata = {
   title: { default: "JDS · Jaco Design System", template: "%s · JDS" },
