@@ -71,6 +71,7 @@ export {
   Users as UsersIcon,
   Calendar as CalendarIcon,
   PanelLeft as SidebarIcon,
+  Shuffle as ShuffleIcon,
 } from "lucide-react"
 
 export type { LucideIcon as IconComponent } from "lucide-react"
