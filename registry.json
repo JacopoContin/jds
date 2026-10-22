@@ -571,6 +571,54 @@
       }
     },
     {
+      "name": "skills",
+      "type": "registry:item",
+      "title": "JDS skills",
+      "description": "Design rules for coding agents: layout, type, color, motion, copy, mobile and agent UI.",
+      "files": [
+        {
+          "path": "skills/jds/references/agent-ui.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/agent-ui.md"
+        },
+        {
+          "path": "skills/jds/references/color.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/color.md"
+        },
+        {
+          "path": "skills/jds/references/copy.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/copy.md"
+        },
+        {
+          "path": "skills/jds/references/layout.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/layout.md"
+        },
+        {
+          "path": "skills/jds/references/mobile.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/mobile.md"
+        },
+        {
+          "path": "skills/jds/references/motion.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/motion.md"
+        },
+        {
+          "path": "skills/jds/references/type.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/references/type.md"
+        },
+        {
+          "path": "skills/jds/SKILL.md",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/SKILL.md"
+        }
+      ]
+    },
+    {
       "name": "conversation",
       "type": "registry:component",
       "title": "Conversation",

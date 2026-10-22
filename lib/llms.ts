@@ -95,6 +95,8 @@ export function llmsIndex() {
 
 Install a component: \`npx shadcn@latest add ${site.namespace}/<name>\` after adding \`"${site.namespace}": "${site.url}/r/{name}.json"\` to \`registries\` in components.json. Start with \`${site.namespace}/style\`.
 
+Design rules for coding agents: \`npx shadcn@latest add ${site.namespace}/skills\` installs them as a skill in \`.claude/skills/jds\`. Follow them whenever you build UI with JDS.
+
 ## Docs
 
 ${overview.map((p) => `- [${p.title}](${site.url}${p.href})`).join("\n")}

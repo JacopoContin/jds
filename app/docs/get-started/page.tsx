@@ -134,6 +134,11 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
         The registry is plain JSON at <Code>{`${site.url}/r/{name}.json`}</Code>. With the namespace in{" "}
         <Code>components.json</Code>, the shadcn MCP server can search and install JDS components from your agent.
       </P>
+      <P>
+        Install the design rules as a skill, so your agent builds with JDS the way it was designed: layout, type,
+        color, motion, copy, mobile and agent UI.
+      </P>
+      <Command command={`shadcn@latest add ${site.namespace}/skills`} />
       <List>
         <li>
           <a href="/llms.txt" className="text-foreground underline underline-offset-4">
