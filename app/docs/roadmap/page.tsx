@@ -164,7 +164,8 @@ const phases: { title: string; status: Status; items: readonly string[] }[] = [
     items: [
       "Installable agent skills from the registry: layout, type, color, motion, copy and mobile",
       "Short rules with a reason each, written for the agent that builds with JDS",
-      "Every rule that can be checked ships with a check: lint rules, contrast, type scale and touch targets",
+      "A check script in the skill: token contrast in light and dark, and the banned patterns in source (live)",
+      "Type scale and touch target checks",
       "Served alongside llms.txt, so any agent picks them up",
     ],
   },

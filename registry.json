@@ -612,6 +612,11 @@
           "target": ".claude/skills/jds/references/type.md"
         },
         {
+          "path": "skills/jds/scripts/check.mjs",
+          "type": "registry:file",
+          "target": ".claude/skills/jds/scripts/check.mjs"
+        },
+        {
           "path": "skills/jds/SKILL.md",
           "type": "registry:file",
           "target": ".claude/skills/jds/SKILL.md"

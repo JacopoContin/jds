@@ -10,7 +10,8 @@
     "registry:build": "node scripts/build-registry.mts && shadcn build",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
-    "pro:fetch": "node scripts/fetch-pro.mts"
+    "pro:fetch": "node scripts/fetch-pro.mts",
+    "check:design": "node skills/jds/scripts/check.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -50,4 +50,7 @@ Read the file that matches what you are doing:
 
 ## Check your work
 
-Run `pnpm lint` before you call UI done. If the project has `@shadcn/lint`, fix every error it reports by using the token or variant its message names. Never fix one with an `eslint-disable` comment.
+Before you call UI done:
+
+1. Run `node .claude/skills/jds/scripts/check.mjs`. It checks text contrast for every token pair in `globals.css`, light and dark, and flags the patterns above in source: palette colors, direct icon imports, hover-only actions, removed focus rings, hand-tuned motion, heavy shadows and weights, `h-screen`, marketing copy, em dashes and emoji. Fix every error. Fix each warning, or leave a `jds-check-ignore` comment saying why it is right.
+2. Run `pnpm lint`. If the project has `@shadcn/lint`, fix every error by using the token or variant its message names. Never fix one with an `eslint-disable` comment.
