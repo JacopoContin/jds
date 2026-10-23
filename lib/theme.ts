@@ -33,9 +33,10 @@ export function parseTheme(params: URLSearchParams): ThemeChoice {
 }
 
 /**
- * A shadcn registry theme item for a choice. It depends on the JDS style, so one install
- * brings the full token set plus these overrides: base grays, primary, radius, surface
- * lighting, and a system font stack (Geist and Inter load through next/font in the layout instead).
+ * A shadcn registry theme item for a choice: the overrides on top of the JDS style (base grays,
+ * primary, radius, surface lighting, and a system font stack; Geist and Inter load through
+ * next/font in the layout instead). It doesn't depend on the style: install that first, see
+ * `themeInstall`.
  */
 export function themeItem(t: ThemeChoice) {
   const base = baseColors.find((b) => b.name === t.base)
@@ -51,7 +52,6 @@ export function themeItem(t: ThemeChoice) {
     type: "registry:theme",
     title: `${site.name} theme`,
     description: describe(t),
-    registryDependencies: [`${site.namespace}/style`],
     cssVars: { light, dark },
   }
 }
@@ -71,6 +71,17 @@ export const themeUrl = (t: ThemeChoice) => {
 }
 
 export const isDefaultTheme = (t: ThemeChoice) => themeQuery(t) === ""
+
+/**
+ * The install for a theme plus registry items, as commands without the runner (for Command).
+ * Two runs when the theme isn't the default: shadcn writes a dependency's variables after the
+ * item that needs it, so a theme that pulled in the style was overwritten by it. The style and
+ * items go first, then the theme on top.
+ */
+export function themeInstall(t: ThemeChoice, items: string[] = []) {
+  const first = `shadcn@latest add ${[`${site.namespace}/style`, ...items].join(" ")}`
+  return isDefaultTheme(t) ? [first] : [first, `shadcn@latest add "${themeUrl(t)}"`]
+}
 
 function describe(t: ThemeChoice) {
   return `Primary ${t.color}, base ${t.base}, radius ${t.radius}rem, font ${t.font}, ${t.surface} surfaces.`

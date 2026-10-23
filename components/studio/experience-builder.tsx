@@ -48,7 +48,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import type { VoiceOrbVariant } from "@/components/voice/voice-orb"
 import { AddIcon, ChartIcon, ReasoningIcon, ResearchIcon, SparkleIcon, WebSearchIcon } from "@/lib/icons"
-import { fontSnippet, isDefaultTheme, themeUrl, type ThemeChoice } from "@/lib/theme"
+import { fontSnippet, themeInstall, type ThemeChoice } from "@/lib/theme"
 import ChatApp from "@/recipes/chat-app/chat-app"
 import { AgentSidePanel } from "@/recipes/agent-side-panel/agent-side-panel"
 import { useSimulatedPanel } from "@/recipes/agent-side-panel/session"
@@ -298,8 +298,12 @@ function installCommand(c: Config, t: ThemeChoice) {
     if (c.model) items.push("model-picker")
   }
   if (c.commandBar && c.surface !== "voice") items.push("command-bar")
-  const theme = isDefaultTheme(t) ? "@jds/style" : `"${themeUrl(t)}"`
-  return `npx shadcn@latest add ${theme} ${items.map((i) => `@jds/${i}`).join(" ")}`
+  return themeInstall(
+    t,
+    items.map((i) => `@jds/${i}`),
+  )
+    .map((c) => `npx ${c}`)
+    .join("\n")
 }
 
 function generateCode(c: Config, t: ThemeChoice) {

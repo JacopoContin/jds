@@ -2,7 +2,8 @@
  * Generates registry.json from lib/docs.ts. Dependencies are read from each file's
  * imports so the registry can't drift from the code. Run `pnpm registry:build`.
  */
-import { readFileSync, writeFileSync } from "node:fs"
+import { readdirSync, readFileSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
 
 import { baseColorVars, baseColors, colorPresets } from "../lib/colors.ts"
 import { components } from "../lib/docs.ts"
@@ -176,6 +177,20 @@ const items: object[] = [
     description: `${p.label} surfaces for cards, inputs and menus, for the whole app. To style one element, set data-surface="${p.name}" on it instead. Install after ${NS}/style.`,
     cssVars: { light: p.light, dark: p.dark },
   })),
+  // The design rules ship as an agent skill, installed where Claude Code and other agents look.
+  {
+    name: "skills",
+    type: "registry:item",
+    title: `${site.name} skills`,
+    description: "Design rules for coding agents: layout, type, color, motion, copy, mobile and agent UI.",
+    files: readdirSync("skills/jds", { recursive: true, withFileTypes: true })
+      .filter((f) => f.isFile())
+      .map((f) => {
+        const path = join(f.parentPath, f.name)
+        return { path, type: "registry:file", target: `.claude/${path}` }
+      })
+      .sort((a, b) => a.path.localeCompare(b.path)),
+  },
   // Pro items are served by app/r/pro, never from the public registry.
   ...components.filter((c) => !c.pro).map((c) => ({
     name: c.slug,
